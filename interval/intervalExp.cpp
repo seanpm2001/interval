@@ -29,11 +29,15 @@ namespace itv {
 interval interval_algebra::Exp(const interval& x) const
 {
     if (x.isEmpty()) return x;
-    return {exp(x.lo()), exp(x.hi())};
+
+    int precision = (int)floor(x.lo()*log2(M_E)) + x.lsb();
+    int truncated_precision = std::max(precision, -24);
+
+    return {exp(x.lo()), exp(x.hi()), precision};
 }
 
 void interval_algebra::testExp() const
 {
-    analyzeUnaryMethod(10, 1000, "exp", interval(-100, 10), exp, &interval_algebra::Exp);
+    analyzeUnaryMethod(10, 100000, "exp", interval(-100, 10, -24), exp, &interval_algebra::Exp);
 }
 }  // namespace itv
