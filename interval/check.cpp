@@ -70,6 +70,24 @@ void check(const std::string& testname, bool exp, bool res)
 }
 
 /**
+ * @brief Computes the minimum of four doubles
+ */
+
+static double min4(double a, double b, double c, double d)
+{
+    return std::min(std::min(a, b), std::min(c, d));
+}
+
+/**
+ * @brief Computes the maximum of four doubles
+ */
+
+static double max4(double a, double b, double c, double d)
+{
+    return std::max(std::max(a, b), std::max(c, d));
+}
+
+/**
  * @brief Approximate the resulting interval of a function
  *
  * @param N the number of iterations
@@ -78,17 +96,6 @@ void check(const std::string& testname, bool exp, bool res)
  * @param y the interval of its second argument
  * @return interval the interval of the results
  */
-
-static double min4(double a, double b, double c, double d)
-{
-    return std::min(std::min(a, b), std::min(c, d));
-}
-
-static double max4(double a, double b, double c, double d)
-{
-    return std::max(std::max(a, b), std::max(c, d));
-}
-
 itv::interval testfun(int N, bfun f, const itv::interval& x, const itv::interval& y)
 {
     std::random_device             rd;  // used to generate a random seed, based on some hardware randomness
@@ -128,6 +135,48 @@ void analyzemod(itv::interval x, itv::interval y)
     std::cout << "simulated fmod(" << x << "," << y << ") = " << testfun(10000, fmod, x, y) << std::endl;
     std::cout << "computed  fmod(" << x << "," << y << ") = " << A.Mod(x, y) << std::endl;
     std::cout << std::endl;
+}
+
+int insert_measurement(std::vector<double> &prev_measurements, double value, int former_precision)
+{
+    int precision = former_precision; // unsure what the initial (max) precision should be: what is the general fixed-point format?
+
+    // we have to do something to insert the first element in the empty list 
+
+    if (prev_measurements.size() == 0)
+    {
+        prev_measurements.insert(std::begin(prev_measurements), value);
+        return 0;
+    }
+
+    auto it=std::begin(prev_measurements);
+
+    while(it !=std::end(prev_measurements))
+    {
+        if (value <= *it)
+        {
+            break;
+        }
+        ++it;
+    }
+
+    // insérer la valeur dans le vecteur et calculer la précision
+    it = prev_measurements.insert(it, value); // now it points to the position of value
+
+    // space between value and the previous item, if it exists
+    if (it != std::begin(prev_measurements) and ((double)log2(*it-*(it-1)) < precision)){
+        // std::cout << "Former precision " << precision << std::endl;
+        precision = floor(log2(*it - *(it-1)));
+        //std::cout << "Precision updated to " << precision << " because of " << *it << " and " << *(it-1) << std::endl;
+    }
+            
+    if (it+1 != std::end(prev_measurements) and ((double)log2(*(it+1)-*it) < precision)) {
+        // std::cout << "Former precision " << precision << std::endl;
+        precision = floor(log2(*(it+1) - *it));
+        // std::cout << "Precision updated to " << precision << " because of " << *it << " and " << *(it+1) << std::endl;
+    }
+
+    return precision;
 }
 
 void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& D, ufun f)
@@ -172,40 +221,59 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
     std::default_random_engine     generator(R());
     std::uniform_real_distribution rd(D.lo(), D.hi());
     itv::interval_algebra          A;
+    
+    double epsilon = pow(2, D.lsb()); // smallest gap between numbers
 
     std::cout << "Analysis of " << title << " in domain " << D << std::endl;
 
     for (int e = 0; e < E; e++) {  // E experiments
 
         // X: random input interval X < I
-        double        a = rd(generator);
-        double        b = rd(generator);
-        itv::interval X(std::min(a, b), std::max(a, b));
+        double        a = epsilon*floor(rd(generator)/epsilon);
+        double        b = epsilon*floor(rd(generator)/epsilon);
+        itv::interval X(std::min(a, b), std::max(a, b), D.lsb());
 
         // boundaries of the resulting interval
         double y0 = HUGE_VAL;   // std::min(t0, t1);
         double y1 = -HUGE_VAL;  // std::max(t0, t1);
 
+        // precision of the resulting interval
+        int lsb = 0;
+
         // random values in X
         std::uniform_real_distribution rx(X.lo(), X.hi());
 
+        std::vector<double> measurements;
+
         for (int m = 0; m < M; m++) {  // M measurements
-            double y = f(rx(generator));
+            double sample = epsilon*floor(rx(generator)/epsilon);
+            // std::cout.precision(17);
+            //std::cout << "Sample number " << m << " = " << sample << std::endl;
+            double y = f(sample); // !!! We need to truncate the input !!!  
+            
+            int lsby = insert_measurement(measurements, y, lsb);
             if (!std::isnan(y)) {
                 if (y < y0) y0 = y;
                 if (y > y1) y1 = y;
             }
+            // std::cout << "Current precision = " << lsb << std::endl;
+            if(lsby < lsb and lsby != INT_MIN){ // if lsby is INT_MIN this means that there are two identical images that should not be counted for precision
+                lsb = lsby;
+                // std::cout << "Precision updated to " << lsb << std::endl;
+            }
         }
-        itv::interval Y(y0, y1);
+
+        // std::cout << "LSB=" << lsb << std::endl;
+        itv::interval Y(y0, y1, lsb);
         itv::interval Z = (A.*mp)(X);
 
-        if (Z >= Y) {
+        if (Z >= Y and Z.lsb() <= Y.lsb()) {
             double lsb = (Z.size() == 0) ? 1 : Y.size() / Z.size();
 
             std::cout << "OK    " << e << ": " << title << "(" << X << ") = " << Z << " >= " << Y << " (precision "
-                      << lsb << ")" << std::endl;
+                      << lsb << ", LSB diff = " << Y.lsb() - Z.lsb() << ")" << std::endl;
         } else {
-            std::cout << "ERROR " << e << ": " << title << "(" << X << ") = " << Z << " INSTEAD OF " << Y << std::endl;
+            std::cout << "ERROR " << e << ": " << title << "(" << X << ") = " << Z << " INSTEAD OF " << Y << ", LSB diff = " << Y.lsb() - Z.lsb() << std::endl;
         }
     }
     std::cout << std::endl;
