@@ -31,8 +31,11 @@ interval interval_algebra::Cos(const interval& x) const
 {
     double TWOPI = 2 * M_PI;
 
+    int precision = 2 + 2*x.lsb();
+    int truncated_precision = std::max(precision, -24);  
+
     if (x.isEmpty()) return {};
-    if (x.size() >= TWOPI) return {-1, 1};
+    if (x.size() >= TWOPI) return {-1, 1, precision};
 
     // normalize input interval between 0..4PI
     double l = fmod(x.lo(), TWOPI);
@@ -48,12 +51,12 @@ interval interval_algebra::Cos(const interval& x) const
     // check if n*PI are included
     if (i.has(0) || i.has(2 * M_PI)) hi = 1;
     if (i.has(M_PI) || i.has(3 * M_PI)) lo = -1;
-
-    return {lo, hi};
+  
+    return {lo, hi, precision};
 }
 
 void interval_algebra::testCos() const
 {
-    analyzeUnaryMethod(20, 2000, "cos", interval(-10 * M_PI, 10 * M_PI), cos, &interval_algebra::Cos);
+    analyzeUnaryMethod(20, 40000, "cos", interval(-10 * M_PI, 10 * M_PI, -3), cos, &interval_algebra::Cos);
 }
 }  // namespace itv
