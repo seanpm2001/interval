@@ -26,7 +26,7 @@ using namespace itv;
 int main()
 {
     // test interval representation
-    check("interval()", interval());
+    /*check("interval()", interval());
     check("interval(0,100)", interval(100.0, 0.0));
     check("interval(0)", interval(0, 0));
     check("interval(-10,0)", interval(0, -10));
@@ -74,12 +74,14 @@ int main()
     std::cout << "must be true " << (reunion(a, n) == a) << std::endl;
     std::cout << "must be true " << (intersection(a, n) == n) << std::endl;
 
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
     interval_algebra A;
-    A.testAll();
-
-    {
+    //A.testAll();
+    //A.testExp();
+    A.testCos();
+    
+    /*{
         double u = 0.0;
         double v = nextafter(u, -HUGE_VAL);
         double w = nextafter(v, -HUGE_VAL);
@@ -104,5 +106,5 @@ int main()
 
     analyzeUnaryFunction(10, 1000, "rint", interval(-10000, 10000), rint);
     analyzeUnaryFunction(10, 1000, "floor", interval(-10000, 10000), floor);
-    analyzeUnaryFunction(10, 1000, "ceil", interval(-10000, 10000), ceil);
+    analyzeUnaryFunction(10, 1000, "ceil", interval(-10000, 10000), ceil);*/
 }
