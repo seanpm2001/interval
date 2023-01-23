@@ -31,11 +31,19 @@ interval interval_algebra::Sqrt(const interval& x) const
     if (x.isEmpty()) return x;
     if (x.lo() < 0) return {};  // sqrt of negative numbers
 
-    return {sqrt(x.lo()), sqrt(x.hi())};
+    double epsilon = pow(2, x.lsb());
+    int precision = floor((double)log2(sqrt(x.hi()) - sqrt(x.hi() - epsilon)));
+
+    return {sqrt(x.lo()), sqrt(x.hi()), precision};
 }
 
 void interval_algebra::testSqrt() const
 {
-    analyzeUnaryMethod(10, 1000, "sqrt", interval(0, 10), sqrt, &interval_algebra::Sqrt);
+    // analyzeUnaryMethod(10, 1000, "sqrt", interval(0, 10), sqrt, &interval_algebra::Sqrt);
+    analyzeUnaryMethod(10, 1000, "sqrt", interval(0, 10, 0), sqrt, &interval_algebra::Sqrt);
+    analyzeUnaryMethod(10, 1000, "sqrt", interval(0, 10, -5), sqrt, &interval_algebra::Sqrt);
+    analyzeUnaryMethod(10, 1000, "sqrt", interval(0, 10, -10), sqrt, &interval_algebra::Sqrt);
+    analyzeUnaryMethod(10, 1000, "sqrt", interval(0, 10, -15), sqrt, &interval_algebra::Sqrt);
+    analyzeUnaryMethod(10, 1000, "sqrt", interval(0, 10, -20), sqrt, &interval_algebra::Sqrt);
 }
 }  // namespace itv
