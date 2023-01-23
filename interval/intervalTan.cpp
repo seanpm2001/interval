@@ -27,31 +27,40 @@ namespace itv {
 // interval Tan(const interval& x) const;
 // void testTan() const;
 
+static double tanPi(double x)
+{
+    return tan(x*M_PI);
+}
+
 interval interval_algebra::Tan(const interval& x) const
 {
     double TWOPI = 2 * M_PI;
+    double epsilon = pow(2, x.lsb());
 
     if (x.isEmpty()) return x;
-    if (x.size() >= TWOPI) return {};  // we have undefined values
+    if (x.size() >= 1) return {};  // we have undefined values
 
-    // normalize input interval between 0..4PI
-    double l = fmod(x.lo(), TWOPI);
-    if (l < 0) l += TWOPI;
-    interval i(l, l + x.size());
+    // normalize input interval between -0.5..0.5 (corresponding to -PI/2..PI/2)
+    double l = fmod(x.lo(), 1); // fractional part of x.lo()
+    interval i(l, l + x.size(), x.lsb());
 
-    if (i.has(M_PI_2) || i.has(3 * M_PI_2) || i.has(5 * M_PI_2) || i.has(7 * M_PI_2)) {
+    if (i.has(1)) {
         return {};  //  we have undefined values
     }
 
-    double a  = tan(i.lo());
-    double b  = tan(i.hi());
+    double a  = tanPi(i.lo());
+    double b  = tanPi(i.hi());
     double lo = std::min(a, b);
     double hi = std::max(a, b);
-    return {lo, hi};
+
+    return {lo, hi, x.lsb()};
 }
 
 void interval_algebra::testTan() const
 {
-    analyzeUnaryMethod(20, 2000, "tan", interval(-M_PI_2, M_PI_2), tan, &interval_algebra::Tan);
+    analyzeUnaryMethod(20, 20000, "tan", interval(-0.5, 0.5,-2), tanPi, &interval_algebra::Tan);
+    analyzeUnaryMethod(20, 20000, "tan", interval(-0.5, 0.5,-5), tanPi, &interval_algebra::Tan);
+    analyzeUnaryMethod(20, 20000, "tan", interval(-0.5, 0.5,-10), tanPi, &interval_algebra::Tan);
+    analyzeUnaryMethod(20, 20000, "tan", interval(-0.5, 0.5,-15), tanPi, &interval_algebra::Tan);
 }
 }  // namespace itv
