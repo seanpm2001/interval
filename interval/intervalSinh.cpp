@@ -30,11 +30,15 @@ interval interval_algebra::Sinh(const interval& x) const
 {
     if (x.isEmpty()) return x;
 
-    return {sinh(x.lo()), sinh(x.hi())};
+    return {sinh(x.lo()), sinh(x.hi()), x.lsb()};
 }
 
 void interval_algebra::testSinh() const
 {
-    analyzeUnaryMethod(10, 1000, "sinh", interval(-10, 10), sinh, &interval_algebra::Sinh);
+    analyzeUnaryMethod(10, 1000, "sinh", interval(-10, 10, 0), sinh, &interval_algebra::Sinh);
+    analyzeUnaryMethod(10, 1000, "sinh", interval(-10, 10, -5), sinh, &interval_algebra::Sinh);
+    analyzeUnaryMethod(10, 1000, "sinh", interval(-10, 10, -10), sinh, &interval_algebra::Sinh);
+    analyzeUnaryMethod(10, 1000, "sinh", interval(-10, 10, -15), sinh, &interval_algebra::Sinh);
+    analyzeUnaryMethod(10, 1000, "sinh", interval(-10, 10, -20), sinh, &interval_algebra::Sinh);
 }
 }  // namespace itv

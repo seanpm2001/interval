@@ -30,11 +30,22 @@ namespace itv {
 interval interval_algebra::Tanh(const interval& x) const
 {
     if (x.isEmpty()) return {};
-    return {tanh(x.lo()), tanh(x.hi())};
+    double maxbound = 0;
+    if (abs(x.lo()) < abs(x.hi()))
+        maxbound = x.hi();
+    else
+        maxbound = x.lo();
+    int precision = floor(x.lsb() - 2*(double)log2(cosh(maxbound)));
+    return {tanh(x.lo()), tanh(x.hi()), precision};
 }
 
 void interval_algebra::testTanh() const
 {
-    analyzeUnaryMethod(20, 2000, "tanh", interval(-10 * M_PI, 10 * M_PI), tanh, &interval_algebra::Tanh);
+    // analyzeUnaryMethod(20, 2000, "tanh", interval(-10, 10), tanh, &interval_algebra::Tanh);
+    analyzeUnaryMethod(20, 2000, "tanh", interval(-10, 10, 0), tanh, &interval_algebra::Tanh);
+    analyzeUnaryMethod(20, 2000, "tanh", interval(-10, 10, -5), tanh, &interval_algebra::Tanh);
+    analyzeUnaryMethod(20, 2000, "tanh", interval(-10, 10, -10), tanh, &interval_algebra::Tanh);
+    analyzeUnaryMethod(20, 2000, "tanh", interval(-10, 10, -15), tanh, &interval_algebra::Tanh);
+    analyzeUnaryMethod(20, 2000, "tanh", interval(-10, 10, -20), tanh, &interval_algebra::Tanh);
 }
 }  // namespace itv
