@@ -160,6 +160,9 @@ int insert_measurement(std::vector<double> &prev_measurements, double value, int
         ++it;
     }
 
+    if (value == *it)
+        return it - prev_measurements.begin();
+
     // insérer la valeur dans le vecteur et calculer la précision
     it = prev_measurements.insert(it, value); // now it points to the position of value
 
@@ -176,7 +179,7 @@ int insert_measurement(std::vector<double> &prev_measurements, double value, int
         // std::cout << "Precision updated to " << precision << " because of " << *it << " and " << *(it+1) << std::endl;
     }
 
-    return precision;
+    return it-prev_measurements.begin();
 }
 
 void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& D, ufun f)
@@ -224,7 +227,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
     
     double epsilon = pow(2, D.lsb()); // smallest gap between numbers
 
-    std::cout << "Analysis of " << title << " in domain " << D << std::endl;
+    std::cout << "Analysis of " << title << " in domain " << D  << " (epsilon = " << pow(2, D.lsb()) << ")" << std::endl;
 
     for (int e = 0; e < E; e++) {  // E experiments
 
@@ -246,37 +249,38 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         std::vector<double> measurements;
 
         for (int m = 0; m < M; m++) {  // M measurements
-            double sample = epsilon*floor(rx(generator)/epsilon);
-            // std::cout.precision(17);
-            //std::cout << "Sample number " << m << " = " << sample << std::endl;
-            double y = f(sample); // !!! We need to truncate the input !!!  
+            double sample = epsilon*floor(rx(generator)/epsilon); // truncated to desired precision
+            double y = f(sample);
             
-            int lsby = insert_measurement(measurements, y, lsb);
+            int i = insert_measurement(measurements, y, lsb);
+
+            if (i != 0 and measurements[i] != measurements[i-1] and ((double)log2(measurements[i] - measurements[i-1]) < lsb))
+                lsb = floor(log2(measurements[i] - measurements[i-1]));
+                
+            if (m != 0 and i != measurements.size() and measurements[i+1] != measurements[i] and ((double)log2(measurements[i+1] - measurements[i]) < lsb))
+                lsb = floor(log2(measurements[i+1] - measurements[i]));
+
             if (!std::isnan(y)) {
                 if (y < y0) y0 = y;
                 if (y > y1) y1 = y;
             }
-            // std::cout << "Current precision = " << lsb << std::endl;
-            if(lsby < lsb and lsby != INT_MIN){ // if lsby is INT_MIN this means that there are two identical images that should not be counted for precision
-                lsb = lsby;
-                // std::cout << "Precision updated to " << lsb << std::endl;
-            }
+
         }
 
-        // std::cout << "LSB=" << lsb << std::endl;
         itv::interval Y(y0, y1, lsb);
         itv::interval Z = (A.*mp)(X);
 
         if (Z >= Y and Z.lsb() <= Y.lsb()) {
             double lsb = (Z.size() == 0) ? 1 : Y.size() / Z.size();
 
-            std::cout << "OK    " << e << ": " << title << "(" << X << ") = " << Z << " >= " << Y << " (precision "
-                      << lsb << ", LSB diff = " << Y.lsb() - Z.lsb() << ")" << std::endl;
+            std::cout << "\033[32m" << "OK    " << e << ": " << title << "(" << X << ") = " << Z << " >= " << Y << " (precision "
+                      << lsb << ", LSB diff = " << Y.lsb() - Z.lsb() << ")" << "\033[0m"<< std::endl;
         } else {
-            std::cout << "ERROR " << e << ": " << title << "(" << X << ") = " << Z << " INSTEAD OF " << Y << ", LSB diff = " << Y.lsb() - Z.lsb() << std::endl;
+            std::cout << "\033[31m" << "ERROR " << e << ": " << title << "(" << X << ") = " << Z << " INSTEAD OF " << Y << ", LSB diff = " << Y.lsb() - Z.lsb() << "\033[0m"<< std::endl;
         }
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
+    std::cout << std::endl << std::endl;
 }
 
 /**
