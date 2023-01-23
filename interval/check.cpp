@@ -221,7 +221,7 @@ void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& 
 void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D, ufun f, umth mp)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(R());
+    std::default_random_engine     generator(1);
     std::uniform_real_distribution rd(D.lo(), D.hi());
     itv::interval_algebra          A;
     
