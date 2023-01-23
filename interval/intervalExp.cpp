@@ -38,6 +38,9 @@ interval interval_algebra::Exp(const interval& x) const
 
 void interval_algebra::testExp() const
 {
-    analyzeUnaryMethod(10, 100000, "exp", interval(-100, 10, -24), exp, &interval_algebra::Exp);
+    analyzeUnaryMethod(10, 100000, "exp", interval(-100, 10, 0), exp, &interval_algebra::Exp);
+    analyzeUnaryMethod(10, 100000, "exp", interval(-100, 10, 3), exp, &interval_algebra::Exp);
+    analyzeUnaryMethod(10, 100000, "exp", interval(-100, 10, 6), exp, &interval_algebra::Exp);
+    analyzeUnaryMethod(10, 100000, "exp", interval(-100, 10, 9), exp, &interval_algebra::Exp);
 }
 }  // namespace itv
