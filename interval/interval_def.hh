@@ -151,10 +151,11 @@ inline interval intersection(const interval& i, const interval& j)
     } else {
         double l = std::max(i.lo(), j.lo());
         double h = std::min(i.hi(), j.hi());
+        int p = std::min(i.lsb(), j.lsb()); // precision of the intersection should be the finest of the two
         if (l > h) {
             return {};
         } else {
-            return {l, h};
+            return {l, h, p};
         }
     }
 }
@@ -168,7 +169,8 @@ inline interval reunion(const interval& i, const interval& j)
     } else {
         double l = std::min(i.lo(), j.lo());
         double h = std::max(i.hi(), j.hi());
-        return {l, h};
+        int p = std::min(i.lsb(), j.lsb()); // precision of the reunion should be the finest of the two
+        return {l, h, p};
     }
 }
 
