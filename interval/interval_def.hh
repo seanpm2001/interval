@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <limits>

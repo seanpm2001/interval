@@ -188,16 +188,16 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
     std::default_random_engine     generator(R());
     std::uniform_real_distribution rd(D.lo(), D.hi());
     itv::interval_algebra          A;
-    
-    double epsilon = pow(2, D.lsb()); // smallest gap between numbers
+
+    double epsilon = pow(2, D.lsb());  // smallest gap between numbers
 
     std::cout << "Analysis of " << title << " in domain " << D  << " (epsilon = " << pow(2, D.lsb()) << ")" << std::endl;
 
     for (int e = 0; e < E; e++) {  // E experiments
 
         // X: random input interval X < I
-        double        a = epsilon*floor(rd(generator)/epsilon);
-        double        b = epsilon*floor(rd(generator)/epsilon);
+        double        a = epsilon * floor(rd(generator) / epsilon);
+        double        b = epsilon * floor(rd(generator) / epsilon);
         itv::interval X(std::min(a, b), std::max(a, b), D.lsb());
 
         // boundaries of the resulting interval
