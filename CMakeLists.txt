@@ -11,8 +11,6 @@ else ()
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif()
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 add_definitions(-D_USE_MATH_DEFINES)
 
 include_directories(. ./interval)
