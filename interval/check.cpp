@@ -185,7 +185,7 @@ int exactPrecisionUnary(ufun f, double x, double epsilon)
 void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D, ufun f, umth mp)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(1);
+    std::default_random_engine     generator(R());
     std::uniform_real_distribution rd(D.lo(), D.hi());
     itv::interval_algebra          A;
     
@@ -258,10 +258,10 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         if (Z >= Y and Z.lsb() <= Y.lsb()) {
             double lsb = (Z.size() == 0) ? 1 : Y.size() / Z.size();
 
-            std::cout << "\033[32m" << "OK    " << e << ": " << title << "(" << X << ") = " << Z << " >= " << Y << " (precision "
+            std::cout << "\033[32m" << "OK    " << e << ": " << title << "(" << X << ") = \t" << Z << "\t >= \t" << Y << "\t (precision "
                       << lsb << ", LSB diff = " << Y.lsb() - Z.lsb() << ")" << "\033[0m"<< std::endl;
         } else {
-            std::cout << "\033[31m" << "ERROR " << e << ": " << title << "(" << X << ") = " << Z << " INSTEAD OF " << Y << ", LSB diff = " << Y.lsb() - Z.lsb() << "\033[0m"<< std::endl;
+            std::cout << "\033[31m" << "ERROR " << e << ": " << title << "(" << X << ") = \t" << Z << "\t INSTEAD OF \t" << Y << ", \t LSB diff = " << Y.lsb() - Z.lsb() << "\033[0m"<< std::endl;
         }
         std::cout << std::endl;
     }
