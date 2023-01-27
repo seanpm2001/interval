@@ -28,11 +28,13 @@ namespace itv {
 
 interval interval_algebra::Exp(const interval& x) const
 {
-    if (x.isEmpty()) return x;
+    if (x.isEmpty()) {
+        return x;
+    }
 
     // lowest slope is attained at the lowest boundary
     int precision = exactPrecisionUnary(exp, x.lo(), pow(2, x.lsb()));
-    int truncated_precision = std::max(precision, -24);
+    // int truncated_precision = std::max(precision, -24);
 
     return {exp(x.lo()), exp(x.hi()), precision};
 }

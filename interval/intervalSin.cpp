@@ -29,22 +29,26 @@ namespace itv {
 
 static double sinPi(double x)
 {
-    return sin(x*M_PI);
+    return sin(x * M_PI);
 }
 
 interval interval_algebra::Sin(const interval& x) const
 {
-    double TWOPI = 2*M_PI;
-    double epsilon = pow(2, x.lsb());
+    double TWOPI = 2 * M_PI;
+    // double epsilon = pow(2, x.lsb());
 
-    int precision = exactPrecisionUnary(sinPi, 0.5, pow(2, x.lsb())); 
-    int truncated_precision = std::max(precision, -24);  
-    
-    if (x.size() >= 2) return {-1, 1, precision};
+    int precision = exactPrecisionUnary(sinPi, 0.5, pow(2, x.lsb()));
+    // int truncated_precision = std::max(precision, -24);
+
+    if (x.size() >= 2) {
+        return {-1, 1, precision};
+    }
 
     // normalize input interval between 0..2
     double l = fmod(x.lo(), 2);
-    if (l < 0) l += 2;
+    if (l < 0) {
+        l += 2;
+    }
     interval i(l, l + x.size(), x.lsb());
 
     // compute the default boundaries
@@ -54,23 +58,31 @@ interval interval_algebra::Sin(const interval& x) const
     double hi = std::max(a, b);
 
     // check if integers are included
-    if (i.has(0.5) || i.has(2.5)) hi = 1;
-    if (i.has(1.5) || i.has(3.5)) lo = -1;
+    if (i.has(0.5) || i.has(2.5)) {
+        hi = 1;
+    }
+    if (i.has(1.5) || i.has(3.5)) {
+        lo = -1;
+    }
 
-    double v = 0.5; // value of the interval at which the finest precision is computed
-                    // defaults at 0.5, interchangeable with any other half-integer
+    double v = 0.5;  // value of the interval at which the finest precision is computed
+                     // defaults at 0.5, interchangeable with any other half-integer
 
     // precision if we don't hit the half integers
-    if (i.hi() < 0.5)
+    if (i.hi() < 0.5) {
         v = x.hi();
-    else if ((i.lo() > 0.5 and i.hi() < 1.5) or (i.lo() > 1.5 and i.hi() < 2.5))
-        if (i.lo() - floor(i.lo() - 0.5) > ceil(i.hi() + 0.5) - i.hi()) // if i.hi is closer to its higher half-integer than i.lo() to its lower half-integer
+    } else if ((i.lo() > 0.5 and i.hi() < 1.5) or (i.lo() > 1.5 and i.hi() < 2.5)) {
+        if (i.lo() - floor(i.lo() - 0.5) >
+            ceil(i.hi() + 0.5) -
+                i.hi()) {  // if i.hi is closer to its higher half-integer than i.lo() to its lower half-integer
             v = x.hi();
-        else
+        } else {
             v = x.lo();
+        }
+    }
 
     precision = exactPrecisionUnary(sinPi, v, pow(2, x.lsb()));
-        
+
     return {lo, hi, precision};
 }
 
@@ -80,8 +92,8 @@ void interval_algebra::testSin() const
     analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -3), sinPi, &interval_algebra::Sin);
     analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -5), sinPi, &interval_algebra::Sin);
     analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -10), sinPi, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -15), sinPi, &interval_algebra::Sin);    
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -15), sinPi, &interval_algebra::Sin);
     analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -20), sinPi, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -24), sinPi, &interval_algebra::Sin); 
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -24), sinPi, &interval_algebra::Sin);
 }
 }  // namespace itv

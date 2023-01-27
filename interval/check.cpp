@@ -15,9 +15,9 @@
 #include <climits>
 #include <iostream>
 #include <random>
+#include <set>
 #include <sstream>
 #include <string>
-#include <set>
 
 #include "check.hh"
 #include "interval_algebra.hh"
@@ -117,8 +117,12 @@ itv::interval testfun(int N, bfun f, const itv::interval& x, const itv::interval
         double u = rx(generator);
         double v = ry(generator);
         double r = f(u, v);
-        if (r < l) l = r;
-        if (r > h) h = r;
+        if (r < l) {
+            l = r;
+        }
+        if (r > h) {
+            h = r;
+        }
     }
 
     return {l, h};
@@ -165,8 +169,12 @@ void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& 
 
         for (int m = 0; m < M; m++) {  // M measurements
             double y = f(rx(generator));
-            if (y < y0) y0 = y;
-            if (y > y1) y1 = y;
+            if (y < y0) {
+                y0 = y;
+            }
+            if (y > y1) {
+                y1 = y;
+            }
         }
         itv::interval Y(y0, y1);
 
@@ -179,7 +187,7 @@ void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& 
 // epsilon is positive or negative depending on the relative position of the points to compare
 int exactPrecisionUnary(ufun f, double x, double epsilon)
 {
-    int res = floor((double)log2(std::abs(f(x+epsilon) - f(x))));
+    int res = floor((double)log2(std::abs(f(x + epsilon) - f(x))));
     return res;
 }
 
@@ -192,7 +200,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
 
     double epsilon = pow(2, D.lsb());  // smallest gap between numbers
 
-    std::cout << "Analysis of " << title << " in domain " << D  << " (epsilon = " << pow(2, D.lsb()) << ")" << std::endl;
+    std::cout << "Analysis of " << title << " in domain " << D << " (epsilon = " << pow(2, D.lsb()) << ")" << std::endl;
 
     for (int e = 0; e < E; e++) {  // E experiments
 
@@ -215,42 +223,50 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         std::set<double> measurements;
 
         // the loop has almost no chance of drawing X.hi(): we manually add it
-        double sample = X.hi(); // not truncated since morally the interval boundaries should already have the right precision
+        double sample =
+            X.hi();  // not truncated since morally the interval boundaries should already have the right precision
         double y = f(sample);
-            
+
         measurements.insert(y);
 
         if (!std::isnan(y)) {
-            if (y < y0) y0 = y;
-            if (y > y1) y1 = y;
+            if (y < y0) {
+                y0 = y;
+            }
+            if (y > y1) {
+                y1 = y;
+            }
         }
 
         for (int m = 0; m < M; m++) {  // M measurements
             double presample = rx(generator);
-            double sample = epsilon*floor(presample/epsilon); // truncated to desired precision
-            double y = f(sample);
-            
+            double sample    = epsilon * floor(presample / epsilon);  // truncated to desired precision
+            double y         = f(sample);
+
             measurements.insert(y);
 
             if (!std::isnan(y)) {
-                if (y < y0) y0 = y;
-                if (y > y1) y1 = y;
+                if (y < y0) {
+                    y0 = y;
+                }
+                if (y > y1) {
+                    y1 = y;
+                }
             }
-
         }
 
-        std::set<double>::iterator it = measurements.begin();
-        
-        while(it != measurements.end())
-        {
+        auto it = measurements.begin();
+
+        while (it != measurements.end()) {
             double measurement = *it;
             it++;
             double next = *it;
 
             double l = log2(next - measurement);
 
-            if (l < lsb)
+            if (l < lsb) {
                 lsb = floor(l);
+            }
         }
 
         itv::interval Y(y0, y1, lsb);
@@ -259,10 +275,14 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         if (Z >= Y and Z.lsb() <= Y.lsb()) {
             double lsb = (Z.size() == 0) ? 1 : Y.size() / Z.size();
 
-            std::cout << "\033[32m" << "OK    " << e << ": " << title << "(" << X << ") = \t" << Z << "\t >= \t" << Y << "\t (precision "
-                      << lsb << ", LSB diff = " << Y.lsb() - Z.lsb() << ")" << "\033[0m"<< std::endl;
+            std::cout << "\033[32m"
+                      << "OK    " << e << ": " << title << "(" << X << ") = \t" << Z << "\t >= \t" << Y
+                      << "\t (precision " << lsb << ", LSB diff = " << Y.lsb() - Z.lsb() << ")"
+                      << "\033[0m" << std::endl;
         } else {
-            std::cout << "\033[31m" << "ERROR " << e << ": " << title << "(" << X << ") = \t" << Z << "\t INSTEAD OF \t" << Y << ", \t LSB diff = " << Y.lsb() - Z.lsb() << "\033[0m"<< std::endl;
+            std::cout << "\033[31m"
+                      << "ERROR " << e << ": " << title << "(" << X << ") = \t" << Z << "\t INSTEAD OF \t" << Y
+                      << ", \t LSB diff = " << Y.lsb() - Z.lsb() << "\033[0m" << std::endl;
         }
         std::cout << std::endl;
     }
@@ -316,8 +336,12 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
         for (int m = 0; m < M; m++) {  // M measurements
             double z = f(rvx(generator), rvy(generator));
             if (!std::isnan(z)) {
-                if (z < zlo) zlo = z;
-                if (z > zhi) zhi = z;
+                if (z < zlo) {
+                    zlo = z;
+                }
+                if (z > zhi) {
+                    zhi = z;
+                }
             }
         }
         itv::interval Zm(zlo, zhi);         // the measured Z
