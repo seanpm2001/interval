@@ -31,8 +31,8 @@ interval interval_algebra::Sqrt(const interval& x) const
     if (x.isEmpty()) return x;
     if (x.lo() < 0) return {};  // sqrt of negative numbers
 
-    double epsilon = pow(2, x.lsb());
-    int precision = floor((double)log2(sqrt(x.hi()) - sqrt(x.hi() - epsilon)));
+    // lowest slope at the highest bound of the interval
+    int precision = exactPrecisionUnary(sqrt, x.hi(), -pow(2, x.lsb()));
 
     return {sqrt(x.lo()), sqrt(x.hi()), precision};
 }

@@ -37,10 +37,10 @@ interval interval_algebra::Sin(const interval& x) const
     double TWOPI = 2*M_PI;
     double epsilon = pow(2, x.lsb());
 
-    int precision = floor(-1 + 2*x.lsb() + 2*log2(M_PI)); // in the case where there is an integer in the interval
+    int precision = exactPrecisionUnary(sinPi, 0.5, pow(2, x.lsb())); 
     int truncated_precision = std::max(precision, -24);  
     
-    if (x.size() >= 2) return {-1, 1};
+    if (x.size() >= 2) return {-1, 1, precision};
 
     // normalize input interval between 0..2
     double l = fmod(x.lo(), 2);
@@ -57,16 +57,19 @@ interval interval_algebra::Sin(const interval& x) const
     if (i.has(0.5) || i.has(2.5)) hi = 1;
     if (i.has(1.5) || i.has(3.5)) lo = -1;
 
+    double v = 0.5; // value of the interval at which the finest precision is computed
+                    // defaults at 0.5, interchangeable with any other half-integer
+
     // precision if we don't hit the half integers
     if (i.hi() < 0.5)
-        precision = floor(log2(M_PI) + x.lsb() + log2(abs(cos(M_PI*(x.hi() - epsilon/2)))));
-    else if (i.lo() > 0.5 and i.hi() < 1.5)
-        if (i.lo() - 0.5 < 1.5 - i.hi())
-            precision = floor(log2(M_PI) + x.lsb() + log2(abs(cos(M_PI*(x.lo() + epsilon/2)))));
+        v = x.hi();
+    else if ((i.lo() > 0.5 and i.hi() < 1.5) or (i.lo() > 1.5 and i.hi() < 2.5))
+        if (i.lo() - floor(i.lo() - 0.5) > ceil(i.hi() + 0.5) - i.hi()) // if i.hi is closer to its higher half-integer than i.lo() to its lower half-integer
+            v = x.hi();
         else
-            precision = floor(log2(M_PI) + x.lsb() + log2(abs(cos(M_PI*(x.hi() - epsilon/2)))));
-    else if (i.lo() > 1.5 and i.hi() < 2)
-        precision = floor(log2(M_PI) + x.lsb() + log2(abs(cos(M_PI*(x.lo() + epsilon/2)))));
+            v = x.lo();
+
+    precision = exactPrecisionUnary(sinPi, v, pow(2, x.lsb()));
         
     return {lo, hi, precision};
 }
@@ -74,11 +77,11 @@ interval interval_algebra::Sin(const interval& x) const
 void interval_algebra::testSin() const
 {
     // analyzeUnaryMethod(5, 20000, "sin", interval(-1, 1, -3), sinPi, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(1, 2, -3), sinPi, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(1, 2, -5), sinPi, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(1, 2, -10), sinPi, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(1, 2, -15), sinPi, &interval_algebra::Sin);    
-    analyzeUnaryMethod(10, 40000, "sin", interval(1, 2, -20), sinPi, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(1, 2, -24), sinPi, &interval_algebra::Sin); 
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -3), sinPi, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -5), sinPi, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -10), sinPi, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -15), sinPi, &interval_algebra::Sin);    
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -20), sinPi, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2, -24), sinPi, &interval_algebra::Sin); 
 }
 }  // namespace itv

@@ -30,7 +30,20 @@ interval interval_algebra::Sinh(const interval& x) const
 {
     if (x.isEmpty()) return x;
 
-    return {sinh(x.lo()), sinh(x.hi()), x.lsb()};
+    double v = 0; // absolute lowest slope is at zero
+
+    int sign = 1;
+
+    // if zero is not included, lowest slope is at the boundary of lowest absolute value
+    if (x.lo()>0) // if the interval is entirely in the positives, 
+        v = x.lo();
+    else if (x.hi() < 0) // if the interval is entirely in the negatives
+    {
+        v = x.hi();
+        sign = -1;
+    }
+
+    return {sinh(x.lo()), sinh(x.hi()), exactPrecisionUnary(sinh, v, sign*pow(2, x.lsb()))};
 }
 
 void interval_algebra::testSinh() const

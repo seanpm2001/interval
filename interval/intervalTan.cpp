@@ -44,7 +44,7 @@ interval interval_algebra::Tan(const interval& x) const
     double l = fmod(x.lo(), 1); // fractional part of x.lo()
     interval i(l, l + x.size(), x.lsb());
 
-    if (i.has(1)) {
+    if (i.has(0.5) or i.has(-0.5)) { // asymptots at PI/2
         return {};  //  we have undefined values
     }
 
@@ -52,6 +52,16 @@ interval interval_algebra::Tan(const interval& x) const
     double b  = tanPi(i.hi());
     double lo = std::min(a, b);
     double hi = std::max(a, b);
+
+    double v = 0; // value at which the lowest slope is computed: 0 if present
+    int sign = 1;
+
+    if (i.lo() > 0)
+        v = i.lo();
+    else if (i.hi() < 0)
+        v = i.hi();
+
+    int precision = exactPrecisionUnary(tanPi, v, sign*pow(2, x.lsb()));
 
     return {lo, hi, x.lsb()};
 }

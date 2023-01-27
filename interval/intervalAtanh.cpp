@@ -27,17 +27,26 @@ namespace itv {
 // interval Atanh(const interval& x) const;
 // void testAtanh() const;
 
-static const interval domain(std::nexttoward(-1, 0), std::nexttoward(1, 0));  // interval ]-1,1[
+static const interval domain(std::nexttoward(-1, 0), std::nexttoward(1, 0), 0);  // interval ]-1,1[, precision 0
 
 interval interval_algebra::Atanh(const interval& x) const
 {
     interval i = intersection(domain, x);
     if (i.isEmpty()) return i;
-    return {atanh(i.lo()), atanh(i.hi())};
+
+    // min slope is attained in 0
+    int precision = exactPrecisionUnary(atanh, 0, pow(2, x.lsb()));
+
+    return {atanh(i.lo()), atanh(i.hi()), precision};
 }
 
 void interval_algebra::testAtanh() const
 {
-    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -3), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -5), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -10), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -15), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -20), atanh, &interval_algebra::Atanh);
+
 }
 }  // namespace itv

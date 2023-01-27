@@ -29,11 +29,27 @@ static const interval domain(-HUGE_VAL, HUGE_VAL);
 
 interval interval_algebra::Asinh(const interval& x) const
 {
-    return {asinh(x.lo()), asinh(x.hi())};
+    double v = 0; // value at which the min slope is attained, here the bound of highest absolute value
+    int sign = 1; // whether we compute the difference between f(v) and f(v+ε) or f(v-ε)
+    if (std::abs(x.hi()) < std::abs(x.lo()))
+        v = x.lo();
+    else
+    {
+        v = x.hi();
+        sign = -1; // if we compute the difference at the higer bound we have to take the FP point right before
+    }
+
+    int precision = exactPrecisionUnary(asinh, v, sign*pow(2, x.lsb()));
+
+    return {asinh(x.lo()), asinh(x.hi()), precision};
 }
 
 void interval_algebra::testAsinh() const
 {
-    analyzeUnaryMethod(10, 1000, "asinh", interval(-10, 10), asinh, &interval_algebra::Asinh);
+    analyzeUnaryMethod(10, 1000, "asinh", interval(-10, 10, 0), asinh, &interval_algebra::Asinh);
+    analyzeUnaryMethod(10, 1000, "asinh", interval(-10, 10, -5), asinh, &interval_algebra::Asinh);
+    analyzeUnaryMethod(10, 1000, "asinh", interval(-10, 10, -10), asinh, &interval_algebra::Asinh);
+    analyzeUnaryMethod(10, 1000, "asinh", interval(-10, 10, -15), asinh, &interval_algebra::Asinh);
+    analyzeUnaryMethod(10, 1000, "asinh", interval(-10, 10, -20), asinh, &interval_algebra::Asinh);    
 }
 }  // namespace itv

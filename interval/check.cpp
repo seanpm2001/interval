@@ -218,6 +218,14 @@ void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& 
     std::cout << std::endl;
 }
 
+// f is the function to study
+// epsilon is positive or negative depending on the relative position of the points to compare
+int exactPrecisionUnary(ufun f, double x, double epsilon)
+{
+    int res = floor((double)log2(std::abs(f(x+epsilon) - f(x))));
+    return res;
+}
+
 void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D, ufun f, umth mp)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness

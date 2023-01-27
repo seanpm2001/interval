@@ -37,7 +37,7 @@ interval interval_algebra::Cos(const interval& x) const
     double TWOPI = 2 * M_PI;
     double epsilon = pow(2, x.lsb());
 
-    int precision = floor(-1 + 2*x.lsb() + 2*log2(M_PI)); // in the case where there is an integer in the interval
+    int precision = exactPrecisionUnary(cosPi, 0, pow(2, x.lsb()));
     int truncated_precision = std::max(precision, -24);  
 
     if (x.isEmpty()) return {};
@@ -58,13 +58,17 @@ interval interval_algebra::Cos(const interval& x) const
     if (i.has(0) || i.has(2)) hi = 1;
     if (i.has(1) || i.has(3)) lo = -1;
 
+    double v = 0; // value of the interval at which the finest precision is computed
+
     if (i.hi() < 1 or (i.lo() > 1 and i.hi() < 2)) // if there are no integers in i, i.e i is included in ]0;1[ or ]1;2[
     {
         if (ceil(x.hi()) - x.hi() < x.lo() - floor(x.lo())) // if the lowest slope is attained for the higher bound
-            precision = floor(log2(M_PI) + x.lsb() + log2(abs(sin(M_PI*(x.hi() - epsilon/2))))); 
+            v = x.hi();
         else // ... for the lower bound
-            precision = floor(log2(M_PI) + x.lsb() + log2(abs(sin(M_PI*(x.lo() + epsilon/2)))));
+            v = x.lo();
     }
+
+    precision = exactPrecisionUnary(cosPi, v, pow(2, x.lsb()));
   
     return {lo, hi, precision};
 }

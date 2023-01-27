@@ -30,7 +30,8 @@ interval interval_algebra::Log(const interval& x) const
 {
     if (x.isEmpty()) return {};
 
-    int precision = x.lsb() - log2(x.hi());
+    // lowest slope is at the highest bound of the interval
+    int precision = exactPrecisionUnary(log, x.hi(), -pow(2, x.lsb())); // -pow because we take the FP number right before the higher bound
     int truncated_precision = std::max(precision, -24);
 
     interval i = intersection(interval(0, HUGE_VAL), x);

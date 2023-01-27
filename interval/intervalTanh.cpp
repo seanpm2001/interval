@@ -30,12 +30,14 @@ namespace itv {
 interval interval_algebra::Tanh(const interval& x) const
 {
     if (x.isEmpty()) return {};
-    double maxbound = 0;
+
+    // value at which the lowest slope is attained: bound of the interval with the highest absolute value
+    double v = 0; 
     if (abs(x.lo()) < abs(x.hi()))
-        maxbound = x.hi();
+        v = x.hi();
     else
-        maxbound = x.lo();
-    int precision = floor(x.lsb() - 2*(double)log2(cosh(maxbound)));
+        v = x.lo();
+    int precision = exactPrecisionUnary(tanh, v, pow(2,x.lsb()));
     return {tanh(x.lo()), tanh(x.hi()), precision};
 }
 

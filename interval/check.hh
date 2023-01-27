@@ -20,7 +20,7 @@ using bmth = itv::interval (itv::interval_algebra::*)(const itv::interval& x, co
 itv::interval testfun(int N, bfun f, const itv::interval& x, const itv::interval& y);
 void          analyzemod(itv::interval x, itv::interval y);
 
-int insert_measurement(std::vector<double>& prev_measurements, double value, int former_precision);
+int exactPrecisionUnary(ufun f, double x, double epsilon);
 
 void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& D, ufun f);
 void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D, ufun f, umth m);
