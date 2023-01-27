@@ -16,6 +16,7 @@
 #include <random>
 #include <sstream>
 #include <string>
+#include <set>
 
 #include "check.hh"
 #include "interval_algebra.hh"
@@ -137,51 +138,6 @@ void analyzemod(itv::interval x, itv::interval y)
     std::cout << std::endl;
 }
 
-int insert_measurement(std::vector<double> &prev_measurements, double value, int former_precision)
-{
-    int precision = former_precision; // unsure what the initial (max) precision should be: what is the general fixed-point format?
-
-    // we have to do something to insert the first element in the empty list 
-
-    if (prev_measurements.size() == 0)
-    {
-        prev_measurements.insert(std::begin(prev_measurements), value);
-        return 0;
-    }
-
-    auto it=std::begin(prev_measurements);
-
-    while(it !=std::end(prev_measurements))
-    {
-        if (value <= *it)
-        {
-            break;
-        }
-        ++it;
-    }
-
-    if (value == *it)
-        return it - prev_measurements.begin();
-
-    // insérer la valeur dans le vecteur et calculer la précision
-    it = prev_measurements.insert(it, value); // now it points to the position of value
-
-    // space between value and the previous item, if it exists
-    if (it != std::begin(prev_measurements) and ((double)log2(*it-*(it-1)) < precision)){
-        // std::cout << "Former precision " << precision << std::endl;
-        precision = floor(log2(*it - *(it-1)));
-        //std::cout << "Precision updated to " << precision << " because of " << *it << " and " << *(it-1) << std::endl;
-    }
-            
-    if (it+1 != std::end(prev_measurements) and ((double)log2(*(it+1)-*it) < precision)) {
-        // std::cout << "Former precision " << precision << std::endl;
-        precision = floor(log2(*(it+1) - *it));
-        // std::cout << "Precision updated to " << precision << " because of " << *it << " and " << *(it+1) << std::endl;
-    }
-
-    return it-prev_measurements.begin();
-}
-
 void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& D, ufun f)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
@@ -249,30 +205,51 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         double y1 = -HUGE_VAL;  // std::max(t0, t1);
 
         // precision of the resulting interval
-        int lsb = 0;
+        int lsb = INT_MAX;
 
         // random values in X
         std::uniform_real_distribution rx(X.lo(), X.hi());
 
-        std::vector<double> measurements;
+        // std::vector<double> measurements;
+        std::set<double> measurements;
+
+        // the loop has almost no chance of drawing X.hi(): we manually add it
+        double sample = X.hi(); // not truncated since morally the interval boundaries should already have the right precision
+        double y = f(sample);
+            
+        measurements.insert(y);
+
+        if (!std::isnan(y)) {
+            if (y < y0) y0 = y;
+            if (y > y1) y1 = y;
+        }
 
         for (int m = 0; m < M; m++) {  // M measurements
-            double sample = epsilon*floor(rx(generator)/epsilon); // truncated to desired precision
+            double presample = rx(generator);
+            double sample = epsilon*floor(presample/epsilon); // truncated to desired precision
             double y = f(sample);
             
-            int i = insert_measurement(measurements, y, lsb);
-
-            if (i != 0 and measurements[i] != measurements[i-1] and ((double)log2(measurements[i] - measurements[i-1]) < lsb))
-                lsb = floor(log2(measurements[i] - measurements[i-1]));
-                
-            if (m != 0 and i != measurements.size() and measurements[i+1] != measurements[i] and ((double)log2(measurements[i+1] - measurements[i]) < lsb))
-                lsb = floor(log2(measurements[i+1] - measurements[i]));
+            measurements.insert(y);
 
             if (!std::isnan(y)) {
                 if (y < y0) y0 = y;
                 if (y > y1) y1 = y;
             }
 
+        }
+
+        std::set<double>::iterator it = measurements.begin();
+        
+        while(it != measurements.end())
+        {
+            double measurement = *it;
+            it++;
+            double next = *it;
+
+            double l = log2(next - measurement);
+
+            if (l < lsb)
+                lsb = floor(l);
         }
 
         itv::interval Y(y0, y1, lsb);
