@@ -194,7 +194,7 @@ int exactPrecisionUnary(ufun f, double x, double epsilon)
 void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D, ufun f, umth mp)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(R());
+    std::default_random_engine     generator(1);
     std::uniform_real_distribution rd(D.lo(), D.hi());
     itv::interval_algebra          A;
 
@@ -240,8 +240,8 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
 
         for (int m = 0; m < M; m++) {  // M measurements
             double presample = rx(generator);
-            double sample    = epsilon * floor(presample / epsilon);  // truncated to desired precision
-            double y         = f(sample);
+            sample    = epsilon * (double)floor(presample / epsilon);  // truncated to desired precision
+            y         = f(sample);
 
             measurements.insert(y);
 
