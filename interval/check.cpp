@@ -223,8 +223,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         std::set<double> measurements;
 
         // the loop has almost no chance of drawing X.hi(): we manually add it
-        double sample =
-            X.hi();  // not truncated since morally the interval boundaries should already have the right precision
+        double sample = X.hi();  // not truncated since morally the interval boundaries should already have the right precision
         double y = f(sample);
 
         measurements.insert(y);
@@ -253,6 +252,20 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
                     y1 = y;
                 }
             }
+        }
+
+        double meas = *(measurements.begin());
+
+        for (auto it = std::next(measurements.begin()); it != measurements.end();  ++it)
+        {
+            double next = *it;
+            double l = log2(next - meas);
+            if (l < lsb)
+            {
+                lsb = floor(l);
+            }
+
+            meas = next;
         }
 
         /* auto it = measurements.begin();
