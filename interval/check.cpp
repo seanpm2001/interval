@@ -255,7 +255,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
             }
         }
 
-        auto it = measurements.begin();
+        /* auto it = measurements.begin();
 
         while (it != measurements.end()) {
             double measurement = *it;
@@ -267,7 +267,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
             if (l < lsb) {
                 lsb = floor(l);
             }
-        }
+        }*/
 
         itv::interval Y(y0, y1, lsb);
         itv::interval Z = (A.*mp)(X);
