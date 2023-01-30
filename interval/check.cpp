@@ -21,6 +21,7 @@
 
 #include "check.hh"
 #include "interval_algebra.hh"
+#include "precision_utils.hh"
 
 /**
  * @brief check we have the expected interval
@@ -205,8 +206,8 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
     for (int e = 0; e < E; e++) {  // E experiments
 
         // X: random input interval X < I
-        double        a = epsilon * floor(rd(generator) / epsilon);
-        double        b = epsilon * floor(rd(generator) / epsilon);
+        double        a = truncate(rd(generator), D.lsb()); // epsilon * floor(rd(generator) / epsilon);
+        double        b = truncate(rd(generator), D.lsb()); // epsilon * floor(rd(generator) / epsilon);
         itv::interval X(std::min(a, b), std::max(a, b), D.lsb());
 
         // boundaries of the resulting interval
@@ -239,7 +240,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
 
         for (int m = 0; m < M; m++) {  // M measurements
             double presample = rx(generator);
-            sample    = epsilon * (double)floor(presample / epsilon);  // truncated to desired precision
+            sample    = truncate(presample, D.lsb()); // epsilon * (double)floor(presample / epsilon);  // truncated to desired precision
             y         = f(sample);
 
             measurements.insert(y);
