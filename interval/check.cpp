@@ -268,6 +268,20 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
             meas = next;
         }
 
+        double meas = *(measurements.begin());
+
+        for (auto it = std::next(measurements.begin()); it != measurements.end();  ++it)
+        {
+            double next = *it;
+            double l = log2(next - meas);
+            if (l < lsb)
+            {
+                lsb = floor(l);
+            }
+
+            meas = next;
+        }
+
         /* auto it = measurements.begin();
 
         while (it != measurements.end()) {
