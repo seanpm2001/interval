@@ -42,11 +42,11 @@ interval interval_algebra::Atanh(const interval& x) const
 
 void interval_algebra::testAtanh() const
 {
-    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -3), atanh, &interval_algebra::Atanh);
-    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -5), atanh, &interval_algebra::Atanh);
-    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -10), atanh, &interval_algebra::Atanh);
-    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -15), atanh, &interval_algebra::Atanh);
-    analyzeUnaryMethod(10, 1000, "atanh", interval(-0.999, 0.999, -20), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-1 + pow(2, -3), 1 - pow(2, -3), -3), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-1 + pow(2, -5), 1 - pow(2, -5), -5), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-1 + pow(2, -10), 1 - pow(2, -10), -10), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-1 + pow(2, -15), 1 - pow(2, -15), -15), atanh, &interval_algebra::Atanh);
+    analyzeUnaryMethod(10, 1000, "atanh", interval(-1 + pow(2, -20), 1 - pow(2, -20), -20), atanh, &interval_algebra::Atanh);
 
 }
 }  // namespace itv
