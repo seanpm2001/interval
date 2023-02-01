@@ -83,12 +83,12 @@ int main()
     A.testAcos(); 
     A.testAsin();
     A.testAcosh();
-    A.testAsinh();
+    A.testAsinh();*/
     A.testAtanh();
-    A.testCosh();
-    A.testLog10();*/
+    /*A.testCosh();
+    A.testLog10();
     A.testSin();
-    /* A.testCos();
+    A.testCos();
     A.testSinh();
     A.testSqrt();
     A.testTan();
