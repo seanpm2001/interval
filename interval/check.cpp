@@ -193,13 +193,6 @@ void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& 
     std::cout << std::endl;
 }
 
-// f is the function to study
-// epsilon is positive or negative depending on the relative position of the points to compare
-int exactPrecisionUnary(ufun f, double x, double epsilon)
-{
-    int res = floor((double)log2(std::abs(f(x + epsilon) - f(x))));
-    return res;
-}
 
 /**
  * @brief Check the unary interval function gives a good approximation of the numerical function
