@@ -54,3 +54,25 @@ If there is no integer in the translated interval, we compute `prec(f, lo', +ε)
 This approach can cause some rounding issues in the implementation: there can be `x` and `y` such that `cos(π*x)` and `cos(π*y)` are mathematically equal but for which the roundings of `π*x` and `π*y` cause their images through cos to be slightly different, resulting in a measured lsb much lower than what is actually needed.
 
 Functions: `cos`, `tan`, `sin`
+
+# Backwards precision computation
+
+i.e., given an output precision `lout`, determine an input precision `lin` such that The Property is fulfilled. 
+
+We suppose that we know at which point `x0` to compute the precision in the direct direction if given an input precision.
+So, we know that the relationship between `lin` and `lout` is as follows:
+`lout = ⌊log2(f(x+2^lin) - f(x))⌋`
+(we do away with the absolute value and the `±` without loss of generality)
+This can be translated as a pair of inequalities:
+`lout ≤ log2(f(x+2^lin) - f(x)) < lout + 1`
+By inverting these inequalities and inverting `f` (assuming that it has the right properties for that) we get:
+`log2(f^-1(2^lout + f(x0)) - x0) ≤ lin < log2(f^-1(2^(lout+1) + f(x0)) - x0)`
+
+The first inequality is the most important: in the direct direction, it ensures that the choice of precision is sound, ie that it won't cause any collision.
+In the backwards direction, it means that the input precision shouldn't be chosen lower than this limit, lest we end up with inputs that the chosen output precision won't be able to discriminate.
+
+The other inequality is less crucial: it is only here to ensure that the precision chosen is tight, ie that we don't choose an output precision that is too precise wrt what we need (or, in the reverse sense, that we are not too sloppy with the input precision).
+
+So, in conclusion, the formula of `lin` in function of `lout` is:
+`lin = ⌈log2(f^-1(2^lout + f(x0)) - x0)⌉`.
+By design, it always fulfills the important inequality, and it may or may not fulfill the other, but we shouldn't be too concerned about this.
