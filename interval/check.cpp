@@ -144,6 +144,15 @@ void analyzemod(itv::interval x, itv::interval y)
     std::cout << std::endl;
 }
 
+/**
+ * @brief Compute numerically the output interval of a function
+ * 
+ * @param E number of intervals/experiments
+ * @param M number of measurements used to estimate the resulting interval
+ * @param title name of the tested function
+ * @param D maximal interval for the argument
+ * @param f the numerical function of reference
+*/
 void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& D, ufun f)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
@@ -192,6 +201,16 @@ int exactPrecisionUnary(ufun f, double x, double epsilon)
     return res;
 }
 
+/**
+ * @brief Check the unary interval function gives a good approximation of the numerical function
+ * 
+ * @param E number of intervals/experiments
+ * @param M number of measurements used to estimate the resulting interval
+ * @param title name of the tested function
+ * @param D maximal interval for the argument
+ * @param f the numerical function of reference
+ * @param mp the interval method corresponding to f
+*/
 void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D, ufun f, umth mp)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
