@@ -4,7 +4,11 @@
 #include "check.hh"
 
 /** 
- * truncates x at the precision induced by lsb
+ * @brief truncate x at the precision induced by lsb
+ * 
+ * @param x value to truncate
+ * @param lsb the precision to which to truncate
+ * @return x truncated with lsb bits of precision
  * */
 double truncate(double x, int lsb)
 {
