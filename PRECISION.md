@@ -8,7 +8,7 @@ In the case of monotonous functions, this minimum will be attained for two conse
 
 When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions `sin`, `cos` and `tan`. We study modified versions of these functions to get around this difficulty and get back to the case where the minimum is between two consecutive numbers.
 
-The overall goad is to find the proper `x` and `±ε` for each usual function `f`. After that, the target lsb is given by `prec(f, x, ±ε) = ⌊log₂(|f(x±ε) - f(x)|)⌋`.
+The overall goal is to find the proper `x` and `±ε` for each usual function `f`. After that, the target lsb is given by `prec(f, x, ±ε) = ⌊log₂(|f(x±ε) - f(x)|)⌋`.
 
 # Typology of functions
 
@@ -57,7 +57,7 @@ Functions: `cos`, `tan`, `sin`
 
 # Backwards precision computation
 
-i.e., given an output precision `lout`, determine an input precision `lin` such that The Property is fulfilled. 
+i.e., given an output precision `lout`, determine an input precision `lin` such that `lin` would induce output precision `lout` in the direct direction.
 
 We suppose that we know at which point `x0` to compute the precision in the direct direction if given an input precision.
 So, we know that the relationship between `lin` and `lout` is as follows:
