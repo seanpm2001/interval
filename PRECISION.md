@@ -12,6 +12,16 @@ The overall goal is to find the proper `x` and `±ε` for each usual function `f
 
 # Typology of functions
 
+## Binary operator
+
+### Add
+
+min(lx, ly) is exact: attained
+
+### Mul
+
+lx + ly: not sure if always attained but is a sound over-approximation
+
 ## Convex functions
 
 The derivative is increasing, so the lowest slope is attained at the low end of the interval.
