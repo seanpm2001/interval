@@ -1,41 +1,40 @@
-The `interval` library is being developed in the context of the FAST project, which aims at porting the Faust language on FPGAs. 
+The `interval` library is being developed in the context of the FAST project, which aims at porting the Faust language to FPGA. 
 
 # Faust on FPGAs
 
 Faust is a functional programming language for signal processing, typically used to create audio applications such as virtual instruments, or plugins for DAWs. 
 
 FPGAs are reprogrammable logical circuits. 
-Because program running on FPGAs are running on bare metal without being mediated by an OS, they are subjected to very low latency, allowing for very good performances. 
-This is particularly valuable in audio applications where latency can be critical.
-In this context, very low latencies allow for almost instantaneous processing of the signal.
+Because a program on an FPGA is running on *"bare metal"* without being mediated by an operating system, very high performance and low latency are possible.
+This is particularly valuable in audio applications where latency can be critical, and where very low latency allow for almost instantaneous processing of the signal.
 
-Programming on FPGAs is normally done using a low-level Hardware Description Language (HDL) such as VHDL or Verilog. 
-However, programming in these languages is not an easy task, which is why a frequent approach to programming FPGAs is High Level Synthesis (HLS), where the program to run on the FPGA is described in a higher-level language and then automatically translated to a HDL.
+Programming on FPGA is normally done using a low-level Hardware Description Language (HDL) such as VHDL or Verilog. 
+However, programming in these languages is not an easy task, which is why a common approach to programming FPGAs is High Level Synthesis (HLS), whereby the program to run on the FPGA is described in a higher-level language and then automatically translated to a HDL.
 
-This is the motivation behing the FAST project, whose goal is to allow the programming of FPGAs for audio application using the Faust language.
-Compilation of Faust programs on FPGAs is done through the Syfala toolchain[^2].
+This is the motivation behind the FAST project, whose goal is to allow programming on FPGA for audio applications using the Faust language.
+Compilation of Faust programs for FPGA is done with the Syfala toolchain[^2].
 
 # Fixed-point precision in Faust programs
 
-When programming on FPGAs, using fixed-point numbers is much more efficient than using floating-point numbers, both in terms of computation time and resources use.
+When programming on FPGAs, using fixed-point numbers is much more efficient than using floating-point numbers, both in terms of computation time and resources used.
 
-In our situation, this means that we need to determine, for each operator and wiring present in the final design, the number of bits used for the numbers that they manipulate. 
+To ensure numerical precision, we need to determine, for each operator and wiring present in the final design, the number of bits used for the numbers that they manipulate. 
 This number of bits (as well as the position of the binary point) is referred to as the *fixed point format* of the numbers.
 
 ## Fixed-point formats
 
 A fixed-point format is defined by two parameters: the Most Significant Bit (MSB), which we will denote $m$ in this document, and the Least Significant Bit (LSB), denoted $l$. 
-These parameters inform us of the positions between which a given numbers is guaranteed to have non-null bits.
+These parameters inform us of the positions between which a given number is guaranteed to have non-null bits.
 
 For example, `101.1101` has MSB 2 and LSB -4.
 
-These notions can be extended to signals (i.e. infinite sequences of numbers), where the MSB and the LSB will respectively be the maximum MSB and the minimum LSB of a number appearing in the signal.
+These notions can be extended to signals (i.e. infinite sequences of numbers), where the MSB and the LSB will respectively be the maximum MSB and the minimum LSB of any number appearing in the signal.
 
-Determining the MSB is fairly straightforward: it boils down to determining the order of magnitude of a signal, i.e., the maximum absolute value it is susceptible to take.
+Determining the MSB is fairly straightforward: it requires determining the order of magnitude of a signal, i.e., the maximum absolute value it is susceptible to take.
 This can be done by determining the interval in which the signal is guaranteed to be constrained, through application of the rules of interval algebra.
 
 Determining the LSB is a more subtle task. 
-On the one hand, we would like to minimise the resources, which means using the coarsest precision we can afford (i.e., the highest LBS), but on the other hand, this shouldn't be done at the cost of signal quality. 
+On the one hand, we would like to minimise the use of resources, which means using the coarsest precision we can afford (i.e., the LSB with the highest value), but on the other hand, this should not be done at the cost of signal quality. 
 The property we have chosen as criterion to link the input and output LSBs is the pseudo-injectivity property defined as follows.
 
 **Notation**: $\lfloor x \rfloor_l$ denotes the truncation of the real number $x$ up to $l$ bits.
@@ -44,8 +43,8 @@ The property we have chosen as criterion to link the input and output LSBs is th
 We say that the fixed-point representation of a unary, real function $f : [a; b] \rightarrow \mathbb{R}$ with input LSB $l_{in}$ and output LSB $l_{out}$ respects the pseudo-injectivity property if
 $\forall x, y \in [a;b], \lfloor x \rfloor_{l_{in}} \neq \lfloor y \rfloor_{l_{in}} \Rightarrow \lfloor f(x) \rfloor_{l_{out}} \neq \lfloor f(y) \rfloor_{l_{out}} \vee f(x) = f(y)$.
 
-The condition that $f(x) = f(y)$ serves to capure the case where function $f$ is not injective and there are legitimate distinct pairs $x \neq y$ that yield the same image. 
-These pairs should not be considered for testing pseudo-injectivity, as their equality in fixed-point comes not from from a truncation artefact but from a real mathematical equality.
+The condition $f(x) = f(y)$ serves to capture the case where function $f$ is not injective and there are legitimate distinct pairs $x \neq y$ that yield the same image. 
+These pairs should not be considered for testing pseudo-injectivity, as their equality in fixed-point comes not from a truncation artefact but from a real mathematical equality.
 
 This property can also be formulated as its contraposition:
 $\forall x, y \in [a;b],  \lfloor f(x) \rfloor_{l_{out}} = \lfloor f(y) \rfloor_{l_{out}} \wedge f(x) \neq f(y)  \Rightarrow \lfloor x \rfloor_{l_{in}} = \lfloor y \rfloor_{l_{in}}$.
@@ -54,17 +53,17 @@ In more intuitive terms, a function is pseudo-injective for a pair of input and 
 
 # Determining formats
 
-In order to determine all the formats in a given circuit, Beata Burreau[^1] suggests to scan the associated signal graph using a traversal algorithm.
+In order to determine all the formats in a given circuit, Beata Burreau[^1] suggests that the associated signal graph is scanned using a traversal algorithm.
 This first scan computes, for each node (representing a function or an operator in the Faust program), its output LSB given the input LSB(s). 
 For that purpose, the algorithm is designed in such a way that a node is not treated before all its predecessors have been treated.
 
 This gives us a final output LSB for the sinks of the program.
-This LSB might be more precise than what the actual outputs calls for (typically a LSB of -24): this means that at least some of the computed internal LSBs need not be so precise, and that we can thus trim some of it by propagating the output LSB backwards.
+This LSB can exceed the precision called for by the output (typically a LSB of -24): this means that at least some of the computed internal LSBs need not be so precise, and that we can thus trim some of them by propagating the output LSB backwards.
 
 A second scan is thus performed, starting from the outputs and working its way through the signal graph towards the inputs. 
 This calls for a procedure capable of inferring the input LSBs of an operator given its output LSB. 
 When the inferred LSB from the backwards propagation is coarser than the previously computed value, it is updated.
-Note that a finer LSB cannot possibly happen because LSB inference is monotonous.
+Note that a finer LSB cannot possibly happen because LSB inference is monotonic.
 
 Issues can arise with this approach when the signal graph presents a cycle due to the presence of a feedback loop: in the case where an operator that has higher output LSB than input LSB is looped on itself, the prescribed LSB might get finer and finer at each computation and never settle on a finite value.
 In addition, even in the case where a sound LSB value is determined, there is a real risk of accumulation of rounding errors in the loop.
@@ -75,22 +74,22 @@ Thus, we need, for each potential operator we might encounter, to determine how 
 ## LSB computation
 
 To determine the output LSB of a unary function, given an input LSB and an input interval, we need to determine how close two outputs can get.
-In the case of a continuous, unary, monotonous function, we can restrict our study to that of consecutive outputs: in that case, the closeness of such outputs is directly correlated to the slope of the 
+In the case of a continuous, unary, monotonic function, we can restrict our study to that of consecutive outputs: in that case, the closeness of such outputs is directly correlated to the slope of the 
 function at that point, i.e. to the amplitude of its derivative.
 See PRECISION.md for details of the computations.
 
-In the forward direction, we search for the roughest precision that will preserve the pseudo injectivity condition: two distinguishable input numbers should produce two distinguishable outputs.
+In the forward direction, we search for the coarsest precision that will preserve the pseudo-injectivity condition: two distinguishable input numbers should produce two distinguishable outputs.
 
-In the backwards direction, we search for the finest precision that will preserve the reverse pseudo injectivity condition: two indistinguishable outputs should have been produced by two indistinguishable inputs.
+In the backwards direction, we search for the finest precision that will preserve the reverse pseudo-injectivity condition: two indistinguishable outputs should have been produced by two indistinguishable inputs.
 
 
 ## Testing the precision
 
 Once a theoretical precision bound has been determined, we need to test it empirically.
  
-In the forward direction (i.e. when propagating the LSB from inputs to outputs), this is done by randomly polling the discrete input interval, discarding indistinguishable images and keeping an ordered record of the samples' images. 
+In the forward direction (i.e. when propagating the LSB from inputs to outputs), this is done by randomly polling the discrete input interval, keeping an ordered record of the samples' images through the function tested while discarding equal values. 
 This record is then scanned to determine how close two images can get and determine the corresponding LSB. 
-The precision is obtained from these two closest images by computing their longest common prefix and taking its `log2` in order to count its bits.
+The precision is obtained from these two closest images by computing their longest common prefix and taking `log2` of the result in order to count its bits.
 This empirical LSB is expected to be higher (i.e. coarser) or equal to the theoretical LSB (assuming it has been correctly determined): it is equal if two samples corresponding to the smallest gap are drawn, higher otherwise.
 
 An interesting question to explore would be to try to determine what gap between theoretical and empirical precisions can be expected, given the number of samples drawn.
@@ -107,8 +106,8 @@ For the final result over the interval, we take the maximum over all these bin-w
 
 We want to draw `n` samples `(x_i)_1≤i≤n` such that `x_i < x_i+1` for all `i` over the span of interval `[a;b]`.
 
-Unlike what we did in the forward polling, we don't draw the samples directly, but instead start from the lowest part of the interval `x_0 = a` and draw the step `δ_i = x_i+1 - x_i` to get from this sample to the next. 
-This step is drawn with a gaussian distribution with mean `μ = (b-a)/n`, so that we will cover the whole interval in average in `n` steps. 
+Unlike for forward polling, we don't draw the samples directly, but instead start from the lowest part of the interval `x_0 = a` and draw the step `δ_i = x_i+1 - x_i` to get from this sample to the next. 
+This step is drawn with a gaussian distribution with mean `μ = (b-a)/n`, so that we will cover the whole interval on average in `n` steps. 
 We take the standard deviation to be `σ = μ` for no particularly good reason. We'll probably have to adjust that empirically. 
 If the step `δ_i` we have drawn is `≤ 0`, we reject it, since we want the samples to be in strictly increasing order.
 
