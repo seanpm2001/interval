@@ -6,7 +6,7 @@ Faust is a functional programming language for signal processing, typically used
 
 FPGAs are reprogrammable logical circuits. 
 Because a program on an FPGA is running on *"bare metal"* without being mediated by an operating system, very high performance and low latency are possible.
-This is particularly valuable in audio applications where latency can be critical, and where very low latency allow for almost instantaneous processing of the signal.
+This is particularly valuable in audio applications where latency can be critical, and where very low latency allows for almost instantaneous processing of the signal.
 
 Programming on FPGA is normally done using a low-level Hardware Description Language (HDL) such as VHDL or Verilog. 
 However, programming in these languages is not an easy task, which is why a common approach to programming FPGAs is High Level Synthesis (HLS), whereby the program to run on the FPGA is described in a higher-level language and then automatically translated to a HDL.
@@ -104,12 +104,12 @@ For the final result over the interval, we take the maximum over all these bin-w
 
 ### Detail of the backwards polling method
 
-We want to draw `n` samples `(x_i)_1≤i≤n` such that `x_i < x_i+1` for all `i` over the span of interval `[a;b]`.
+We want to draw $n$ samples $(x_i)_{1≤i≤n}$ such that $x_i < x_{i+1}$ for all $i$ over the span of interval $[a;b]$.
 
-Unlike for forward polling, we don't draw the samples directly, but instead start from the lowest part of the interval `x_0 = a` and draw the step `δ_i = x_i+1 - x_i` to get from this sample to the next. 
-This step is drawn with a gaussian distribution with mean `μ = (b-a)/n`, so that we will cover the whole interval on average in `n` steps. 
-We take the standard deviation to be `σ = μ` for no particularly good reason. We'll probably have to adjust that empirically. 
-If the step `δ_i` we have drawn is `≤ 0`, we reject it, since we want the samples to be in strictly increasing order.
+Unlike for forward polling, we don't draw the samples directly, but instead start from the lowest part of the interval $x_0 = a$ and draw the step $δ_i = x_{i+1} - x_i$ to get from this sample to the next. 
+This step is drawn with a gaussian distribution with mean $μ = \frac{b-a}{n}$, so that we will cover the whole interval on average in $n$ steps. 
+We take the standard deviation to be $σ = μ$ for no particularly good reason. We'll probably have to adjust that empirically. 
+If the step $δ_i$ we have drawn is $≤ 0$, we reject it, since we want the samples to be in strictly increasing order.
 
 ## Fuzzy precision
 
