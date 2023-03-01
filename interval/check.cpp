@@ -340,13 +340,22 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
         double zlo = HUGE_VAL;   // std::min(t0, t1);
         double zhi = -HUGE_VAL;  // std::max(t0, t1);
 
+        // precision of the resulting interval
+        int lsb = INT_MAX;
+
         // random values in X
         std::uniform_real_distribution rvx(X.lo(), X.hi());
         std::uniform_real_distribution rvy(Y.lo(), Y.hi());
 
+        // store output values in order to measure the output precision
+        std::set<double> measurements;
+
         // measure the interval Z using the numerical function f
         for (int m = 0; m < M; m++) {  // M measurements
             double z = f(rvx(generator), rvy(generator));
+
+            measurements.insert(z);
+
             if (!std::isnan(z)) {
                 if (z < zlo) {
                     zlo = z;
@@ -356,16 +365,34 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
                 }
             }
         }
+
+        double meas = *(measurements.begin());
+
+        for (auto it = std::next(measurements.begin()); it != measurements.end();  ++it)
+        {
+            double next = *it;
+            double l = log2(next - meas);
+            if (l < lsb)
+            {
+                lsb = floor(l);
+            }
+
+            meas = next;
+        }
+
         itv::interval Zm(zlo, zhi);         // the measured Z
         itv::interval Zc  = (A.*bm)(X, Y);  // the computed Z
-        double        lsb = (Zm.size() == Zc.size()) ? 1 : Zm.size() / Zc.size();
+        double        precision = (Zm.size() == Zc.size()) ? 1 : Zm.size() / Zc.size();
 
         if (Zc >= Zm) {
-            std::cout << "OK    " << e << ": " << title << "(" << X << "," << Y << ") =c=> " << Zc << " >= " << Zm
-                      << " (precision " << lsb << ")" << std::endl;
+            std::cout << "\033[32m"
+                      << "OK    " << e << ": " << title << "(" << X << "," << Y << ") =c=> " << Zc << " >= " << Zm
+                      << " (precision " << precision << ")" 
+                      << "\033[0m" << std::endl;
         } else {
-            std::cout << "ERROR " << e << ": " << title << "(" << X << "," << Y << ") =c=> " << Zc << " != " << Zm
-                      << std::endl;
+            std::cout << "\033[32m"
+                      << "ERROR " << e << ": " << title << "(" << X << "," << Y << ") =c=> " << Zc << " != " << Zm
+                      << "\033[0m" << std::endl;
         }
     }
     std::cout << std::endl;
