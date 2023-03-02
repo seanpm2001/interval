@@ -56,15 +56,15 @@ In more intuitive terms, a function is pseudo-injective for a pair of input and 
 A property that will show useful when propagating determined LSBs is the composability of the pseudo-injectivity property.
 
 **Composability of the pseudo-injectivity property**: 
-If $f:[a;b]_{l_in} \rightarrow [a';b']_{l_mid}$ and $g:[a';']_{l_mid} \rightarrow [a'';b'']_{l_out}$ are pseudo-injective, then $g\circ f:[a;b]_{l_in} \rightarrow [a'';b'']_{l_out}$ is pseudo-injective as well.
+If $f: [a;b]_{l_{in}} \rightarrow [a';b']_{l_{mid}}$ and $g: [a';']_{l_{mid}} \rightarrow [a'';b'']_{l_{out}}$ are pseudo-injective, then $g\circ f:[a;b]_{l_{in}} \rightarrow [a'';b'']_{l_{out}}$ is pseudo-injective as well.
 
 **Proof**
 Let $f$ and $g$ be such pseudo-injective functions.
-Let $x, y \in [a; b]_l$ such that $\lfloor x \rfloor_{l_in}\neq \lfloor y\rfloor_{l_in}$.
+Let $x, y \in [a; b]_l$ such that $\lfloor x \rfloor_{l_{in}}\neq \lfloor y\rfloor_{l_{in}}$.
 
 Let us first assume that $f(x) \neq f(y)$. 
-Then, by pseudo-injectivity of $f$, $\lfloor f(x) \rfloor_{l_mid} \neq \lfloor f(y) \rfloor_{l_mid}$.
-If we also assume that $g\circ f (x) \neq g \circ f(y)$, by pseudo-injectivity of $g$ we can deduce that $\lfloor g\circ f (x) \rfloor_{l_out} \neq \lfloor g\circ f (y) \rfloor_{l_out}$, which verifies the right hand of the implication of the pseudo-injectivity of $g\circ f$.
+Then, by pseudo-injectivity of $f$, $\lfloor f(x) \rfloor_{l_{mid}} \neq \lfloor f(y) \rfloor_{l_{mid}}$.
+If we also assume that $g\circ f (x) \neq g \circ f(y)$, by pseudo-injectivity of $g$ we can deduce that $\lfloor g\circ f (x) \rfloor_{l_{out}} \neq \lfloor g\circ f (y) \rfloor_{l_{out}}$, which verifies the right hand of the implication of the pseudo-injectivity of $g\circ f$.
 
 In the case where $f(x) = f(y)$, $g\circ f(x) = g\circ f(y)$, which verifies the other part of the disjunction.
 
