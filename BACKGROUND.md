@@ -39,6 +39,8 @@ The property we have chosen as criterion to link the input and output LSBs is th
 
 **Notation**: $\lfloor x \rfloor_l$ denotes the truncation of the real number $x$ up to $l$ bits.
 
+**Notation**: $[a;b]_l$ denotes the interval $[a;b]$ with LSB $l$: $[a;b]_l = [a;b]\cap 2^l\mathbb{Z}$
+
 **Pseudo-injectivity property**:
 We say that the fixed-point representation of a unary, real function $f : [a; b] \rightarrow \mathbb{R}$ with input LSB $l_{in}$ and output LSB $l_{out}$ respects the pseudo-injectivity property if
 $\forall x, y \in [a;b], \lfloor x \rfloor_{l_{in}} \neq \lfloor y \rfloor_{l_{in}} \Rightarrow \lfloor f(x) \rfloor_{l_{out}} \neq \lfloor f(y) \rfloor_{l_{out}} \vee f(x) = f(y)$.
@@ -51,7 +53,29 @@ $\forall x, y \in [a;b],  \lfloor f(x) \rfloor_{l_{out}} = \lfloor f(y) \rfloor_
 
 In more intuitive terms, a function is pseudo-injective for a pair of input and output fixed-point formats if all distinguishable outputs in the real function correspond to distinguishable outputs in its fixed-point counterpart.
 
+A property that will show useful when propagating determined LSBs is the composability of the pseudo-injectivity property.
+
+**Composability of the pseudo-injectivity property**
+If $f:[a;b]_{l_in} \rightarrow [a';b']_{l_mid}$ and $g:[a';']_{l_mid} \rightarrow [a'';b'']_{l_out}$ are pseudo-injective, then $g\circ f:[a;b]_{l_in} \rightarrow [a'';b'']_{l_out}$ is pseudo-injective as well.
+
+**Proof**
+Let $f$ and $g$ be such pseudo-injective functions.
+Let $x, y \in [a; b]_l$ such that $\lfloor x \rfloor_{l_in}\neq \lfloor y\rfloor_{l_in}$.
+
+Let us first assume that $f(x) \neq f(y)$. 
+Then, by pseudo-injectivity of $f$, $\lfloor f(x) \rfloor_{l_mid} \neq \lfloor f(y) \rfloor_{l_mid}$.
+If we also assume that $g\circ f (x) \neq g \circ f(y)$, by pseudo-injectivity of $g$ we can deduce that $\lfloor g\circ f (x) \rfloor_{l_out} \neq \lfloor g\circ f (y) \rfloor_{l_out}$, which verifies the right hand of the implication of the pseudo-injectivity of $g\circ f$.
+
+In the case where $f(x) = f(y)$, $g\circ f(x) = g\circ f(y)$, which verifies the other part of the disjunction.
+
+In the case where $f(x) \neq f(y)$ but $g\circ f(x) = g\circ f(y)$, which verifies it as well.
+□
+
+Thus, if each of the individual components of a circuit are pseudo-injective, by composition, the circuit as a whol is pseudo-injective as well.
+
 # Determining formats
+
+## Format propagation
 
 In order to determine all the formats in a given circuit, Beata Burreau[^1] suggests that the associated signal graph is scanned using a traversal algorithm.
 This first scan computes, for each node (representing a function or an operator in the Faust program), its output LSB given the input LSB(s). 
@@ -81,7 +105,6 @@ See PRECISION.md for details of the computations.
 In the forward direction, we search for the coarsest precision that will preserve the pseudo-injectivity condition: two distinguishable input numbers should produce two distinguishable outputs.
 
 In the backwards direction, we search for the finest precision that will preserve the reverse pseudo-injectivity condition: two indistinguishable outputs should have been produced by two indistinguishable inputs.
-
 
 ## Testing the precision
 
