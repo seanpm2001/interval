@@ -55,7 +55,7 @@ In more intuitive terms, a function is pseudo-injective for a pair of input and 
 
 A property that will show useful when propagating determined LSBs is the composability of the pseudo-injectivity property.
 
-**Composability of the pseudo-injectivity property**
+**Composability of the pseudo-injectivity property**: 
 If $f:[a;b]_{l_in} \rightarrow [a';b']_{l_mid}$ and $g:[a';']_{l_mid} \rightarrow [a'';b'']_{l_out}$ are pseudo-injective, then $g\circ f:[a;b]_{l_in} \rightarrow [a'';b'']_{l_out}$ is pseudo-injective as well.
 
 **Proof**
@@ -68,7 +68,7 @@ If we also assume that $g\circ f (x) \neq g \circ f(y)$, by pseudo-injectivity o
 
 In the case where $f(x) = f(y)$, $g\circ f(x) = g\circ f(y)$, which verifies the other part of the disjunction.
 
-In the case where $f(x) \neq f(y)$ but $g\circ f(x) = g\circ f(y)$, which verifies it as well.
+In the case where $f(x) \neq f(y)$ but $g\circ f(x) = g\circ f(y)$, it is verified it as well.
 □
 
 Thus, if each of the individual components of a circuit are pseudo-injective, by composition, the circuit as a whol is pseudo-injective as well.
