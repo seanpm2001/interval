@@ -4,6 +4,10 @@ This document describes how we compute the output precision of a function over a
 
 We consider a function $f$ that we study over the interval $[lo;hi]$, with $lo<hi$. The fixpoint format for the input is given, we denote its lsb $l$ and $ε = 2^l$ the gap between two consecutive numbers. The goal is to determine the minimum of $|f(x) - f(y)|$ with $x$, $y$ ranging over $[lo;hi]$, which will inform us of the minimum number of digits needed to distinguish between all the images of $f$ over $[lo;hi]$.
 
+This minimum number of digits needed to distinguish between two numbers $x$ and $y$ is linked to the notion of their Least Common Bit (LCB), that is the position of the first bit at which they differ.
+If two non-negative numbers $x$ and $y$ have LCB $-k$, then $|x-y|\le 2^{-k}$ and $log_2|x-y| \le LCB(x, y)$: thus, $log_2|x-y|$ is a sound approximation of their LCB.
+This is particularly useful in situations where we do not have direct access to the digits of the numbers, for example when studying them in a general abstract setting.
+
 In the case of monotonous functions, this minimum will be attained for two consecutive arguments: $|f(x) - f(x±ε)|$. This $x$ is determined as the point where function $f$ has lowest slope over $[lo;hi]$.
 
 When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions $sin$, $cos$ and $tan$. We study modified versions of these functions to get around this difficulty and get back to the case where the minimum is between two consecutive numbers.
