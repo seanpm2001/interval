@@ -207,7 +207,7 @@ void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& 
 void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D, ufun f, umth mp)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(1);
+    std::default_random_engine     generator(R());
     std::uniform_real_distribution rd(D.lo(), D.hi());
     itv::interval_algebra          A;
 
@@ -327,14 +327,14 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
     for (int e = 0; e < E; e++) {  // for each experiments
 
         // X: random input interval X < Dx
-        double        x0 = rdx(generator);
-        double        x1 = rdx(generator);
-        itv::interval X(std::min(x0, x1), std::max(x0, x1));
+        double        x0 = truncate(rdx(generator), Dx.lsb());
+        double        x1 = truncate(rdx(generator), Dx.lsb());
+        itv::interval X(std::min(x0, x1), std::max(x0, x1), Dx.lsb());
 
         // Y: random input interval Y < Dy
-        double        y0 = rdy(generator);
-        double        y1 = rdy(generator);
-        itv::interval Y(std::min(y0, y1), std::max(y0, y1));
+        double        y0 = truncate(rdy(generator), Dy.lsb());
+        double        y1 = truncate(rdy(generator), Dy.lsb());
+        itv::interval Y(std::min(y0, y1), std::max(y0, y1), Dy.lsb());
 
         // boundaries of the resulting interval Z
         double zlo = HUGE_VAL;   // std::min(t0, t1);
@@ -352,7 +352,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
 
         // measure the interval Z using the numerical function f
         for (int m = 0; m < M; m++) {  // M measurements
-            double z = f(rvx(generator), rvy(generator));
+            double z = f(truncate(rvx(generator), Dx.lsb()), truncate(rvy(generator), Dy.lsb()));
 
             measurements.insert(z);
 
@@ -380,17 +380,17 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
             meas = next;
         }
 
-        itv::interval Zm(zlo, zhi);         // the measured Z
+        itv::interval Zm(zlo, zhi, lsb);         // the measured Z
         itv::interval Zc  = (A.*bm)(X, Y);  // the computed Z
         double        precision = (Zm.size() == Zc.size()) ? 1 : Zm.size() / Zc.size();
 
-        if (Zc >= Zm) {
+        if (Zc >= Zm and Zc.lsb() <= Zm.lsb()) {
             std::cout << "\033[32m"
                       << "OK    " << e << ": " << title << "(" << X << "," << Y << ") =c=> " << Zc << " >= " << Zm
                       << " (precision " << precision << ")" 
                       << "\033[0m" << std::endl;
         } else {
-            std::cout << "\033[32m"
+            std::cout << "\033[31m"
                       << "ERROR " << e << ": " << title << "(" << X << "," << Y << ") =c=> " << Zc << " != " << Zm
                       << "\033[0m" << std::endl;
         }
