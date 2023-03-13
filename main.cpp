@@ -78,7 +78,7 @@ int main()
 
     interval_algebra A;
     //A.testAll();
-    A.testExp();
+    /*A.testExp();
     A.testLog();
     A.testAcos(); 
     A.testAsin();
@@ -92,7 +92,13 @@ int main()
     A.testSinh();
     A.testSqrt();
     A.testTan();
-    A.testTanh();
+    A.testTanh();*/
+    // A.testPow();
+    A.testAdd();
+    // A.testMul();
+    // A.testSub();
+    // A.testInv();
+    // A.testDiv();
     
     /*{
         double u = 0.0;
