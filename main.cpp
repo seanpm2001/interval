@@ -94,11 +94,11 @@ int main()
     A.testTan();
     A.testTanh();*/
     // A.testPow();
-    A.testAdd();
+    // A.testAdd();
     // A.testMul();
     // A.testSub();
     // A.testInv();
-    // A.testDiv();
+    A.testDiv();
     
     /*{
         double u = 0.0;
