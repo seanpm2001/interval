@@ -386,12 +386,12 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
 
         if (Zc >= Zm and Zc.lsb() <= Zm.lsb()) {
             std::cout << "\033[32m"
-                      << "OK    " << e << ": " << title << "(" << X << "," << Y << ") =c=> " << Zc << " >= " << Zm
-                      << " (precision " << precision << ")" 
+                      << "OK    " << e << ": " << title << "(" << X << ",\t" << Y << ")\t =c=> " << Zc << " >= " << Zm
+                      << "\t (precision " << precision << "), \t LSB diff = " << Zm.lsb() - Zc.lsb()  
                       << "\033[0m" << std::endl;
         } else {
             std::cout << "\033[31m"
-                      << "ERROR " << e << ": " << title << "(" << X << "," << Y << ") =c=> " << Zc << " != " << Zm
+                      << "ERROR " << e << ": " << title << "(" << X << ",\t" << Y << ")\t =c=> " << Zc << " != " << Zm
                       << "\033[0m" << std::endl;
         }
     }
