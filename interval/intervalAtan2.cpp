@@ -34,7 +34,7 @@ interval interval_algebra::Atan2(const interval& y, const interval& x) const
 {
     double lo = -M_PI;
     double hi = M_PI;
-    int precision = INT_MIN;
+    int precision = -2147483648; // INT_MIN, to change when the actual precision is computed
 
     if (x.lo() <= 0 and y.hasZero()) // if we intersect the Ox- axis
         return {lo, hi, precision};
