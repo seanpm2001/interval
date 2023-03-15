@@ -34,9 +34,6 @@ static double tanPi(double x)
 
 interval interval_algebra::Tan(const interval& x) const
 {
-    double TWOPI = 2 * M_PI;
-    // double epsilon = pow(2, x.lsb());
-
     if (x.isEmpty()) {
         return x;
     }
@@ -57,18 +54,18 @@ interval interval_algebra::Tan(const interval& x) const
     double lo = std::min(a, b);
     double hi = std::max(a, b);
 
-    // double v    = 0;  // value at which the lowest slope is computed: 0 if present
+    double v = 0;  // value at which the lowest slope is computed: 0 if present
     int sign = 1;
 
-    // if (i.lo() > 0) {
-    //     v = i.lo();
-    // } else if (i.hi() < 0) {
-    //     v = i.hi();
-    // }
+    if (i.lo() > 0) {
+         v = i.lo();
+    } else if (i.hi() < 0) {
+         v = i.hi();
+    }
 
-    // int precision = exactPrecisionUnary(tanPi, v, sign * pow(2, x.lsb()));
+    int precision = exactPrecisionUnary(tanPi, v, sign * pow(2, x.lsb()));
 
-    return {lo, hi, x.lsb()};
+    return {lo, hi, precision};
 }
 
 void interval_algebra::testTan() const
