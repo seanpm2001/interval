@@ -374,6 +374,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
         } else {
             std::cout << "\033[31m"
                       << "ERROR " << e << ": " << title << "(" << X << ",\t" << Y << ")\t =c=> " << Zc << " != " << Zm
+                      << "\t LSB diff = " << Zm.lsb() - Zc.lsb()  
                       << "\033[0m" << std::endl;
         }
     }
