@@ -383,7 +383,9 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
         double        precision = (Zm.size() == Zc.size()) ? 1 : Zm.size() / Zc.size();
 
         if (Zc >= Zm and Zc.lsb() <= Zm.lsb()) {
-            std::cout << "\033[32m"
+            std::string color = "\033[32m"; 
+            if (precision < 0.8 or Zm.lsb() - Zc.lsb() >= 10) color = "\033[36m"; // cyan instead of green if approximation is technically correct but of poor quality
+            std::cout << color 
                       << "OK    " << e << ": " << title << "(" << X << ",\t" << Y << ")\t =c=> " << Zc << " >= " << Zm
                       << "\t (precision " << precision << "), \t LSB diff = " << Zm.lsb() - Zc.lsb()  
                       << "\033[0m" << std::endl;
