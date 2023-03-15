@@ -73,24 +73,6 @@ void check(const std::string& testname, bool exp, bool res)
 }
 
 /**
- * @brief Computes the minimum of four doubles
- */
-
-static double min4(double a, double b, double c, double d)
-{
-    return std::min(std::min(a, b), std::min(c, d));
-}
-
-/**
- * @brief Computes the maximum of four doubles
- */
-
-static double max4(double a, double b, double c, double d)
-{
-    return std::max(std::max(a, b), std::max(c, d));
-}
-
-/**
  * @brief Approximate the resulting interval of a function
  *
  * @param N the number of iterations
@@ -111,8 +93,8 @@ itv::interval testfun(int N, bfun f, const itv::interval& x, const itv::interval
     double c = f(x.hi(), y.lo());
     double d = f(x.hi(), y.hi());
 
-    double l = min4(a, b, c, d);
-    double h = max4(a, b, c, d);
+    double l = itv::min4(a, b, c, d);
+    double h = itv::max4(a, b, c, d);
 
     for (int i = 0; i < N; i++) {
         double u = rx(generator);

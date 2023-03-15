@@ -19,6 +19,7 @@
 #include "check.hh"
 #include "interval_algebra.hh"
 #include "interval_def.hh"
+#include "utils.hh"
 
 namespace itv {
 //==========================================================================================
@@ -31,16 +32,6 @@ static double specialmult(double a, double b)
 {
     // we want inf*0 to be 0
     return ((a == 0.0) || (b == 0.0)) ? 0.0 : a * b;
-}
-
-static double min4(double a, double b, double c, double d)
-{
-    return std::min(std::min(a, b), std::min(c, d));
-}
-
-static double max4(double a, double b, double c, double d)
-{
-    return std::max(std::max(a, b), std::max(c, d));
 }
 
 interval interval_algebra::Mul(const interval& x, const interval& y) const
