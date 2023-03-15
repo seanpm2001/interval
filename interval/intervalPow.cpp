@@ -27,6 +27,9 @@ namespace itv {
 // interval Pow(const interval& x, const interval& y) const;
 // void testPow() const;
 
+/**
+ * @brief Interval elevated to an integer power
+*/
 static interval ipow(const interval& x, int y)
 {
     assert(y >= 0);
@@ -45,6 +48,9 @@ static interval ipow(const interval& x, int y)
     return {std::pow(x.lo(), y), std::pow(x.hi(), y)};
 }
 
+/**
+ * @brief Interval elevated to an interval power
+*/
 interval interval_algebra::fPow(const interval& x, const interval& y) const
 {
     assert(x.lo() > 0);
@@ -86,11 +92,11 @@ static double myiPow(double x, double y)
 
 void interval_algebra::testPow() const
 {
-    analyzeBinaryMethod(10, 2000, "iPow2", interval(-100, 100), interval(0, 20), myiPow, &interval_algebra::iPow);
-    analyzeBinaryMethod(10, 2000, "iPow2", interval(-1, 1), interval(1, 3), myiPow, &interval_algebra::iPow);
-    analyzeBinaryMethod(10, 2000, "iPow2", interval(-1, 1), interval(1, 10), myiPow, &interval_algebra::iPow);
-    analyzeBinaryMethod(10, 2000, "fPow2", interval(1, 1000), interval(-10, 10), myfPow, &interval_algebra::fPow);
-    analyzeBinaryMethod(10, 2000, "fPow2", interval(0.001, 1), interval(-10, 10), myfPow, &interval_algebra::fPow);
-    analyzeBinaryMethod(10, 2000, "fPow2", interval(0.001, 10), interval(-20, 20), myfPow, &interval_algebra::fPow);
+    analyzeBinaryMethod(10, 20000, "iPow2", interval(-100, 100), interval(0, 20), myiPow, &interval_algebra::iPow);
+    analyzeBinaryMethod(10, 20000, "iPow2", interval(-1, 1), interval(1, 3), myiPow, &interval_algebra::iPow);
+    analyzeBinaryMethod(10, 20000, "iPow2", interval(-1, 1), interval(1, 10), myiPow, &interval_algebra::iPow);
+    analyzeBinaryMethod(10, 20000, "fPow2", interval(1, 1000), interval(-10, 10), myfPow, &interval_algebra::fPow);
+    analyzeBinaryMethod(10, 20000, "fPow2", interval(0.001, 1), interval(-10, 10), myfPow, &interval_algebra::fPow);
+    analyzeBinaryMethod(10, 20000, "fPow2", interval(0.001, 10), interval(-20, 20), myfPow, &interval_algebra::fPow);
 }
 }  // namespace itv
