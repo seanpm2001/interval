@@ -34,10 +34,28 @@ interval interval_algebra::Atan2(const interval& y, const interval& x) const
 {
     double lo = -M_PI;
     double hi = M_PI;
-    int precision = -2147483648; // INT_MIN, to change when the actual precision is computed
+
+    // if the domain spans the discontinuity, we split in along the Ox axis 
+    // in order to have a continuous function on each domain
+    // we study it on each of the sub-domains and then combine the results
+    
+    // atan2(y, x) = atan(y/x) + constant: precision is that of y/x compounded with that of atan
 
     if (x.lo() <= 0 and y.hasZero()) // if we intersect the Ox- axis
-        return {lo, hi, precision};
+    {
+        interval yp = {0, y.hi(), y.lsb()}; // positive part of y
+        interval yn = {y.lo(), 0, y.lsb()}; // negative part of y
+
+        interval dp = interval_algebra::Div(yp, x);
+        interval dn = interval_algebra::Div(yn, x);
+
+        int precisionp = exactPrecisionUnary(atan, maxValAbs(dp), signMaxValAbs(dp)*pow(2, dp.lsb())); 
+        int precisionn = exactPrecisionUnary(atan, maxValAbs(dn), signMaxValAbs(dn)*pow(2, dn.lsb())); 
+        return {lo, hi, std::min(precisionp, precisionn)}; // final precision is the finest precision attained on either of the domains
+    }
+        
+    interval d = interval_algebra::Div(y, x);
+    int precision = exactPrecisionUnary(atan, maxValAbs(d), signMaxValAbs(d)*pow(2, d.lsb())); 
 
     if (y.lo() >= 0) // the domain XxY is entirely included in the higher half of the plane
     {
@@ -81,13 +99,13 @@ interval interval_algebra::Atan2(const interval& y, const interval& x) const
 void interval_algebra::testAtan2() const
 {
     // std::cout << "Atan2 not implemented" << std::endl;
-    analyzeBinaryMethod(10, 2000, "atan2", interval(1, 2, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 2000, "atan2", interval(-1, 2, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 2000, "atan2", interval(-2, -1, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 2000, "atan2", interval(-2, -1, -24), interval(-1, 2, -24), atan2, &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 2000, "atan2", interval(-2, -1, -24), interval(-2, -1, -24), atan2, &interval_algebra::Atan2);
+    analyzeBinaryMethod(10, 1000000, "atan2", interval(1, 2, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
+    analyzeBinaryMethod(10, 1000000, "atan2", interval(-1, 2, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
+    analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
+    analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(-1, 2, -24), atan2, &interval_algebra::Atan2);
+    analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(-2, -1, -24), atan2, &interval_algebra::Atan2);
 
-    analyzeBinaryMethod(10, 2000, "atan2", interval(-1, 2, -24), interval(-1, 2, -24), atan2, &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 2000, "atan2", interval(-1, 2, -24), interval(-2, -1, -24), atan2, &interval_algebra::Atan2);
+    analyzeBinaryMethod(10, 1000000, "atan2", interval(-1, 2, -24), interval(-1, 2, -24), atan2, &interval_algebra::Atan2);
+    analyzeBinaryMethod(10, 1000000, "atan2", interval(-1, 2, -24), interval(-2, -1, -24), atan2, &interval_algebra::Atan2);
 }
 }  // namespace itv

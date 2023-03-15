@@ -98,7 +98,8 @@ int main()
     // A.testMul();
     // A.testSub();
     // A.testInv();
-    A.testDiv();
+    // A.testDiv();
+    A.testAtan2();
     
     /*{
         double u = 0.0;
