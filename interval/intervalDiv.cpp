@@ -27,7 +27,6 @@ namespace itv {
 interval interval_algebra::Div(const interval& x, const interval& y) const
 {
     interval D = Mul(x, Inv(y));
-    // return {D.lo(), D.hi(), x.lsb() + y.lsb() - }
     return D;
 }
 

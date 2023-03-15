@@ -34,7 +34,6 @@ interval interval_algebra::Exp(const interval& x) const
 
     // lowest slope is attained at the lowest boundary
     int precision = exactPrecisionUnary(exp, x.lo(), pow(2, x.lsb()));
-    // int truncated_precision = std::max(precision, -24);
 
     return {exp(x.lo()), exp(x.hi()), precision};
 }
