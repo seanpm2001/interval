@@ -5,6 +5,7 @@
 
 #include "interval_algebra.hh"
 #include "interval_def.hh"
+#include "utils.hh"
 
 void check(const std::string& testname, const itv::interval& exp);
 

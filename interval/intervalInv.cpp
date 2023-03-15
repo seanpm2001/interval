@@ -37,13 +37,8 @@ interval interval_algebra::Inv(const interval& x) const
         return {};
     }
 
-    int sign = 1;
-    double v = x.lo();
-    if (std::abs (x.lo()) < std::abs(x.hi())) // whether the precision is computed at the lowest or highest bound of the interval
-    {
-        v = x.hi();
-        sign = -1;
-    }
+    int sign = signMaxValAbs(x);
+    double v = maxValAbs(x); // computed at the bound with the highest absolute value
 
     int precision = exactPrecisionUnary(inv, v, sign*pow(2, x.lsb()));
 

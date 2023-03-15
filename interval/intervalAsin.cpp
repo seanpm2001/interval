@@ -40,13 +40,8 @@ interval interval_algebra::Asin(const interval& x) const
     int sign = 1; // whether we compute the difference between f(v) and f(v+ε) or f(v-ε)
     if (not i.has(0)) // if zero is not present, it's the bound closer to zero
     {
-        if (i.lo() > 0) // if the interval is contained in the positives, it's the lower bound
-            v = i.lo();
-        else // if the interval is contained in the negatives, it's the higher bound
-        {
-            v = i.hi();
-            sign = -1;
-        }
+        v = minValAbs(i);
+        sign = signMinValAbs(i);
     }
     int precision = exactPrecisionUnary(asin, v, sign*pow(2, i.lsb()));
 

@@ -29,15 +29,8 @@ static const interval domain(-HUGE_VAL, HUGE_VAL);
 
 interval interval_algebra::Asinh(const interval& x) const
 {
-    double v = 0; // value at which the min slope is attained, here the bound of highest absolute value
-    int sign = 1; // whether we compute the difference between f(v) and f(v+ε) or f(v-ε)
-    if (std::abs(x.hi()) < std::abs(x.lo()))
-        v = x.lo();
-    else
-    {
-        v = x.hi();
-        sign = -1; // if we compute the difference at the higer bound we have to take the FP point right before
-    }
+    double v = maxValAbs(x); // value at which the min slope is attained, here the bound of highest absolute value
+    int sign = signMaxValAbs(x); // whether we compute the difference between f(v) and f(v+ε) or f(v-ε)
 
     int precision = exactPrecisionUnary(asinh, v, sign*pow(2, x.lsb()));
 

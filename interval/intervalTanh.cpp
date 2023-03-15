@@ -32,12 +32,10 @@ interval interval_algebra::Tanh(const interval& x) const
     if (x.isEmpty()) return {};
 
     // value at which the lowest slope is attained: bound of the interval with the highest absolute value
-    double v = 0; 
-    if (abs(x.lo()) < abs(x.hi()))
-        v = x.hi();
-    else
-        v = x.lo();
-    int precision = exactPrecisionUnary(tanh, v, pow(2,x.lsb()));
+    double v = maxValAbs(x);
+    int sign = signMaxValAbs(x); 
+
+    int precision = exactPrecisionUnary(tanh, v, sign*pow(2,x.lsb()));
     return {tanh(x.lo()), tanh(x.hi()), precision};
 }
 

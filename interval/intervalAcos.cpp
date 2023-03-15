@@ -37,14 +37,10 @@ interval interval_algebra::Acos(const interval& x) const
     int sign = 1; // whether we compute the difference between f(x) and f(x+ε) or f(x-ε)
     if (not i.has(0)) // if zero is not present, it's the bound closer to zero
     {
-        if (i.lo() > 0) // if the interval is contained in the positives, it's the lower bound
-            v = i.lo();
-        else // if the interval is contained in the negatives, it's the higher bound
-        {
-            v = i.hi();
-            sign = -1;
-        }
+        v = minValAbs(i);
+        sign = signMinValAbs(i);
     }
+
     int precision = exactPrecisionUnary(acos, v, sign*pow(2, i.lsb()));
 
     return {acos(i.hi()), acos(i.lo()), precision};
