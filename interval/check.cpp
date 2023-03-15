@@ -211,8 +211,6 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
     std::uniform_real_distribution rd(D.lo(), D.hi());
     itv::interval_algebra          A;
 
-    double epsilon = pow(2, D.lsb());  // smallest gap between numbers
-
     std::cout << "Analysis of " << title << " in domain " << D << " (epsilon = " << pow(2, D.lsb()) << ")" << std::endl;
 
     for (int e = 0; e < E; e++) {  // E experiments

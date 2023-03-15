@@ -34,12 +34,8 @@ static double cosPi(double x)
 
 interval interval_algebra::Cos(const interval& x) const
 {
-    double TWOPI = 2 * M_PI;
-    // double epsilon = pow(2, x.lsb());
-
     int precision = exactPrecisionUnary(cosPi, 0, pow(2, x.lsb()));
-    // int truncated_precision = std::max(precision, -24);
-
+ 
     if (x.isEmpty()) {
         return {};
     }

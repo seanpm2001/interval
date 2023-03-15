@@ -34,11 +34,7 @@ static double sinPi(double x)
 
 interval interval_algebra::Sin(const interval& x) const
 {
-    double TWOPI = 2 * M_PI;
-    // double epsilon = pow(2, x.lsb());
-
     int precision = exactPrecisionUnary(sinPi, 0.5, pow(2, x.lsb()));
-    // int truncated_precision = std::max(precision, -24);
 
     if (x.size() >= 2) {
         return {-1, 1, precision};
