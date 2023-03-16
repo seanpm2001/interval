@@ -56,11 +56,11 @@ In more intuitive terms, a function is pseudo-injective for a pair of input and 
 A property that will show useful when propagating determined LSBs is the composability of the pseudo-injectivity property.
 
 **Composability of the pseudo-injectivity property**: 
-If $f: [a;b]_{l_{in}} \rightarrow [a';b']_{l_{mid}}$ and $g: [a';']_{l_{mid}} \rightarrow [a'';b'']_{l_{out}}$ are pseudo-injective, then $g\circ f:[a;b]_{l_{in}} \rightarrow [a'';b'']_{l_{out}}$ is pseudo-injective as well.
+If $f: [a;b]\_{l\_{in}} \rightarrow [a';b']\_{l\_{mid}}$ and $g: [a';']\_{l\_{mid}} \rightarrow [a'';b'']\_{l\_{out}}$ are pseudo-injective, then $g\circ f:[a;b]\_{l\_{in}} \rightarrow [a'';b'']\_{l\_{out}}$ is pseudo-injective as well.
 
 **Proof**
 Let $f$ and $g$ be such pseudo-injective functions.
-Let $x, y \in [a; b]_l$ such that $\lfloor x \rfloor_{l_{in}}\neq \lfloor y\rfloor_{l_{in}}$.
+Let $x, y \in [a; b]\_l$ such that $\lfloor x \rfloor\_{l\_{in}}\neq \lfloor y\rfloor\_{l\_{in}}$.
 
 Let us first assume that $f(x) \neq f(y)$. 
 Then, by pseudo-injectivity of $f$, $\lfloor f(x) \rfloor_{l_{mid}} \neq \lfloor f(y) \rfloor_{l_{mid}}$.
@@ -127,9 +127,9 @@ For the final result over the interval, we take the maximum over all these bin-w
 
 ### Detail of the backwards polling method
 
-We want to draw $n$ samples $(x_i)_{1≤i≤n}$ such that $x_i < x_{i+1}$ for all $i$ over the span of interval $[a;b]$.
+We want to draw $n$ samples $(x\_i)\_{1≤i≤n}$ such that $x\_i < x\_{i+1}$ for all $i$ over the span of interval $[a;b]$.
 
-Unlike for forward polling, we don't draw the samples directly, but instead start from the lowest part of the interval $x_0 = a$ and draw the step $δ_i = x_{i+1} - x_i$ to get from this sample to the next. 
+Unlike for forward polling, we don't draw the samples directly, but instead start from the lowest part of the interval $x\_0 = a$ and draw the step $δ\_i = x\_{i+1} - x\_i$ to get from this sample to the next. 
 This step is drawn with a gaussian distribution with mean $μ = \frac{b-a}{n}$, so that we will cover the whole interval on average in $n$ steps. 
 We take the standard deviation to be $σ = μ$ for no particularly good reason. We'll probably have to adjust that empirically. 
 If the step $δ_i$ we have drawn is $≤ 0$, we reject it, since we want the samples to be in strictly increasing order.
