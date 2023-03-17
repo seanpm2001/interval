@@ -37,22 +37,15 @@ interval interval_algebra::Tan(const interval& x) const
     if (x.isEmpty()) {
         return x;
     }
-    if (x.size() >= 1) {
-        return {};  // we have undefined values
+    if (x.size() >= 1) { // spans asymptots and contains an integer
+        return {-HUGE_VAL, HUGE_VAL, 
+                exactPrecisionUnary(tanPi, ceil(x.lo()), pow(2, x.lsb())) // computes the precision at the first integer contained in the interval
+                };
     }
 
     // normalize input interval between -0.5..0.5 (corresponding to -PI/2..PI/2)
     double   l = fmod(x.lo(), 1);  // fractional part of x.lo()
     interval i(l, l + x.size(), x.lsb());
-
-    if (i.has(0.5) or i.has(-0.5)) {  // asymptots at PI/2
-        return {};                    //  we have undefined values
-    }
-
-    double a  = tanPi(i.lo());
-    double b  = tanPi(i.hi());
-    double lo = std::min(a, b);
-    double hi = std::max(a, b);
 
     double v = 0;  // value at which the lowest slope is computed: 0 if present
     int sign = 1;
@@ -62,8 +55,15 @@ interval interval_algebra::Tan(const interval& x) const
     } else if (i.hi() < 0) {
          v = i.hi();
     }
-
     int precision = exactPrecisionUnary(tanPi, v, sign * pow(2, x.lsb()));
+
+    if (i.has(0.5) or i.has(-0.5))  // asymptots at PI/2
+        return {-HUGE_VAL, HUGE_VAL, precision};
+
+    double a  = tanPi(i.lo());
+    double b  = tanPi(i.hi());
+    double lo = std::min(a, b);
+    double hi = std::max(a, b);
 
     return {lo, hi, precision};
 }
