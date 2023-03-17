@@ -142,6 +142,6 @@ If the step $δ_i$ we have drawn is $≤ 0$, we reject it, since we want the sam
 
 **TODO** e.g. pow, atan2, division
 
-[^1] https://raw.githubusercontent.com/beataburreau/FAUST-signal-graphs-goes-Haskell/main/ProjectReport.pdf
+[^1]: https://raw.githubusercontent.com/beataburreau/FAUST-signal-graphs-goes-Haskell/main/ProjectReport.pdf
 
-[^2] https://github.com/inria-emeraude/syfala
+[^2]: https://github.com/inria-emeraude/syfala
