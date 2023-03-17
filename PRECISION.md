@@ -28,13 +28,17 @@ $min(l_x, l_y)$ is exact: attained
 
 $l_x + l_y$: not sure if always attained but is a sound over-approximation.
 
+### Div
+
+We express it as the composition of multiplication and the inverse.
+
 ## Convex functions
 
 The derivative is increasing, so the lowest slope is attained at the low end of the interval.
 
 We thus compute $prec(f, lo, +ε)$.
 
-Functions: $exp$
+Functions: $exp$, inverse on $]0; +\infty[$
 
 ## Concave functions
 
@@ -42,7 +46,7 @@ The derivative is decreasing, so the lowest slope is attained at the high end of
 
 We compute $prec(f, hi, -ε)$, with $-ε$ is in order to evaluate $f$ at a point that is in the interval.
 
-Functions: $log$, $log_{10}$, $acosh$, $\sqrt{\;}$
+Functions: $log$, $log_{10}$, $acosh$, $\sqrt{\;}$, inverse on $]-\infty; 0[$
 
 ## The lowest slope is attained at one point (typically zero)
 
@@ -70,6 +74,66 @@ If there is no integer in the translated interval, we compute $prec(f, lo', +ε)
 This approach can cause some rounding issues in the implementation: there can be $x$ and $y$ such that $cos(π\*x)$ and $cos(π\*y)$ are mathematically equal but for which the roundings of $π\*x$ and $π\*y$ cause their images through cos to be slightly different, resulting in a measured lsb much lower than what is actually needed.
 
 Functions: $cos$, $tan$, $sin$
+
+## Binary functions
+
+These are functions such as $atan2$ (computing the angle between a vector $(x, y)$ and the x-axis) and $pow$ (computing $x^y$). 
+These are typically tackled by expressing them as the composition of a binary operator and of an unary function that has already been studied.
+
+### atan2
+
+Since $atan2(y,x)$ represents the angle of $(x,y)$, the location of the maximum and minimum value it takes over a product of intervals $[\underline{x};\overline{x}]\times [\underline{y};\overline{y}]$ depends on the quadrant(s) which this domain intersects.
+
+This function presents a discontinuity on the negative part of the x-axis, where the angle leaps from $\pi$ to $-\pi$.
+
+If the domain over which we study $atan2$ intersects this discontinuity, we separate it between positive and negative values of $y$, so that $atan2$ is continuous over each of these sub-domains.
+
+Then, when studying a domain over which $atan2$ is continuous, the maximum and the minimum are determined in function of the quadrant(s) intersected by the domain, considered in clockwise order for the maximum and counter-clockwise for the minimum.
+
+* If the domain intersects $\{(x, y) | x \le 0, y\ge0\}$, then the maximum of $atan2$ over the domain is attained at $(\underline{x}, \underline{y})$.
+* The next quadrant to consider is $\{(x, y) | x \ge 0, y\ge0\}$, where the maximum would lie at $(\underline{x},\overline{y})$.
+* If there is an intersection with $\{(x, y) | x \ge 0, y< 0\}$ but not the previous quadrants, look for the maximum at $(\overline{x}, \overline{y})$.
+* Finally, if the domain is entirely contained in the last quadrant $\{(x, y) | x > 0, y<0\}$, the maximum will be at $(\overline{x}, \underline{y})$.
+
+The location of the minimum is determined with a similar method.
+
+### pow
+
+$x^y = exp(y\cdot ln(x))$: since $exp$, $ln$ and multiplication have already be studied, we can thus compute the output interval and the LSB by chaining these well-known operations.
+
+# Avoiding cancellations
+
+In the case of $pow$, we chain the computations of LSBs associated to $ln$, multiplication and $exp$.
+These can quickly get very fine precisions, and result in computations of the form $f(x + \epsilon) - f(x)$ where $\epsilon$ is so small compared to $x$ that in machine representation $x + \epsilon = x$, resulting in an infinite computed precision.
+
+We thus need to rewrite precision computations so that these forms do not appear.
+We need to rewrite them in the case of $log$ and $exp$.
+
+## Logarithm
+
+Precision computation for base $a$ logarithm studied over interval $[\underline{x};\overline{x}]\_l$ looks like this in its basic form:
+$\lfloor log_2(log\_a(\overline{x}) - log\_a(\overline{x} - 2^l))\rfloor$
+
+In cases where $l$ is negative enough (and thus $2^l$ very small), the representation of $\overline{x} - 2^l$ is identical to that of $\overline{x}$, and the computation yields a precision of $-\infty$.
+
+To avoid such a phenomenon, we rewrite the computation as follows:
+$log_a(\overline{x} - 2^l) = log_a(\overline{x}\cdot(1 - \frac{2^l}{\overline{x}})) = log_a(\overline{x}) + log_a(1 - \frac{2^l}{\overline{x}})$, thus the precision becomes $\lfloor log_2(- log_a(1 - \frac{2^l}{\overline{x}}))\rfloor$.
+
+When $2^l/\overline{x}$ is so small that cancellation happens, it is reasonable to replace it by its first-order series expansion: $log_a(1 - \frac{2^l}{\overline{x}}) \approx -log_a(e)\cdot \frac{2^l}{\overline{x}}$.
+
+The final form of the precision is then $\lfloor log_2(log_a(e)\cdot \frac{2^l}{\overline{x}})\rfloor = \lfloor log_2(log_a(e)) + l - log_2(\overline{x})\rfloor$
+
+## Exponential
+
+$exp(\underline{x} + 2^l) - exp(\underline{x}) = exp(\underline{x})\cdot (exp(2^l) - 1)$
+
+If $2^l$ is very small, $exp(2^l) \approx 1 + 2^l$ and thus the former expression becomes $exp(\underline{x})\cdot 2^l$.
+
+Reinjected into the precision, this becomes $\lfloor log_2(exp(\underline{x})) + l\rfloor$.
+
+## Integer power
+
+Let's study $x \mapsto x^n$ for $n \in \mathbb{N}$.
 
 # Backwards precision computation
 
