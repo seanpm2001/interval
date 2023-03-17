@@ -26,20 +26,21 @@ namespace itv {
 // interval Atan2(const interval& x, const interval& y) const;
 // void testAtan2() const;
 
-// atan2(y, x) = 2*atan(y / (sqrt(x^2 + y^2) + x))
-
 // be careful with the order of the arguments:
-// atan2 is typically called as atan2(y,x) (where (x,y) are the cartesian coordinates of the point we wish to retrieve the angle of)
+// atan2 is typically called as atan2(y,x) 
+// (where (x,y) are the cartesian coordinates of the point we wish to retrieve the angle of)
 interval interval_algebra::Atan2(const interval& y, const interval& x) const 
 {
     double lo = -M_PI;
     double hi = M_PI;
 
+    // atan2 is continuous on the plane except on Ox- = {(x,y)| x<=0 and y=0} where the angle gap happens
     // if the domain spans the discontinuity, we split in along the Ox axis 
     // in order to have a continuous function on each domain
     // we study it on each of the sub-domains and then combine the results
     
     // atan2(y, x) = atan(y/x) + constant: precision is that of y/x compounded with that of atan
+    // cf https://en.wikipedia.org/wiki/Atan2#Definition_and_computation
 
     if (x.lo() <= 0 and y.hasZero()) // if we intersect the Ox- axis
     {
@@ -51,13 +52,15 @@ interval interval_algebra::Atan2(const interval& y, const interval& x) const
 
         int precisionp = exactPrecisionUnary(atan, maxValAbs(dp), signMaxValAbs(dp)*pow(2, dp.lsb())); 
         int precisionn = exactPrecisionUnary(atan, maxValAbs(dn), signMaxValAbs(dn)*pow(2, dn.lsb())); 
+
         return {lo, hi, std::min(precisionp, precisionn)}; // final precision is the finest precision attained on either of the domains
     }
         
     interval d = interval_algebra::Div(y, x);
     int precision = exactPrecisionUnary(atan, maxValAbs(d), signMaxValAbs(d)*pow(2, d.lsb())); 
 
-    if (y.lo() >= 0) // the domain XxY is entirely included in the higher half of the plane
+    // highest angle between a point of XxY and the x-axis
+    if (y.lo() >= 0) // the domain XxY is entirely included in the higher half of the plane, where the angle is highest
     {
         if (x.lo() <= 0) // we intersect the quadrant in which atan2 takes the highest values
             hi = atan2(y.lo(), x.lo());
@@ -75,7 +78,8 @@ interval interval_algebra::Atan2(const interval& y, const interval& x) const
         }
     }
 
-    if (y.hi() <= 0) // the domain XxY is entirely included in the lower half of the plane
+    // lowest angle between a point of XxY and the x-axis
+    if (y.hi() <= 0) // the domain XxY is entirely included in the lower half of the plane, where the angle is highest
     {
         if (x.lo() <= 0)
             lo = atan2(y.hi(), x.lo());

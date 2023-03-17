@@ -38,7 +38,7 @@ interval interval_algebra::Inv(const interval& x) const
     }
 
     int sign = signMaxValAbs(x);
-    double v = maxValAbs(x); // computed at the bound with the highest absolute value
+    double v = maxValAbs(x); // precision is computed at the bound with the highest absolute value
 
     int precision = exactPrecisionUnary(inv, v, sign*pow(2, x.lsb()));
 

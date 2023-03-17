@@ -34,7 +34,7 @@ interval interval_algebra::Acosh(const interval& x) const
     if (i.isEmpty()) return i;
 
     // the min slope is attained at the highest bound of the interval
-    // we thus compute the gap between f(hi) and f(hi-ε)
+    // we thus compute the gap between f(hi) and f(hi-ε), to remain in the interval
     int precision = exactPrecisionUnary(acosh, x.hi(), -pow(2, x.lsb()));
 
     return {acosh(i.lo()), acosh(i.hi()), precision};

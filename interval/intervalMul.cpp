@@ -42,7 +42,7 @@ interval interval_algebra::Mul(const interval& x, const interval& y) const
     double b = specialmult(x.lo(), y.hi());
     double c = specialmult(x.hi(), y.lo());
     double d = specialmult(x.hi(), y.hi());
-    return {min4(a, b, c, d), max4(a, b, c, d), x.lsb() + y.lsb()};
+    return {min4(a, b, c, d), max4(a, b, c, d), x.lsb() + y.lsb()}; // the worst case, we need all the precision digits from both the operands
 }
 
 void interval_algebra::testMul() const

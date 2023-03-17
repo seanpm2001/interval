@@ -28,8 +28,9 @@ namespace itv {
 
 interval interval_algebra::Abs(const interval& x) const
 {
-    if (x.lo() >= 0) return x;
-    if (x.hi() <= 0) return {-x.hi(), -x.lo(), x.lsb()};
+    // precision stays the same
+    if (x.lo() >= 0) return x; 
+    if (x.hi() <= 0) return {-x.hi(), -x.lo(), x.lsb()}; 
     return {0, std::max(std::abs(x.lo()), std::abs(x.hi())), x.lsb()};
 }
 

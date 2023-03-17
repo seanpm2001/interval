@@ -198,8 +198,8 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
     for (int e = 0; e < E; e++) {  // E experiments
 
         // X: random input interval X < I
-        double        a = truncate(rd(generator), D.lsb()); // epsilon * floor(rd(generator) / epsilon);
-        double        b = truncate(rd(generator), D.lsb()); // epsilon * floor(rd(generator) / epsilon);
+        double        a = truncate(rd(generator), D.lsb()); 
+        double        b = truncate(rd(generator), D.lsb()); 
         itv::interval X(std::min(a, b), std::max(a, b), D.lsb());
 
         // boundaries of the resulting interval
@@ -232,7 +232,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
 
         for (int m = 0; m < M; m++) {  // M measurements
             double presample = rx(generator);
-            sample    = truncate(presample, D.lsb()); // epsilon * (double)floor(presample / epsilon);  // truncated to desired precision
+            sample    = truncate(presample, D.lsb()); 
             y         = f(sample);
 
             measurements.insert(y);
@@ -304,7 +304,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
 
     std::cout << "Analysis of " << title << " in domains " << Dx << " x " << Dy << std::endl;
 
-    for (int e = 0; e < E; e++) {  // for each experiments
+    for (int e = 0; e < E; e++) {  // for each experiment
 
         // X: random input interval X < Dx
         double        x0 = truncate(rdx(generator), Dx.lsb());
