@@ -175,6 +175,11 @@ inline interval reunion(const interval& i, const interval& j)
     }
 }
 
+inline interval singleton(double x, int lsb)
+{
+    return {x, x, lsb};
+}
+
 //-------------------------------------------------------------------------
 // predicates
 //-------------------------------------------------------------------------
