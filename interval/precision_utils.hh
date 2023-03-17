@@ -24,7 +24,7 @@ double truncate(double x, int lsb)
  * @param x the point at which the tightest precision is needed
  * @param epsilon the signed gap between the two consecutive numbers at which to compute the precision
 */
-int exactPrecisionUnary(ufun f, double x, double epsilon)
+int exactPrecisionUnary(ufun f, long double x, long double epsilon)
 {
     int res = floor((double)log2(std::abs(f(x + epsilon) - f(x))));
     return res;
