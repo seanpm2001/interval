@@ -135,6 +135,13 @@ Reinjected into the precision, this becomes $\lfloor log_2(exp(\underline{x})) +
 
 Let's study $x \mapsto x^n$ for $n \in \mathbb{N}$.
 
+The absolute lowest value of the slope is attained at zero, so if the input interval contains zero, the precision is $\lfloor log_2((2^l)^n - 0)\rfloor = l\cdot n$.
+
+If zero is not in the interval, the precision is attained at $\tilde x$, the boundary of the interval at the lowest absolute value. 
+
+Let's pose $\delta = (\tilde x+2^l)^n - \tilde x^n = \tilde x^n\cdot\left((1 + \frac{2^l}{\tilde x})^n - 1\right)$, with the precision being $\lfloor log\_2(\delta)\rfloor$. 
+If $2^l$ is very small, $(1+ \frac{2^l}{\tilde x})^n \approx 1 + n\cdot \frac{2^l}{\tilde x}$, and thus the precision is $\lfloor log\_2(\tilde x^n \cdot n \cdot \frac{2^l}{\tilde x})\rfloor = \lfloor (n-1)\cdot log\_2(\tilde x) + log\_2(n) + l\rfloor$.
+
 # Backwards precision computation
 
 i.e., given an output precision $l_{out}$, determine an input precision $l_{in}$ such that $l_{in}$ would induce output precision $l_{out}$ in the direct direction.
