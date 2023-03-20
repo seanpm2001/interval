@@ -44,10 +44,11 @@ static interval ipow(const interval& x, int y)
         int p1, p2;
 
         double v = minValAbs(x);
-        p1 = y*log2(v);
+        int sign = signMinValAbs(x);
+        p1 = y*log2(abs(v));
 
         double epsilon = pow(2, x.lsb());
-        double delta = pow(1+ epsilon/v, y) - 1;
+        double delta = abs(pow(1+ sign*epsilon/v, y) - 1);
         if (delta == 0) // in case of cancellation
             p2 = floor((double)log2(y) + x.lsb() - (double)log2(abs(v))); // (1 + eps/v)^y - 1 ≃ y*eps/v if eps/v very small
         else
