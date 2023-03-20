@@ -130,14 +130,28 @@ interval interval_algebra::And(const interval& x, const interval& y) const
     int y1 = saturatedIntCast(y.hi());
 
     SInterval z = bitwiseSignedAnd({x0, x1}, {y0, y1});
-    return {double(z.lo), double(z.hi)};
+
+    int precision = 0; // precision is 0 since the interval is made up of integer
+
+    // however, if the interval is reduced to one element, the mask can make it so 
+    if (y.lo() == y.hi())
+    {
+        int v = y.lo(); // only element of interval y
+        while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
+        {
+            v = v/2;
+            precision++;
+        }
+    }
+
+    return {double(z.lo), double(z.hi), precision}; 
 }
 
 void interval_algebra::testAnd() const
 {
-    analyzeBinaryMethod(10, 2000, "And", interval(256, 257), interval(127), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(-1000, -800), interval(127), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(-1000, -800), interval(123), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(256, 257), interval(12), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(-1000, -800), interval(12), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(-1000, -800), interval(12), myAnd, &interval_algebra::And);
     analyzeBinaryMethod(10, 2000, "And", interval(-128, 128), interval(127), myAnd, &interval_algebra::And);
     analyzeBinaryMethod(10, 2000, "And", interval(0, 1000), interval(63, 127), myAnd, &interval_algebra::And);
     analyzeBinaryMethod(10, 2000, "And", interval(-1000, 1000), interval(63, 127), myAnd, &interval_algebra::And);
