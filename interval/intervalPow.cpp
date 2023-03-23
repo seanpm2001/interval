@@ -49,7 +49,7 @@ static interval ipow(const interval& x, int y)
 
         double epsilon = pow(2, x.lsb());
         double delta = abs(pow(1+ sign*epsilon/v, y) - 1);
-        if (delta == 0) // in case of cancellation
+        if (delta == 0) // in case of epsilon << x
             p2 = floor((double)log2(y) + x.lsb() - (double)log2(abs(v))); // (1 + eps/v)^y - 1 ≃ y*eps/v if eps/v very small
         else
             p2 = floor((double)log2(delta));

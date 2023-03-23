@@ -101,7 +101,7 @@ The location of the minimum is determined with a similar method.
 
 $x^y = exp(y\cdot ln(x))$: since $exp$, $ln$ and multiplication have already be studied, we can thus compute the output interval and the LSB by chaining these well-known operations.
 
-# Avoiding cancellations
+# Avoiding absorption
 
 In the case of $pow$, we chain the computations of LSBs associated to $ln$, multiplication and $exp$.
 These can quickly get very fine precisions, and result in computations of the form $f(x + \epsilon) - f(x)$ where $\epsilon$ is so small compared to $x$ that in machine representation $x + \epsilon = x$, resulting in an infinite computed precision.
@@ -119,7 +119,7 @@ In cases where $l$ is negative enough (and thus $2^l$ very small), the represent
 To avoid such a phenomenon, we rewrite the computation as follows:
 $log_a(\overline{x} - 2^l) = log_a(\overline{x}\cdot(1 - \frac{2^l}{\overline{x}})) = log_a(\overline{x}) + log_a(1 - \frac{2^l}{\overline{x}})$, thus the precision becomes $\lfloor log_2(- log_a(1 - \frac{2^l}{\overline{x}}))\rfloor$.
 
-When $2^l/\overline{x}$ is so small that cancellation happens, it is reasonable to replace it by its first-order series expansion: $log_a(1 - \frac{2^l}{\overline{x}}) \approx -log_a(e)\cdot \frac{2^l}{\overline{x}}$.
+When $2^l/\overline{x}$ is so small that $x + 2^l$ gets rounded to $x$ (we will call that phenomenon absorption), it is reasonable to replace it by its first-order series expansion: $log_a(1 - \frac{2^l}{\overline{x}}) \approx -log_a(e)\cdot \frac{2^l}{\overline{x}}$.
 
 The final form of the precision is then $\lfloor log_2(log_a(e)\cdot \frac{2^l}{\overline{x}})\rfloor = \lfloor log_2(log_a(e)) + l - log_2(\overline{x})\rfloor$
 
