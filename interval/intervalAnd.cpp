@@ -136,7 +136,7 @@ interval interval_algebra::And(const interval& x, const interval& y) const
     // however, if one of the intervals is reduced to one element, the mask can make it so 
     int precisionx = 0;
 
-    if (x.lo() == x.hi())
+    if (x0 == x1)
     {
         int v = x.lo(); // only element of interval x
         while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
@@ -148,7 +148,7 @@ interval interval_algebra::And(const interval& x, const interval& y) const
 
     int precisiony = 0;
 
-    if (y.lo() == y.hi())
+    if (y0 == y1)
     {
         int v = y.lo(); // only element of interval y
         while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
