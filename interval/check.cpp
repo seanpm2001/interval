@@ -360,7 +360,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
             meas = next;
         }
 
-        itv::interval Zm(zlo, zhi, lsb);         // the measured Z
+        itv::interval Zm(zlo, zhi, lsb);    // the measured Z
         itv::interval Zc  = (A.*bm)(X, Y);  // the computed Z
         double        precision = (Zm.size() == Zc.size()) ? 1 : Zm.size() / Zc.size();
 
