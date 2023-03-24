@@ -50,7 +50,7 @@ void check(const std::string& expected, const itv::interval& exp)
 void check(const std::string& testname, const itv::interval& exp, const itv::interval& res)
 {
     if (exp == res) {
-        std::cout << "OK: " << testname << " " << exp << std::endl;
+        std::cout << "OK: " << testname << " " << exp << " = " << res << std::endl;
     } else {
         std::cout << "ERR:" << testname << " FAILED. We got " << exp << " instead of " << res << std::endl;
     }
