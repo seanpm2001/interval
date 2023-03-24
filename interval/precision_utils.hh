@@ -18,6 +18,23 @@ double truncate(double x, int lsb)
 }
 
 /**
+ * @brief Computes the position of the least significant bit of a number
+ * Floored to -24
+ * 
+ * @param x The number
+ * @return The lsb
+*/
+int lsb_number(double x)
+{
+    int precision = -24;
+
+    while (floor(x*pow(2, -precision-1)) == x*pow(2, -precision-1) and x != 0)
+        precision++;
+
+    return precision;
+}
+
+/**
  * @brief compute the precision needed in the output of a function 
  * 
  * @param f the function to analyse

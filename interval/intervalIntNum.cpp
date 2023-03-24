@@ -14,6 +14,7 @@
  */
 #include "interval_algebra.hh"
 #include "interval_def.hh"
+#include "precision_utils.hh"
 
 namespace itv {
 //------------------------------------------------------------------------------------------
@@ -21,6 +22,8 @@ namespace itv {
 
 interval interval_algebra::IntNum(int x) const
 {
-    return {double(x), double(x), 0};
+    int lsb = lsb_number(x); // x is an integer so lsb is bound to be >=0, but we might be able to shave a couple more bits
+
+    return {double(x), double(x), lsb}; 
 }
 }  // namespace itv
