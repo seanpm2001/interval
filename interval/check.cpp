@@ -297,7 +297,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
                          bmth bm)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(R());
+    std::default_random_engine     generator(1);
     std::uniform_real_distribution rdx(Dx.lo(), Dx.hi());
     std::uniform_real_distribution rdy(Dy.lo(), Dy.hi());
     itv::interval_algebra          A;
@@ -330,9 +330,22 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
         // store output values in order to measure the output precision
         std::set<double> measurements;
 
+        // draw the upper bounds manually
+        double z = f(X.hi(), Y.hi()); // no need to truncate: interval boundaries are already truncated
+        measurements.insert(z);
+
+        if (!std::isnan(z)) {
+            if (z < zlo) {
+                zlo = z;
+            }
+            if (z > zhi) {
+                zhi = z;
+            }
+        }
+
         // measure the interval Z using the numerical function f
         for (int m = 0; m < M; m++) {  // M measurements
-            double z = f(truncate(rvx(generator), Dx.lsb()), truncate(rvy(generator), Dy.lsb()));
+            z = f(truncate(rvx(generator), Dx.lsb()), truncate(rvy(generator), Dy.lsb()));
 
             measurements.insert(z);
 
