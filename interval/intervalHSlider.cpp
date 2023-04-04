@@ -12,9 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "check.hh"
 #include "interval_algebra.hh"
 #include "interval_def.hh"
-#include "precision_utils.hh"
+// #include "precision_utils.hh"
 
 namespace itv {
 //------------------------------------------------------------------------------------------

@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "check.hh"
 #include "interval_algebra.hh"
 #include "interval_def.hh"
 
@@ -28,6 +29,6 @@ interval interval_algebra::VSlider(const interval& name, const interval& init, c
     if (step.lo() > 0) // if we don't have negative or zero steps 
         lsb = std::min(lsb, (int)log2(step.lo())); // and that associated to the smallest value the step can take
 
-    return {lo.lo(), hi.hi(), -24};  // TODO: step, init
+    return {lo.lo(), hi.hi(), lsb};  // TODO: step, init
 }
 }  // namespace itv
