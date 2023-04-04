@@ -41,11 +41,10 @@ static interval ipow(const interval& x, int y)
     int precision = x.lsb()*y; // if x contains 0: finest precision is attained in 0
     if (not x.hasZero())
     {
-        int p1, p2;
-
         double v = minValAbs(x);
         int sign = signMinValAbs(x);
-        p1 = y*log2(abs(v));
+        int p1 = y*(int)log2(abs(v));
+        int p2 = 0;
 
         double epsilon = pow(2, x.lsb());
         double delta = abs(pow(1+ sign*epsilon/v, y) - 1);

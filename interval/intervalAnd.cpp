@@ -138,7 +138,7 @@ interval interval_algebra::And(const interval& x, const interval& y) const
 
     if (x0 == x1)
     {
-        int v = x.lo(); // only element of interval x
+        int v = x0; // only element of interval x
         while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
         {
             v = v/2;
@@ -150,7 +150,7 @@ interval interval_algebra::And(const interval& x, const interval& y) const
 
     if (y0 == y1)
     {
-        int v = y.lo(); // only element of interval y
+        int v = y0; // only element of interval y
         while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
         {
             v = v/2;
