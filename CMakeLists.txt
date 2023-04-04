@@ -9,6 +9,7 @@ if (NOTIDY)
 else ()
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=-*,clang-*,cppcoreguidelines-*,-cppcoreguidelines-avoid-magic-numbers,performance-*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,llvm-*,modernize-*,-modernize-use-trailing-return-type,cert-*")
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wreturn-type")
 endif()
 
 add_definitions(-D_USE_MATH_DEFINES)
