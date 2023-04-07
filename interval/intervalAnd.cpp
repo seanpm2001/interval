@@ -138,6 +138,8 @@ interval interval_algebra::And(const interval& x, const interval& y) const
 
     if (x0 == x1)
     {
+        if (x0 == 0) return singleton(0); // if one of the operands is 0 then 0 must be the only result
+
         int v = x0; // only element of interval x
         while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
         {
@@ -150,6 +152,8 @@ interval interval_algebra::And(const interval& x, const interval& y) const
 
     if (y0 == y1)
     {
+        if (y0 == 0) return singleton(0);  // if one of the operands is 0 then 0 must be the only result
+
         int v = y0; // only element of interval y
         while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
         {

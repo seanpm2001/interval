@@ -177,6 +177,8 @@ inline interval reunion(const interval& i, const interval& j)
 
 inline interval singleton(double x, int lsb=-24)
 {
+    if (x==0) return {0,0,0};
+
     int precision = lsb;
 
     while (floor(x*pow(2, -precision-1)) == x*pow(2, -precision-1) and x != 0)
