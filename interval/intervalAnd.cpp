@@ -138,10 +138,8 @@ interval interval_algebra::And(const interval& x, const interval& y) const
 
     if (x0 == x1)
     {
-        if (x0 == 0) return singleton(0); // if one of the operands is 0 then 0 must be the only result
-
         int v = x0; // only element of interval x
-        while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
+        while ((v & 1) == 0 and v != 0) // while we encounter zeroes at the lower end of v
         {
             v = v/2;
             precisionx++;
@@ -152,10 +150,8 @@ interval interval_algebra::And(const interval& x, const interval& y) const
 
     if (y0 == y1)
     {
-        if (y0 == 0) return singleton(0);  // if one of the operands is 0 then 0 must be the only result
-
         int v = y0; // only element of interval y
-        while ((v & 1) == 0) // while we encounter zeroes at the lower end of v
+        while ((v & 1) == 0 and v != 0) // while we encounter zeroes at the lower end of v
         {
             v = v/2;
             precisiony++;
@@ -173,5 +169,8 @@ void interval_algebra::testAnd() const
     analyzeBinaryMethod(10, 2000, "And", interval(-128, 128), interval(127), myAnd, &interval_algebra::And);
     analyzeBinaryMethod(10, 2000, "And", interval(0, 1000), interval(63, 127), myAnd, &interval_algebra::And);
     analyzeBinaryMethod(10, 2000, "And", interval(-1000, 1000), interval(63, 127), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(10,20), interval(0), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(0), interval(15, 25), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(0), interval(0), myAnd, &interval_algebra::And);
 }
 }  // namespace itv

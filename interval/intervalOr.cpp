@@ -81,5 +81,8 @@ void interval_algebra::testOr() const
     analyzeBinaryMethod(10, 20000, "Or", interval(-128, 128), interval(127), myOr, &interval_algebra::Or);
     analyzeBinaryMethod(10, 20000, "Or", interval(0, 1000), interval(63, 127), myOr, &interval_algebra::Or);
     analyzeBinaryMethod(10, 20000, "Or", interval(-1000, 1000), interval(63, 127), myOr, &interval_algebra::Or);
+    analyzeBinaryMethod(10, 2000, "Or", interval(10,20), interval(0), myOr, &interval_algebra::Or);
+    analyzeBinaryMethod(10, 2000, "Or", interval(0), interval(15, 25), myOr, &interval_algebra::Or);
+    analyzeBinaryMethod(10, 2000, "Or", interval(0), interval(0), myOr, &interval_algebra::Or);
 }
 }  // namespace itv

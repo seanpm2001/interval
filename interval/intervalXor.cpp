@@ -90,5 +90,9 @@ void interval_algebra::testXor() const
 
     analyzeBinaryMethod(10, 20000, "Xor", interval(-1000, 1000, lx(generator)), interval(63, 127, ly(generator)), myXor, &interval_algebra::Xor);
     analyzeBinaryMethod(10, 20000, "Xor", interval(-1000, 1000, lx(generator)), interval(63, 127, ly(generator)), myXor, &interval_algebra::Xor);
+
+    analyzeBinaryMethod(10, 2000, "Xor", interval(10,20), interval(0), myXor, &interval_algebra::Xor);
+    analyzeBinaryMethod(10, 2000, "Xor", interval(0), interval(15, 25), myXor, &interval_algebra::Xor);
+    analyzeBinaryMethod(10, 2000, "Xor", interval(0), interval(0), myXor, &interval_algebra::Xor);
 }
 }  // namespace itv
