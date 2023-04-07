@@ -109,10 +109,10 @@ int main()
     // A.testDiv();
     // A.testAtan2();
 
-    // A.testAnd();
+    A.testAnd();
     // A.testNot();
-    // A.testOr();
-    // A.testXor();
+    A.testOr();
+    A.testXor();
     
     /*{
         double u = 0.0;
