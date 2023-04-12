@@ -77,12 +77,12 @@ int main()
     std::cout << std::endl;*/
 
     // interval v = singleton(2);
-    std::cout << singleton(2.5) << std::endl;
+    /* std::cout << singleton(2.5) << std::endl;
     std::cout << singleton(2.25) << std::endl;
     std::cout << singleton(2.1) << std::endl;
     std::cout << singleton(24) << std::endl;
     std::cout << singleton(44) << std::endl;
-    std::cout << singleton(255) << std::endl;
+    std::cout << singleton(255) << std::endl;*/
 
     interval_algebra A;
     //A.testAll();
@@ -111,8 +111,8 @@ int main()
 
     A.testAnd();
     // A.testNot();
-    A.testOr();
-    A.testXor();
+    // A.testOr();
+    // A.testXor();
     
     /*{
         double u = 0.0;

@@ -163,14 +163,14 @@ interval interval_algebra::And(const interval& x, const interval& y) const
 
 void interval_algebra::testAnd() const
 {
-    analyzeBinaryMethod(10, 2000, "And", interval(256, 257), interval(12), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(-1000, -800), interval(12), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(-1000, -800), interval(12), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(-128, 128), interval(127), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(0, 1000), interval(63, 127), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(-1000, 1000), interval(63, 127), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(10,20), interval(0), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(0), interval(15, 25), myAnd, &interval_algebra::And);
-    analyzeBinaryMethod(10, 2000, "And", interval(0), interval(0), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(0, 257, 0), singleton(12), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(-1000, -800, 0), singleton(12), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(-1000, -800, 0), singleton(12), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(-128, 128, 0), singleton(127), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(0, 1000, 0), interval(63, 127), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(-1000, 1000, 0), interval(63, 127), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", interval(10,20, 0), singleton(0), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", singleton(0), interval(15, 25, 0), myAnd, &interval_algebra::And);
+    analyzeBinaryMethod(10, 2000, "And", singleton(0), singleton(0), myAnd, &interval_algebra::And);
 }
 }  // namespace itv
