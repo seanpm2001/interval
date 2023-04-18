@@ -1,0 +1,69 @@
+interval/main.cpp
+[build] /Users/yannorlarey/Documents/Install/interval/main.cpp:87:22: error: variable type 'itv::interval_algebra' is an abstract class [clang-diagnostic-error]
+[build]     interval_algebra A;
+[build]                      ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:49:15: note: unimplemented pure virtual method 'Nil' in 'interval_algebra'
+[build]     virtual T Nil()                       = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:56:15: note: unimplemented pure virtual method 'FixPointUpdate' in 'interval_algebra'
+[build]     virtual T FixPointUpdate(const T& x, const T& y) = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:59:15: note: unimplemented pure virtual method 'Input' in 'interval_algebra'
+[build]     virtual T Input(const T& chan)              = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:60:15: note: unimplemented pure virtual method 'Output' in 'interval_algebra'
+[build]     virtual T Output(const T& chan, const T& x) = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:67:15: note: unimplemented pure virtual method 'HBargraph' in 'interval_algebra'
+[build]     virtual T HBargraph(const T& name, const T& lo, const T& hi)                              = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:68:15: note: unimplemented pure virtual method 'VBargraph' in 'interval_algebra'
+[build]     virtual T VBargraph(const T& name, const T& lo, const T& hi)                              = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:70:15: note: unimplemented pure virtual method 'Attach' in 'interval_algebra'
+[build]     virtual T Attach(const T& x, const T& y)                                                  = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:74:15: note: unimplemented pure virtual method 'Highest' in 'interval_algebra'
+[build]     virtual T Highest(const T& x)                         = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:75:15: note: unimplemented pure virtual method 'Lowest' in 'interval_algebra'
+[build]     virtual T Lowest(const T& x)                          = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:97:15: note: unimplemented pure virtual method 'BitCast' in 'interval_algebra'
+[build]     virtual T BitCast(const T& x)                         = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:116:15: note: unimplemented pure virtual method 'Select2' in 'interval_algebra'
+[build]     virtual T Select2(const T& x, const T& y, const T& z) = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:127:15: note: unimplemented pure virtual method 'Prefix' in 'interval_algebra'
+[build]     virtual T Prefix(const T& x, const T& y)                                   = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:128:15: note: unimplemented pure virtual method 'RDTbl' in 'interval_algebra'
+[build]     virtual T RDTbl(const T& wtbl, const T& ri)                                = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:129:15: note: unimplemented pure virtual method 'WRTbl' in 'interval_algebra'
+[build]     virtual T WRTbl(const T& n, const T& g, const T& wi, const T& ws)          = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:130:15: note: unimplemented pure virtual method 'SoundFile' in 'interval_algebra'
+[build]     virtual T SoundFile(const T& label)                                        = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:131:15: note: unimplemented pure virtual method 'SoundFileRate' in 'interval_algebra'
+[build]     virtual T SoundFileRate(const T& sf, const T& x)                           = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:132:15: note: unimplemented pure virtual method 'SoundFileLength' in 'interval_algebra'
+[build]     virtual T SoundFileLength(const T& sf, const T& x)                         = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:133:15: note: unimplemented pure virtual method 'SoundFileBuffer' in 'interval_algebra'
+[build]     virtual T SoundFileBuffer(const T& sf, const T& x, const T& y, const T& z) = 0;
+[build]               ^
+[build] /Users/yannorlarey/Documents/Install/interval/FaustAlgebra/FaustAlgebra.hh:134:15: note: unimplemented pure virtual method 'Waveform' in 'interval_algebra'
+[build]     virtual T Waveform(const std::vector<T>& w)                                = 0;
+[build]               ^
+[build] 62214 warnings and 1 error generated.
+[build] Error while processing /Users/yannorlarey/Documents/Install/interval/main.cpp.
+[build] Suppressed 62214 warnings (62214 in non-user code).
+[build] Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+[build] Found compiler error(s).
+[build] ninja: build stopped: subcommand failed.
+[proc] The command: /opt/local/bin/cmake --build /Users/yannorlarey/Documents/Install/interval/build --config Debug --target all -- exited with code: 1
+[build] Build finished with exit code 1

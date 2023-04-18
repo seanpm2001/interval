@@ -1,11 +1,11 @@
 /* Copyright 2023 Yann ORLAREY
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,15 +23,15 @@
 namespace itv {
 //------------------------------------------------------------------------------------------
 // Interval Lt
-// interval Lt(const interval& x, const interval& y) const;
-// void testLt() const;
+// interval Lt(const interval& x, const interval& y);
+// void testLt();
 
-interval interval_algebra::Lt(const interval& x, const interval& y) const
+interval interval_algebra::Lt(const interval& x, const interval& y)
 {
     return Gt(y, x);
 }
 
-void interval_algebra::testLt() const
+void interval_algebra::testLt()
 {
     check("test algebra Lt", Lt(interval(5), interval(6, 10)), interval(1));
     check("test algebra Lt", Lt(interval(2, 5), interval(0, 2)), interval(0));
