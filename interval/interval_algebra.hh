@@ -12,13 +12,13 @@ class interval_algebra : public FaustAlgebra<interval> {
 
    public:
     // Injections of external values
-    interval Label(const std::string& x) override;
+    interval Nil() override;
     interval IntNum(int x) override;
     interval Int64Num(int64_t x) override;
     interval FloatNum(double x) override;
+    interval Label(const std::string& x) override;
 
     // Missing operations
-    interval Nil() override;
     interval FixPointUpdate(const interval& x, const interval& y) override;
     interval Input(const interval& c) override;
     interval Output(const interval& c, const interval& y) override;
