@@ -314,5 +314,10 @@ class FaustAlgebra
         fBinFuncs[symbol("SigSoundfileLength")]  = &FaustAlgebra::SoundFileLength;
         fQuadFuncs[symbol("SigSoundfileBuffer")] = &FaustAlgebra::SoundFileBuffer;
         fVarFuncs[symbol("SigWaveform")]         = &FaustAlgebra::Waveform;
+
+        // Foreign functions
+        fVarFuncs[symbol("SigFFun")]   = &FaustAlgebra::ForeignFunction;
+        fTriFuncs[symbol("SigFVar")]   = &FaustAlgebra::ForeignVar;
+        fTriFuncs[symbol("SigFConst")] = &FaustAlgebra::ForeignConst;
     }
 };
