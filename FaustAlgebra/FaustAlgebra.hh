@@ -239,7 +239,6 @@ class FaustAlgebra
 
         fUnFuncs[symbol("inv")]       = &FaustAlgebra::Inv;
         fUnFuncs[symbol("abs")]       = &FaustAlgebra::Abs;
-        fUnFuncs[symbol("inv")]       = &FaustAlgebra::Inv;
         fUnFuncs[symbol("neg")]       = &FaustAlgebra::Neg;
         fUnFuncs[symbol("acos")]      = &FaustAlgebra::Acos;
         fUnFuncs[symbol("acosh")]     = &FaustAlgebra::Acosh;
@@ -264,28 +263,28 @@ class FaustAlgebra
         fUnFuncs[symbol("tanh")]      = &FaustAlgebra::Tanh;
 
         // Binary Methods
-        fBinFuncs[symbol("add")]    = &FaustAlgebra::Add;
-        fBinFuncs[symbol("sub")]    = &FaustAlgebra::Sub;
-        fBinFuncs[symbol("mul")]    = &FaustAlgebra::Mul;
-        fBinFuncs[symbol("div")]    = &FaustAlgebra::Div;
-        fBinFuncs[symbol("mod")]    = &FaustAlgebra::Mod;
-        fBinFuncs[symbol("and")]    = &FaustAlgebra::And;
-        fBinFuncs[symbol("atan2")]  = &FaustAlgebra::Atan2;
-        fBinFuncs[symbol("delay")]  = &FaustAlgebra::Delay;
-        fBinFuncs[symbol("eq")]     = &FaustAlgebra::Eq;
-        fBinFuncs[symbol("ge")]     = &FaustAlgebra::Ge;
-        fBinFuncs[symbol("gt")]     = &FaustAlgebra::Gt;
-        fBinFuncs[symbol("lsh")]    = &FaustAlgebra::Lsh;
-        fBinFuncs[symbol("lt")]     = &FaustAlgebra::Lt;
-        fBinFuncs[symbol("max")]    = &FaustAlgebra::Max;
-        fBinFuncs[symbol("min")]    = &FaustAlgebra::Min;
-        fBinFuncs[symbol("ne")]     = &FaustAlgebra::Ne;
-        fBinFuncs[symbol("or")]     = &FaustAlgebra::Or;
-        fBinFuncs[symbol("prefix")] = &FaustAlgebra::Prefix;
-        fBinFuncs[symbol("pow")]    = &FaustAlgebra::Pow;
-        fBinFuncs[symbol("le")]     = &FaustAlgebra::Le;
-        fBinFuncs[symbol("rsh")]    = &FaustAlgebra::Rsh;
-        fBinFuncs[symbol("xor")]    = &FaustAlgebra::Xor;
+        fBinFuncs[symbol("add")]   = &FaustAlgebra::Add;
+        fBinFuncs[symbol("sub")]   = &FaustAlgebra::Sub;
+        fBinFuncs[symbol("mul")]   = &FaustAlgebra::Mul;
+        fBinFuncs[symbol("div")]   = &FaustAlgebra::Div;
+        fBinFuncs[symbol("mod")]   = &FaustAlgebra::Mod;
+        fBinFuncs[symbol("and")]   = &FaustAlgebra::And;
+        fBinFuncs[symbol("atan2")] = &FaustAlgebra::Atan2;
+        fBinFuncs[symbol("eq")]    = &FaustAlgebra::Eq;
+        fBinFuncs[symbol("ge")]    = &FaustAlgebra::Ge;
+        fBinFuncs[symbol("gt")]    = &FaustAlgebra::Gt;
+        fBinFuncs[symbol("lsh")]   = &FaustAlgebra::Lsh;
+        fBinFuncs[symbol("lt")]    = &FaustAlgebra::Lt;
+        fBinFuncs[symbol("max")]   = &FaustAlgebra::Max;
+        fBinFuncs[symbol("min")]   = &FaustAlgebra::Min;
+        fBinFuncs[symbol("ne")]    = &FaustAlgebra::Ne;
+        fBinFuncs[symbol("or")]    = &FaustAlgebra::Or;
+        fBinFuncs[symbol("pow")]   = &FaustAlgebra::Pow;
+        fBinFuncs[symbol("le")]    = &FaustAlgebra::Le;
+        fBinFuncs[symbol("rsh")]   = &FaustAlgebra::Rsh;
+        fBinFuncs[symbol("xor")]   = &FaustAlgebra::Xor;
+
+        fBinFuncs[symbol("SigAttach")] = &FaustAlgebra::Attach;
 
         // Ternary Methods
         fTriFuncs[symbol("SigSelect2")]   = &FaustAlgebra::Select2;
@@ -308,6 +307,7 @@ class FaustAlgebra
         fBinFuncs[symbol("SigPrefix")] = &FaustAlgebra::Prefix;
         fBinFuncs[symbol("SigRDTbl")]  = &FaustAlgebra::RDTbl;
         fQuadFuncs[symbol("SigWRTbl")] = &FaustAlgebra::WRTbl;
+        fUnFuncs[symbol("SigGen")]     = &FaustAlgebra::Gen;
 
         fUnFuncs[symbol("SigSoundfile")]         = &FaustAlgebra::SoundFile;
         fBinFuncs[symbol("SigSoundfileRate")]    = &FaustAlgebra::SoundFileRate;
