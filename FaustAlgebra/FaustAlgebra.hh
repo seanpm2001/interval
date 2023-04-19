@@ -11,15 +11,19 @@
 #include "symbol.hh"
 
 //=====================================================================================================================
-// A Faust Algebra is a class grouping the set of primitive operations available on Faust signals. All these operations
-// are callable directly or via dispatch tables according to their arity and name. The dispatch tables are typically
-// used when recursively visiting an expressions tree while applying an algebra. Derived algebras just have to
-// specify the type T and implement the primitive operations for this type T. Example of derived algebras are
-// Interval Algebras, TypeInference Algebras, Expression Tree Algebras, Compiler Algebras, etc.
+// A Faust Algebra is a class grouping the set of primitive operations available
+// on Faust signals. All these operations are callable directly or via dispatch
+// tables according to their arity and name. The dispatch tables are typically
+// used when recursively visiting an expressions tree while applying an algebra.
+// Derived algebras just have to specify the type T and implement the primitive
+// operations for this type T. Example of derived algebras are Interval
+// Algebras, TypeInference Algebras, Expression Tree Algebras, Compiler
+// Algebras, etc.
 //=====================================================================================================================
 
 template <typename T>
-class FaustAlgebra {
+class FaustAlgebra
+{
    public:
     //--------------------------------------------------------------------------------
     // Dispatch tables
@@ -127,11 +131,17 @@ class FaustAlgebra {
     virtual T Prefix(const T& x, const T& y)                                   = 0;
     virtual T RDTbl(const T& wtbl, const T& ri)                                = 0;
     virtual T WRTbl(const T& n, const T& g, const T& wi, const T& ws)          = 0;
+    virtual T Gen(const T& x)                                                  = 0;
     virtual T SoundFile(const T& label)                                        = 0;
     virtual T SoundFileRate(const T& sf, const T& x)                           = 0;
     virtual T SoundFileLength(const T& sf, const T& x)                         = 0;
     virtual T SoundFileBuffer(const T& sf, const T& x, const T& y, const T& z) = 0;
     virtual T Waveform(const std::vector<T>& w)                                = 0;
+
+    // Foreign functions
+    virtual T ForeignFunction(const std::vector<T>& ff)                 = 0;
+    virtual T ForeignVar(const T& type, const T& name, const T& file)   = 0;
+    virtual T ForeignConst(const T& type, const T& name, const T& file) = 0;
 
     //--------------------------------------------------------------------------------
     // Calling the various operations according to the opcode symbol

@@ -4,8 +4,10 @@
 
 #include "FaustAlgebra.hh"
 
-namespace itv {
-class interval_algebra : public FaustAlgebra<interval> {
+namespace itv
+{
+class interval_algebra : public FaustAlgebra<interval>
+{
    private:
     interval iPow(const interval& x, const interval& y);  // integer power, when x can be negative
     interval fPow(const interval& x, const interval& y);  // float power, when x is positive
@@ -24,6 +26,7 @@ class interval_algebra : public FaustAlgebra<interval> {
     interval Output(const interval& c, const interval& y) override;
     interval HBargraph(const interval& name, const interval& lo, const interval& hi) override;
     interval VBargraph(const interval& name, const interval& lo, const interval& hi) override;
+    interval Gen(const interval& x) override;
     interval Attach(const interval& x, const interval& y) override;
     interval Highest(const interval& x) override;
     interval Lowest(const interval& x) override;
@@ -37,6 +40,11 @@ class interval_algebra : public FaustAlgebra<interval> {
     interval SoundFileLength(const interval& sf, const interval& x) override;
     interval SoundFileBuffer(const interval& sf, const interval& x, const interval& y, const interval& z) override;
     interval Waveform(const std::vector<interval>& w) override;
+
+    // Foreign functions
+    interval ForeignFunction(const std::vector<interval>& ff) override;
+    interval ForeignVar(const interval& type, const interval& name, const interval& file) override;
+    interval ForeignConst(const interval& type, const interval& name, const interval& file) override;
 
     // User interface elements
     interval Button(const interval& name) override;

@@ -1,7 +1,8 @@
 #include "interval_algebra.hh"
 #include "interval_def.hh"
 
-namespace itv {
+namespace itv
+{
 //------------------------------------------------------------------------------------------
 // Missing operations. A default imùplementation is provided for the code to compile. A real implementation hyas to be
 // provided.
@@ -71,6 +72,11 @@ interval interval_algebra::WRTbl(const interval& n, const interval& g, const int
 {
     return interval(0);
 }
+interval interval_algebra::Gen(const interval& x)
+{
+    return interval(0);
+}
+
 interval interval_algebra::SoundFile(const interval& label)
 {
     return interval(0);
@@ -121,6 +127,20 @@ interval interval_algebra::FloatNum(double x)
     return interval(0);
 }
 interval interval_algebra::Label(const std::string& x)
+{
+    return interval(0);
+}
+
+// Foreign functions
+interval interval_algebra::ForeignFunction(const std::vector<interval>& ff)
+{
+    return interval(0);
+}
+interval interval_algebra::ForeignVar(const interval& type, const interval& name, const interval& file)
+{
+    return interval(0);
+}
+interval interval_algebra::ForeignConst(const interval& type, const interval& name, const interval& file)
 {
     return interval(0);
 }
