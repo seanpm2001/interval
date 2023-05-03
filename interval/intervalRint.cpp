@@ -28,7 +28,7 @@ namespace itv {
 
 interval interval_algebra::Rint(const interval& x)
 {
-    return {rint(x.lo()), rint(x.hi())};
+    return {rint(x.lo()), rint(x.hi()), 0}; // round to nearest integral value => integer => precision 0
 }
 
 void interval_algebra::testRint()
