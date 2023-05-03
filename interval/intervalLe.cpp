@@ -31,7 +31,7 @@ static double myLe(double x, double y)
     return (x <= y);
 }
 
-interval interval_algebra::Le(const interval& x, const interval& y) const
+interval interval_algebra::Le(const interval& x, const interval& y)
 {
     return Ge(y, x);
 }

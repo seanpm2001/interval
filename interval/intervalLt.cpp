@@ -31,7 +31,7 @@ static double myLt(double x, double y)
     return (x < y);
 }
 
-interval interval_algebra::Lt(const interval& x, const interval& y) const
+interval interval_algebra::Lt(const interval& x, const interval& y)
 {
     return Gt(y, x);
 }

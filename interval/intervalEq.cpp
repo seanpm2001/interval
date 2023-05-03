@@ -31,7 +31,7 @@ static double myEq(double x, double y)
     return (x == y);
 }
 
-interval interval_algebra::Eq(const interval& x, const interval& y) const
+interval interval_algebra::Eq(const interval& x, const interval& y)
 {
     // boolean value => precision 0
     if (x.isEmpty() || y.isEmpty()) return interval{};

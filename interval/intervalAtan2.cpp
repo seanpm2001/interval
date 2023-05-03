@@ -110,24 +110,11 @@ interval interval_algebra::Atan2(const interval& y, const interval& x)
 void interval_algebra::testAtan2()
 {
     // std::cout << "Atan2 not implemented" << std::endl;
-<<<<<<< HEAD
-    analyzeBinaryMethod(10, 1000000, "atan2", interval(1, 2, -24), interval(1, 2, -24), atan2,
-                        &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 1000000, "atan2", interval(-1, 2, -24), interval(1, 2, -24), atan2,
-                        &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(1, 2, -24), atan2,
-                        &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(-1, 2, -24), atan2,
-                        &interval_algebra::Atan2);
-    analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(-2, -1, -24), atan2,
-                        &interval_algebra::Atan2);
-=======
     /* analyzeBinaryMethod(10, 1000000, "atan2", interval(1, 2, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
     analyzeBinaryMethod(10, 1000000, "atan2", interval(-1, 2, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
     analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(1, 2, -24), atan2, &interval_algebra::Atan2);
     analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(-1, 2, -24), atan2, &interval_algebra::Atan2);
     analyzeBinaryMethod(10, 1000000, "atan2", interval(-2, -1, -24), interval(-2, -1, -24), atan2, &interval_algebra::Atan2);*/
->>>>>>> da2b27e (Splits the X interval along zero instead of the Y interval in Atan2)
 
     analyzeBinaryMethod(10, 1000000, "atan2", interval(-1, 2, -24), interval(-1, 2, -24), atan2,
                         &interval_algebra::Atan2);
