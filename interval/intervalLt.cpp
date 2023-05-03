@@ -26,15 +26,24 @@ namespace itv {
 // interval Lt(const interval& x, const interval& y);
 // void testLt();
 
-interval interval_algebra::Lt(const interval& x, const interval& y)
+static double myLt(double x, double y)
+{
+    return (x < y);
+}
+
+interval interval_algebra::Lt(const interval& x, const interval& y) const
 {
     return Gt(y, x);
 }
 
 void interval_algebra::testLt()
 {
-    check("test algebra Lt", Lt(interval(5), interval(6, 10)), interval(1));
+    /* check("test algebra Lt", Lt(interval(5), interval(6, 10)), interval(1));
     check("test algebra Lt", Lt(interval(2, 5), interval(0, 2)), interval(0));
-    check("test algebra Lt", Lt(interval(-1, 1), interval(0, 10)), interval(0, 1));
+    check("test algebra Lt", Lt(interval(-1, 1), interval(0, 10)), interval(0, 1)); */
+
+    analyzeBinaryMethod(10, 200, "Lt", interval(-1, 1, 0), interval(-1, 1, 0), myLt, &interval_algebra::Lt);
+    analyzeBinaryMethod(10, 200, "Lt", interval(-10, 10, 0), interval(-10, 10, 0), myLt, &interval_algebra::Lt);
+    analyzeBinaryMethod(10, 2000, "Lt", interval(-10, 10), interval(-10, 10), myLt, &interval_algebra::Lt);    
 }
 }  // namespace itv

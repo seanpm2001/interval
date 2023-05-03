@@ -109,10 +109,16 @@ int main()
     // A.testDiv();
     // A.testAtan2();
 
-    A.testAnd();
+    // A.testAnd();
     // A.testNot();
     // A.testOr();
     // A.testXor();
+
+    A.testEq();
+    A.testGe();
+    A.testGt();
+    A.testLe();
+    A.testLt();
     
     /*{
         double u = 0.0;
