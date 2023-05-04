@@ -12,7 +12,7 @@ class interval_algebra : public faust_algebra<interval> {
 
    public:
     // Injections of external values
-    interval String(const std::string& x) const;
+    interval Label(const std::string& x) const;
     interval IntNum(int x) const;
     interval FloatNum(double x) const;
 

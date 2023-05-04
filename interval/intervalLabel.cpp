@@ -18,9 +18,9 @@
 
 namespace itv {
 //------------------------------------------------------------------------------------------
-// Interval IntNum
+// Interval Label
 
-interval interval_algebra::String(const std::string& x) const
+interval interval_algebra::Label(const std::string& x) const
 {
     return {NAN, NAN, 0};  // a string don't represent numbers, therefore the interval is empty
 }
