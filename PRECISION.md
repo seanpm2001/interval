@@ -104,7 +104,7 @@ $x^y = exp(y\cdot ln(x))$: since $exp$, $ln$ and multiplication have already be 
 # Avoiding absorption
 
 In the case of $pow$, we chain the computations of LSBs associated to $ln$, multiplication and $exp$.
-These can quickly get very fine precisions, and result in computations of the form $f(x + \epsilon) - f(x)$ where $\epsilon$ is so small compared to $x$ that in machine representation $x + \epsilon = x$, resulting in an infinite computed precision.
+These can quickly get very fine precisions, and result in computations of the form $f(x + u) - f(x)$ where $u$ is so small compared to $x$ that in machine representation $x + u = x$, resulting in an infinite computed precision.
 
 We thus need to rewrite precision computations so that these forms do not appear.
 We need to rewrite them in the case of $log$ and $exp$.
