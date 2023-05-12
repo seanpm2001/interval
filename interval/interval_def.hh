@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <limits>
+#include <limits.h>
 #include <algorithm>
 #include <string>
 
