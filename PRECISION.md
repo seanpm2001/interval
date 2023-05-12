@@ -142,6 +142,36 @@ If zero is not in the interval, the precision is attained at $\tilde x$, the bou
 Let's pose $\delta = (\tilde x+2^l)^n - \tilde x^n = \tilde x^n\cdot\left((1 + \frac{2^l}{\tilde x})^n - 1\right)$, with the precision being $\lfloor log\_2(\delta)\rfloor$. 
 If $2^l$ is very small, $(1+ \frac{2^l}{\tilde x})^n \approx 1 + n\cdot \frac{2^l}{\tilde x}$, and thus the precision is $\lfloor log\_2(\tilde x^n \cdot n \cdot \frac{2^l}{\tilde x})\rfloor = \lfloor (n-1)\cdot log\_2(\tilde x) + log\_2(n) + l\rfloor$.
 
+## 12/05 update
+
+In a shocking turn of events, it appears that computing Pow is not the only context in which functions are composed. 
+In fact, this happens about everywhere in any slightly context program.
+Thus, any function can potentially get an argument with a precision arising from a previous argument computation, which can get low enough that $x+u$ and $x$ have the same representation. 
+In consequence, we apply the same principle as above to every primitive real function.
+
+### Arccos
+
+If $u << x$, $$arccos(x+u) - arccos(x) = u \cdot arccos'(x) + o(u) = \frac{u}{\sqrt{1 - x^2}} + o(u)$$
+
+If the input interval contains $0$, at which the slope of the function is the lowest, 
+then $l\_{out} = \lfloor log\_2(u)\rfloor = l$.
+
+If it does not, then it is computed at point $x$ plosest to $0$ and the precision is 
+$l\_{out} = \lfloor log\_2(\frac{u}{\sqrt{1 - x^2}}) \rfloor = \lfloor l\_{in}- \frac{1}{2} \cdot log\_2(1 - x^2) \rfloor$.
+
+Note that one could prove that if $|x| < \frac{\sqrt{3}}{2}$, then $l\_{out} = l\_{in}$ 
+(but since this is not the case for all x we won't use this property in the implementation).
+
+### SinPi
+
+If $u << x$, 
+$$sinPi(x + u) - sinPi(x) = u \cdot \pi \cdot sinPi'(x) + \frac{u^2}{2}\cdot \pi^2 \cdot sinPi''(x) + o(u^2) = u \cdot \pi \cdot cosPi(x) - \frac{u^2}{2}\cdot \pi^2 \cdot sinPi(x) + o(u^2)$$.
+
+If the input interval contains a half-integer (for instance $\frac{1}{2}$), 
+then precision is computed at that point and becomes $l\_{out} = \lfloor log\_2(\frac{u^2}{2}\cdot \pi^2) \rfloor = 2\cdot(l_in + \lfloor log\_2(\pi)\rfloor) - 1 = 2\cdot l - 1$.
+
+If it doesn't, then precision is computed at point $x$ closest to a half-integer and becomes $l\_{out} = \lfloor log\_2(u\cdot\pi\cdot cosPi(x)) \rfloor = l + \lfloor log\_2(\pi) + log\_2(cosPi(x))\rfloor$
+
 # Backwards precision computation
 
 i.e., given an output precision $l_{out}$, determine an input precision $l_{in}$ such that $l_{in}$ would induce output precision $l_{out}$ in the direct direction.
