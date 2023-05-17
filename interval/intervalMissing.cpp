@@ -4,7 +4,7 @@
 namespace itv
 {
 //------------------------------------------------------------------------------------------
-// Missing operations. A default imùplementation is provided for the code to compile. A real implementation hyas to be
+// Missing operations. A default implementation is provided for the code to compile. A real implementation has to be
 // provided.
 
 interval interval_algebra::Nil()
