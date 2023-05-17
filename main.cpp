@@ -88,9 +88,9 @@ int main()
     //A.testAll();
     /*A.testExp();
     A.testLog();*/
-    A.testAcos(); 
-    /* A.testAsin();
+    //A.testAcos(); 
     A.testAcosh();
+    /* A.testAsin();
     A.testAsinh();
     A.testAtanh();
     A.testCosh();
