@@ -82,6 +82,7 @@ interval interval_algebra::Sin(const interval& x)
     if (precision == INT_MIN)
     {
         if (v != 0.5) precision = (int)floor(log2(M_PI*cos(M_PI*v))) + x.lsb();
+        else precision = 2*x.lsb();
     }
 
     return {lo, hi, precision};
