@@ -34,6 +34,10 @@ interval interval_algebra::Asinh(const interval& x)
 
     int precision = exactPrecisionUnary(asinh, v, sign * pow(2, x.lsb()));
 
+    if (precision == INT_MIN or taylor_lsb)
+        precision = floor(x.lsb() - (double)log2(1 + v*v)/2);
+
+
     return {asinh(x.lo()), asinh(x.hi()), precision};
 }
 
