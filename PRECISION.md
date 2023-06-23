@@ -105,6 +105,15 @@ The location of the minimum is determined with a similar method.
 
 $x^y = exp(y\cdot ln(x))$: since $exp$, $ln$ and multiplication have already be studied, we can thus compute the output interval and the LSB by chaining these well-known operations.
 
+### Mod, Remainder and Rint
+
+* Mod is implemented using the `std::fmod` C++ function, which is specified as: $fmod(x, y) = x - \lfloor \frac{x}{y} \rfloor \cdot y$. 
+Two conditions apply to it: it should be the same sign as $x$, and lesser than $y$ in magnitude.
+* Remainder is implemented using the `std::remainder` C++ function, which is specified as 
+$remainder(x,y) = x - n\cdot y$ where $n$ is the integer closest to $\frac{x}{y}$ (ties to even).
+This value might have sign opposite to $x$, unlike what $fmod$ does.
+* Rint is implemented using the `std::rint` C++ function, which rounds the argument to an integer value using the current rounding mode. 
+
 # Avoiding absorption
 
 In the case of $pow$, we chain the computations of LSBs associated to $ln$, multiplication and $exp$.
