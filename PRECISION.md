@@ -75,6 +75,10 @@ This approach can cause some rounding issues in the implementation: there can be
 
 Functions: $cos$, $tan$, $sin$
 
+### Update 23/06
+
+I ended up deciding against this solution because of the complications involved (in particular, the fact that using this correctly would involve having to detect expressions of the form $cos(\pi·x)$), and because distinguishing between images that are not adjacent doesn't seem to be necessary (this will have to be validated by experiments).
+
 ## Binary functions
 
 These are functions such as $atan2$ (computing the angle between a vector $(x, y)$ and the x-axis) and $pow$ (computing $x^y$). 
