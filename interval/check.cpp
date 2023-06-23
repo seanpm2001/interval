@@ -218,6 +218,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         // the loop has almost no chance of drawing X.hi(): we manually add it
         double sample = X.hi();  // not truncated since morally the interval boundaries should already have the right precision
         double y = f(sample);
+        // y = truncate(y, -30);
 
         measurements.insert(y);
 
@@ -234,6 +235,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
             double presample = rx(generator);
             sample    = truncate(presample, D.lsb()); 
             y         = f(sample);
+            // y         = truncate(y, -30); // workaround to avoid artefacts in trigonometric functions
 
             measurements.insert(y);
 
@@ -265,11 +267,11 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         itv::interval Z = (A.*mp)(X);
 
         if (Z >= Y and Z.lsb() <= Y.lsb()) {
-            double lsb = (Z.size() == 0) ? 1 : Y.size() / Z.size();
+            double precision = (Z.size() == 0) ? 1 : Y.size() / Z.size();
 
             std::cout << "\033[32m"
                       << "OK    " << e << ": " << title << "(" << X << ") = \t" << Z << "\t >= \t" << Y
-                      << "\t (precision " << lsb << ", LSB diff = " << Y.lsb() - Z.lsb() << ")"
+                      << "\t (precision " << precision << ", LSB diff = " << Y.lsb() - Z.lsb() << ")"
                       << "\033[0m" << std::endl;
         } else {
             std::cout << "\033[31m"
