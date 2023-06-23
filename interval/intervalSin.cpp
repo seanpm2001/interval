@@ -38,7 +38,6 @@ interval interval_algebra::Sin(const interval& x)
     if (precision == INT_MIN or taylor_lsb) precision = 2*x.lsb() - 1; // if x.lsb() is so small that the automatic computation doesn't work
 
     if (x.size() >= 2*M_PI) {
-        std::cout << "Interval was larger than a period" << std::endl;
         return {-1, 1, precision};
     }
 
@@ -68,16 +67,13 @@ interval interval_algebra::Sin(const interval& x)
 
     // precision if we don't hit the half integers
     if (i.hi() < 0.5*M_PI) {
-        std::cout << "Higher bound was closer" << std::endl;
         v = x.hi();
     } else if ((i.lo() > 0.5*M_PI and i.hi() < 1.5*M_PI) or (i.lo() > 1.5*M_PI and i.hi() < 2.5*M_PI)) {
         double delta_hi = ceil(i.hi()/M_PI + 0.5) - i.hi()/M_PI; 
         double delta_lo = i.lo()/M_PI - floor(i.lo()/M_PI - 0.5);
         if (delta_lo > delta_hi) {  // if i.hi is closer to its higher half-integer than i.lo() to its lower half-integer
-            std::cout << "Higher bound was closer" << std::endl;
             v = x.hi();
         } else {
-            std::cout << "Lower bound was closer" << std::endl;
             v = x.lo();
         }
     }
