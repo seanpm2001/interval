@@ -88,16 +88,18 @@ int main()
     // A.testAll();
     /*A.testExp();
     A.testLog();*/
-    // A.testAcos();
+    /*A.testAcos(); 
     A.testAcosh();
-    /* A.testAsin();
-    A.testAsinh();
-    A.testAtanh();
-    A.testCosh();
-    A.testLog10();
-    A.testSin();
+    A.testAsin();*/
+    // A.testAsinh();
+    // A.testAtan();
+    // A.testAtanh();
+    // A.testCosh();
+    // A.testLog10();
+    // A.testSin();
     A.testCos();
-    A.testSinh();
+    A.testSin();
+    /* A.testSinh();
     A.testSqrt();
     A.testTan();
     A.testTanh();*/
