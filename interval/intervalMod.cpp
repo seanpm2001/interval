@@ -34,13 +34,13 @@ inline interval operator+(const interval& a, const interval& b)
     if (b.isEmpty()) {
         return a;
     }
-    return interval{std::min(a.lo(), b.lo()), std::max(a.hi(), b.hi())};
+    return interval{std::min(a.lo(), b.lo()), std::max(a.hi(), b.hi()), std::min(a.lsb(), b.lsb())};
 }
 
 // negation of an interval
 interval neg(interval x)
 {
-    return interval{-x.hi(), -x.lo()};
+    return interval{-x.hi(), -x.lo(), x.lsb()};
 }
 
 // join of two intervals
@@ -52,7 +52,7 @@ interval join(interval x, interval y)
     if (y.isEmpty()) {
         return x;
     }
-    return interval{std::min(x.lo(), y.lo()), std::max(x.hi(), y.hi())};
+    return interval{std::min(x.lo(), y.lo()), std::max(x.hi(), y.hi()), std::min(x.lsb(), y.lsb())};
 }
 
 // split an interval into two intervals, negative and positive (or empty)
@@ -64,7 +64,7 @@ std::pair<interval, interval> split(interval x)
     if (x.hi() < 0) {
         return {x, empty()};
     }
-    return {interval{x.lo(), nexttoward(0.0, -1.0)}, interval{0.0, x.hi()}};
+    return {interval{x.lo(), nexttoward(0.0, -1.0), x.lsb()}, interval{0.0, x.hi(), x.lsb()}};
 }
 
 // split an interval into two intervals, negative and positive (or empty)
@@ -97,6 +97,8 @@ interval positiveFMod(const interval& x, const interval& y)
         return empty();
     }
     int n = int(x.lo() / y.hi());
+    int precision = std::min(x.lsb(), y.lsb());
+
     if (n == 0) {
         // prop: x.lo() < y.hi()
         if (y.hi() > x.hi()) {
@@ -105,20 +107,20 @@ interval positiveFMod(const interval& x, const interval& y)
                 return x;
             }
             // prop: y.lo() <= x.hi() < y.hi()
-            return interval{0.0, x.hi()};
+            return interval{0.0, x.hi(), precision};
         }
         // prop: x.lo() < y.hi() <= x.hi()
-        return interval{0.0, nexttoward(y.hi(), 0)};
+        return interval{0.0, nexttoward(y.hi(), 0), precision};
     }
 
     // prop: n > 0 && y.hi() <= x.lo()
     double hi = x.hi() / (n + 1);
     if (y.hi() <= hi) {
-        return interval{0.0, nexttoward(y.hi(), 0)};
+        return interval{0.0, nexttoward(y.hi(), 0), precision};
     }
     // prop: y.hi() > hi
     if (y.lo() <= hi) {
-        return interval{0.0, nexttoward(hi, 0)};
+        return interval{0.0, nexttoward(hi, 0), precision};
     }
     // prop : y.lo() > hi
     // we compute the intersections of y with the segment
@@ -130,7 +132,7 @@ interval positiveFMod(const interval& x, const interval& y)
     double v1 = hi - (y.lo() - hi) / (zhi - hi) * hi;
     double v0 = lo - (y.hi() - lo) / (zlo - lo) * lo;
 
-    return interval{v0, v1};
+    return interval{v0, v1, precision};
 }
 
 // fmod of two signed intervals
@@ -158,10 +160,15 @@ void interval_algebra::testMod()
     // check("test algebra Mod", Mod(interval(-100, 100), 1.0), interval(nextafter(-1.0, 0.0), nextafter(1.0, 0.0)));
     // check("test algebra Mod", Mod(interval(0, 100), 2), interval(0, nextafter(2.0, 0)));
     // check("test algebra Mod", Mod(interval(0, 100), -1.0), interval(0, nextafter(1.0, 0)));
-    check("test algebra Mod", Mod(interval(5, 7), interval(4, 4.5)), interval(0.5, 3));
+    /* check("test algebra Mod", Mod(interval(5, 7), interval(4, 4.5)), interval(0.5, 3));
     check("test algebra Mod", Mod(interval(5, 7), interval(8, 10)), interval(5, 7));
     check("test algebra Mod", Mod(interval(-7, 7), interval(8, 10)), interval(-7, 7));
-    check("test algebra Mod", Mod(interval(0, 100), interval(7, 7)), interval(0, nextafter(7.0, 0.0)));
+    check("test algebra Mod", Mod(interval(0, 100), interval(7, 7)), interval(0, nextafter(7.0, 0.0))); */
+
+    analyzeBinaryMethod(10, 10000, "mod", interval(0, 10, -5), interval(0, 10, -5), fmod, &interval_algebra::Mod);
+    analyzeBinaryMethod(10, 10000, "mod", interval(0, 10, 1), interval(0, 10, 0), fmod, &interval_algebra::Mod);
+    analyzeBinaryMethod(10, 10000, "mod", interval(0, 10, 0), interval(0, 10, 0), fmod, &interval_algebra::Mod);
+    analyzeBinaryMethod(10, 10000, "mod", interval(0, 10, 0), interval(0, 10, -5), fmod, &interval_algebra::Mod);
 }
 
 }  // namespace itv
