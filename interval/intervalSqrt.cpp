@@ -37,6 +37,13 @@ interval interval_algebra::Sqrt(const interval& x)
 
     // lowest slope at the highest bound of the interval
     int precision = exactPrecisionUnary(sqrt, x.hi(), -pow(2, x.lsb()));
+    if (precision == INT_MIN or taylor_lsb)
+    {
+        if (x.hi() == 0)
+            precision = floor(x.lsb()/2);
+        else
+            precision = floor(x.lsb() - log2(x.hi()) - 1); // sqrt(x+u) - sqrt(x) = 1/2 u/sqrt(x)
+    }
 
     return {sqrt(x.lo()), sqrt(x.hi()), precision};
 }
