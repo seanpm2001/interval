@@ -299,7 +299,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
                          bmth bm)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(1);
+    std::default_random_engine     generator(R());
     std::uniform_real_distribution rdx(Dx.lo(), Dx.hi());
     std::uniform_real_distribution rdy(Dy.lo(), Dy.hi());
     itv::interval_algebra          A;
