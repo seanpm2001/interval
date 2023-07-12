@@ -96,13 +96,14 @@ int main()
     // A.testAtanh();
     // A.testCosh();
     // A.testLog10();
+    // A.testLog();
     // A.testSin();
-    A.testCos();
-    A.testSin();
-    /* A.testSinh();
-    A.testSqrt();
+    // A.testCos();
+    // A.testSin();
+    // A.testSinh();
+    // A.testSqrt();
     A.testTan();
-    A.testTanh();*/
+    // A.testTanh();
     // A.testPow();
     // A.testAdd();
     // A.testMul();
@@ -116,7 +117,7 @@ int main()
     // A.testOr();
     // A.testXor();
 
-    A.testMod();
+    // A.testMod();
 
     /* A.testEq();
     A.testGe();
