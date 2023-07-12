@@ -102,8 +102,8 @@ int main()
     // A.testSin();
     // A.testSinh();
     // A.testSqrt();
-    A.testTan();
-    // A.testTanh();
+    // A.testTan();
+    A.testTanh();
     // A.testPow();
     // A.testAdd();
     // A.testMul();
