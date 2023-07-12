@@ -64,8 +64,11 @@ class interval {
             fLo = NAN;
             fHi = NAN;
         } else {
-            fLo = std::min(n, m);
-            fHi = std::max(n, m);
+            double u = pow(2, lsb);
+            double n_trunc = u*(double)floor(n/u);
+            double m_trunc = u*(double)floor(m/u);
+            fLo = std::min(n_trunc, m_trunc);
+            fHi = std::max(n_trunc, m_trunc);
         }
         fLSB = lsb;
     }
