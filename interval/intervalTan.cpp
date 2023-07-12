@@ -44,7 +44,7 @@ interval interval_algebra::Tan(const interval& x)
             precision = x.lsb();
         return {
             -HUGE_VAL, HUGE_VAL,
- // computes the precision at the first integer multiple of pi contained in the interval
+            precision
         };
     }
 
