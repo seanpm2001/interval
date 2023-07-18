@@ -102,7 +102,7 @@ int main()
     // A.testSin();
     // A.testSinh();
     // A.testSqrt();
-    A.testTan();
+    // A.testTan();
     // A.testTanh();
     // A.testPow();
     // A.testAdd();
@@ -151,4 +151,9 @@ int main()
     analyzeUnaryFunction(10, 1000, "rint", interval(-10000, 10000), rint);
     analyzeUnaryFunction(10, 1000, "floor", interval(-10000, 10000), floor);
     analyzeUnaryFunction(10, 1000, "ceil", interval(-10000, 10000), ceil);*/
+
+    interval X = interval(-10, 10, -10);
+    propagateBackwardsUnaryMethod("exp", &interval_algebra::Exp, X, -24);
+    std::cout << std::endl;
+    analyzeUnaryMethod(10, 40000, "exp", X, exp, &interval_algebra::Exp);
 }

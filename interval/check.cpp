@@ -395,3 +395,28 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
     }
     std::cout << std::endl;
 }
+
+/**
+ * @brief Adjusts the lsbs of an input interval to match a target output lsb
+ * 
+ * @param title name of the tested function
+ * @param mp the interval method of the studied function
+ * @param X the input interval
+ * @param l the target lsb for the output
+*/
+void propagateBackwardsUnaryMethod(const char* title, umth mp, itv::interval& X, int l)
+{
+    std::cout << "Shaving input " << X << " of " << title << " to achieve an output lsb of " << l << std::endl;
+
+    itv::interval_algebra A;
+    // itv::interval X = itv::interval(D.lo(), D.hi(), D.lsb());
+    itv::interval Z = (A.*mp)(X);
+
+    while (Z.lsb() < l) // the lsb of Z is more precise than l
+    {
+        X = itv::interval(X.lo(), X.hi(), X.lsb() + 1);
+        Z = (A.*mp)(X);
+    }
+
+    std::cout << "Input interval " << X << " is sufficient" << std::endl;
+}
