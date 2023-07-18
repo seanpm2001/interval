@@ -158,14 +158,18 @@ int main()
     analyzeUnaryMethod(10, 40000, "exp", X, exp, &interval_algebra::Exp);*/
 
     interval X = interval(-10, 10, -24);
-    std::cout << std::endl << "exp(cos("<< X << ")) = " << A.Exp(A.Cos(X)) << std::endl << std::endl;
-    propagateBackwardsComposition("exp", "cos", &interval_algebra::Exp, &interval_algebra::Cos, X, -24);
-    std::cout << std::endl << "exp(cos("<< X << ")) = " << A.Exp(A.Cos(X)) << std::endl;
+    std::vector<const char*> titles{ "sin", "exp", "cos"};
+    std::vector<umth> mps{&interval_algebra::Sin, &interval_algebra::Exp, &interval_algebra::Cos};
+    std::cout << std::endl << "sin(exp(cos("<< X << "))) = " << A.Sin(A.Exp(A.Cos(X))) << std::endl << std::endl;
+    propagateBackwardsComposition(titles, mps, X, -24);
+    std::cout << std::endl << "sin(exp(cos("<< X << "))) = " << A.Sin(A.Exp(A.Cos(X))) << std::endl;
     std::cout << "----------------" << std::endl << std::endl;
 
-    X = interval(1, 10, -24);
+    X = interval(1, 2, -24);
+    std::vector<const char*> titles2{"exp", "log"};
+    std::vector<umth> mps2{&interval_algebra::Exp, &interval_algebra::Log};
     std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl << std::endl;
-    propagateBackwardsComposition("exp", "log", &interval_algebra::Exp, &interval_algebra::Log, X, -24);
+    propagateBackwardsComposition(titles2, mps2, X, -24);
     std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl;
     std::cout << "----------------" << std::endl << std::endl;
 }
