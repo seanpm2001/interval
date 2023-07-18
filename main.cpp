@@ -152,8 +152,20 @@ int main()
     analyzeUnaryFunction(10, 1000, "floor", interval(-10000, 10000), floor);
     analyzeUnaryFunction(10, 1000, "ceil", interval(-10000, 10000), ceil);*/
 
-    interval X = interval(-10, 10, -10);
+    /* interval X = interval(-10, 10, -10);
     propagateBackwardsUnaryMethod("exp", &interval_algebra::Exp, X, -24);
     std::cout << std::endl;
-    analyzeUnaryMethod(10, 40000, "exp", X, exp, &interval_algebra::Exp);
+    analyzeUnaryMethod(10, 40000, "exp", X, exp, &interval_algebra::Exp);*/
+
+    interval X = interval(-10, 10, -24);
+    std::cout << std::endl << "exp(cos("<< X << ")) = " << A.Exp(A.Cos(X)) << std::endl << std::endl;
+    propagateBackwardsComposition("exp", "cos", &interval_algebra::Exp, &interval_algebra::Cos, X, -24);
+    std::cout << std::endl << "exp(cos("<< X << ")) = " << A.Exp(A.Cos(X)) << std::endl;
+    std::cout << "----------------" << std::endl << std::endl;
+
+    X = interval(1, 10, -24);
+    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl << std::endl;
+    propagateBackwardsComposition("exp", "log", &interval_algebra::Exp, &interval_algebra::Log, X, -24);
+    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl;
+    std::cout << "----------------" << std::endl << std::endl;
 }

@@ -397,7 +397,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
 }
 
 /**
- * @brief Adjusts the lsbs of an input interval to match a target output lsb
+ * @brief Adjusts the lsb of an input interval to match a target output lsb
  * 
  * @param title name of the tested function
  * @param mp the interval method of the studied function
@@ -419,4 +419,32 @@ void propagateBackwardsUnaryMethod(const char* title, umth mp, itv::interval& X,
     }
 
     std::cout << "Input interval " << X << " is sufficient" << std::endl;
+}
+
+/**
+ * @brief Adjusts the lsb of an input iterval to two composed functions to match a target output lsb
+ * 
+ * @param title1 name of the first tested function
+ * @param title2 name of the second tested function
+ * @param mp1 the interval method of the outermost function
+ * @param mp2 the interval method of the innermost function
+ * @param X the input interval
+ * @param l the target lsb for the output
+*/
+void propagateBackwardsComposition(const char* title1, const char* title2, umth mp1, umth mp2, itv::interval& X, int l)
+{
+    std::cout << "Shaving input " << X << " of " << title1 << " ○ " << title2 
+              << " to achieve an output lsb of " << l << std::endl << std::endl;
+
+    itv::interval_algebra A;
+    itv::interval Y = (A.*mp2)(X); // the intermediate interval
+    itv::interval Z = (A.*mp1)(Y); // the final interval
+
+    std::cout << title2 << "(" << X << ") = " << Y << std::endl;
+    std::cout << title1 << "(" << Y << ") = " << Z << std::endl;
+    
+    std::cout << std::endl;
+    propagateBackwardsUnaryMethod(title1, mp1, Y, l);
+    std::cout << std::endl;
+    propagateBackwardsUnaryMethod(title2, mp2, X, Y.lsb());
 }
