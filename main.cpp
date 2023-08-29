@@ -165,11 +165,11 @@ int main()
     std::cout << std::endl << "sin(exp(cos("<< X << "))) = " << A.Sin(A.Exp(A.Cos(X))) << std::endl;
     std::cout << "----------------" << std::endl << std::endl;
 
-    X = interval(1, 2, -24);
-    std::vector<const char*> titles2{"exp", "log"};
-    std::vector<umth> mps2{&interval_algebra::Exp, &interval_algebra::Log};
-    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl << std::endl;
+    X = interval(1, 10, -24);
+    std::vector<const char*> titles2{"log", "exp"};
+    std::vector<umth> mps2{ &interval_algebra::Log, &interval_algebra::Exp};
+    std::cout << std::endl << "log(exp("<< X << ")) = " << A.Log(A.Exp(X)) << std::endl << std::endl;
     propagateBackwardsComposition(titles2, mps2, X, -24);
-    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl;
+    std::cout << std::endl << "log(exp("<< X << ")) = " << A.Log(A.Exp(X)) << std::endl;
     std::cout << "----------------" << std::endl << std::endl;
 }
