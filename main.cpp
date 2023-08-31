@@ -157,7 +157,7 @@ int main()
     std::cout << std::endl;
     analyzeUnaryMethod(10, 40000, "exp", X, exp, &interval_algebra::Exp);*/
 
-    interval X = interval(-10, 10, -24);
+    /* interval X = interval(-10, 10, -24);
     std::vector<const char*> titles{ "sin", "exp", "cos"};
     std::vector<umth> mps{&interval_algebra::Sin, &interval_algebra::Exp, &interval_algebra::Cos};
     std::cout << std::endl << "sin(exp(cos("<< X << "))) = " << A.Sin(A.Exp(A.Cos(X))) << std::endl << std::endl;
@@ -172,4 +172,28 @@ int main()
     propagateBackwardsComposition(titles2, mps2, X, -24);
     std::cout << std::endl << "log(exp("<< X << ")) = " << A.Log(A.Exp(X)) << std::endl;
     std::cout << "----------------" << std::endl << std::endl;
+
+    X = interval(1, 10, -24);
+    std::vector<const char*> titles3{"exp", "log"};
+    std::vector<umth> mps3{ &interval_algebra::Exp, &interval_algebra::Log};
+    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl << std::endl;
+    propagateBackwardsComposition(titles3, mps3, X, -24);
+    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl;
+    std::cout << "----------------" << std::endl << std::endl; */
+
+    /* interval X = interval(1, 2, -24);
+    interval Y = interval(1, 10, -24);
+    std::cout << "pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl << std::endl;
+    propagateBackwardsBinaryMethod("pow", &interval_algebra::Pow, X, Y, -24);
+    std::cout << std::endl;
+    // analyzeBinaryMethod(10, 1000, "pow", X, Y, pow, &interval_algebra::Pow);
+    std::cout << "pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl; */
+
+    interval X = interval(1, 2, -24);
+    interval Y = interval(1, 10, -24);
+    std::cout << "max(" << X << ", " << Y << ") = " << A.Max(X, Y) << std::endl << std::endl;
+    propagateBackwardsBinaryMethod("max", &interval_algebra::Max, X, Y, -20);
+    std::cout << std::endl;
+    // analyzeBinaryMethod(10, 1000, "pow", X, Y, pow, &interval_algebra::Pow);
+    std::cout << "max(" << X << ", " << Y << ") = " << A.Max(X, Y) << std::endl;
 }
