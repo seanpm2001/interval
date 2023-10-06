@@ -34,7 +34,17 @@ static double sinPi(double x)
 
 interval interval_algebra::Sin(const interval& x)
 {
-    int precision = exactPrecisionUnary(sin, 0.5, pow(2, x.lsb()));
+    double u = pow(2, x.lsb()); // ulp associated to the lsb
+
+    // value of the interval at which the finest precision is computed
+    // by default, the FX number framing PI/2 the further away from it
+    double v = u*(double)floor(M_PI_2/u);
+    if (v - M_PI_2 < u/2) // if v is closer to PI/2 than its neighbor
+        v = v + u; // take the neighbor instead
+    
+    double delta = std::abs(M_PI_2 - v); // delta between the two points at which we compute the precision
+
+    int precision = exactPrecisionUnary(sin, v, delta);
     if (precision == INT_MIN or taylor_lsb) precision = 2*x.lsb() - 1; // if x.lsb() is so small that the automatic computation doesn't work
 
     if (x.size() >= 2*M_PI) {
@@ -62,23 +72,23 @@ interval interval_algebra::Sin(const interval& x)
         lo = -1;
     }
 
-    double v = 0.5*M_PI;  // value of the interval at which the finest precision is computed
-                     // defaults at 0.5, interchangeable with any other half-integer
-
     // precision if we don't hit the half integers
     if (i.hi() < 0.5*M_PI) {
         v = x.hi();
+        delta = u;
     } else if ((i.lo() > 0.5*M_PI and i.hi() < 1.5*M_PI) or (i.lo() > 1.5*M_PI and i.hi() < 2.5*M_PI)) {
         double delta_hi = ceil(i.hi()/M_PI + 0.5) - i.hi()/M_PI; 
         double delta_lo = i.lo()/M_PI - floor(i.lo()/M_PI - 0.5);
         if (delta_lo > delta_hi) {  // if i.hi is closer to its higher half-integer than i.lo() to its lower half-integer
             v = x.hi();
+            delta = u;
         } else {
             v = x.lo();
+            delta = u;
         }
     }
 
-    precision = exactPrecisionUnary(sin, v, pow(2, x.lsb()));
+    precision = exactPrecisionUnary(sin, v, delta);
     if (precision == INT_MIN or taylor_lsb)
     {
         if (v != 0.5*M_PI) precision = x.lsb() + (int)floor(log2(abs(cos(v))));// (int)floor(log2(M_PI*cos(M_PI*v))) + x.lsb();
@@ -91,11 +101,11 @@ interval interval_algebra::Sin(const interval& x)
 void interval_algebra::testSin()
 {
     // analyzeUnaryMethod(5, 20000, "sin", interval(-1, 1, -3), sin, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2*M_PI, -3), sin, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2*M_PI, -5), sin, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2*M_PI, -10), sin, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2*M_PI, -15), sin, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2*M_PI, -20), sin, &interval_algebra::Sin);
-    analyzeUnaryMethod(10, 40000, "sin", interval(0, 2*M_PI, -24), sin, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 4*M_PI, -3), sin, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 4*M_PI, -5), sin, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 4*M_PI, -10), sin, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 4*M_PI, -15), sin, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 4*M_PI, -20), sin, &interval_algebra::Sin);
+    analyzeUnaryMethod(10, 40000, "sin", interval(0, 4*M_PI, -24), sin, &interval_algebra::Sin);
 }
 }  // namespace itv
