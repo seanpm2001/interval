@@ -125,6 +125,9 @@ int main()
     A.testLe();
     A.testLt();*/
 
+    // A.testAdd();
+    A.testMul();
+
     /*{
         double u = 0.0;
         double v = nextafter(u, -HUGE_VAL);
