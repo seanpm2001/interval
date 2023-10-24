@@ -435,13 +435,11 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
 
             measurements.insert(z);
 
-            if (!std::isnan(z)) {
-                if (z < zlo) {
-                    zlo = z;
-                }
-                if (z > zhi) {
-                    zhi = z;
-                }
+            if (z < zlo) {
+                zlo = z;
+            }
+            if (z > zhi) {
+                zhi = z;
             }
         }
 
