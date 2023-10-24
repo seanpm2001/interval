@@ -422,13 +422,11 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
         int z = f(X.hi(), Y.hi()); // no need to truncate: interval boundaries are already truncated
         measurements.insert((double)z);
 
-        if (!std::isnan(z)) {
-            if (z < zlo) {
-                zlo = z;
-            }
-            if (z > zhi) {
-                zhi = z;
-            }
+        if (z < zlo) {
+            zlo = z;
+        }
+        if (z > zhi) {
+            zhi = z;
         }
 
         // measure the interval Z using the numerical function f
