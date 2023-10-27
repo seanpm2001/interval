@@ -126,7 +126,7 @@ int main()
     A.testLt();*/
 
     // A.testAdd();
-    A.testMul();
+    // A.testMul();
 
     /*{
         double u = 0.0;
@@ -189,14 +189,34 @@ int main()
     std::cout << "pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl << std::endl;
     propagateBackwardsBinaryMethod("pow", &interval_algebra::Pow, X, Y, -24);
     std::cout << std::endl;
-    // analyzeBinaryMethod(10, 1000, "pow", X, Y, pow, &interval_algebra::Pow);
-    std::cout << "pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl; */
+    std::cout << "pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl; 
+    interval Z = A.Pow(X, Y);
+    std::cout << "exp(" << Z << ") = " <<  A.Exp(Z) << std::endl;
+    propagateBackwardsUnaryMethod("exp", &interval_algebra::Exp, Z, -24);
+    std::cout << "exp(" << Z << ") = " <<  A.Exp(Z) << std::endl;
+    std::cout << "----------------" << std::endl << std::endl;*/
 
-    interval X = interval(1, 2, -24);
-    interval Y = interval(1, 10, -24);
-    std::cout << "max(" << X << ", " << Y << ") = " << A.Max(X, Y) << std::endl << std::endl;
-    propagateBackwardsBinaryMethod("max", &interval_algebra::Max, X, Y, -20);
+    /* interval X = interval(0, 2, -6);
+    std::cout << "sin(" << X << ") = "  << A.Sin(X) << std::endl << std::endl;
+    X = itv::interval(X.lo(), X.hi(), 2*X.lsb());
+    std::cout << "sin(" << X << ") = "  << A.Sin(X) << std::endl << std::endl;*/
+    /* propagateBackwardsUnaryMethod("sin", &interval_algebra::Sin, X, -24);
     std::cout << std::endl;
-    // analyzeBinaryMethod(10, 1000, "pow", X, Y, pow, &interval_algebra::Pow);
-    std::cout << "max(" << X << ", " << Y << ") = " << A.Max(X, Y) << std::endl;
+    std::cout << "sin(" << X << ") = "  << A.Sin(X) << std::endl << std::endl;*/
+
+    /* interval X = interval(1, 2, -24);
+    interval Y = interval(1, 10, -24);
+    std::cout << "rsh(" << X << ", " << Y << ") = " << A.Rsh(X, Y) << std::endl << std::endl;
+    propagateBackwardsBinaryMethod("rsh", &interval_algebra::Rsh, X, Y, -20);
+    std::cout << std::endl;
+    std::cout << "rsh(" << X << ", " << Y << ") = " << A.Rsh(X, Y) << std::endl; */
+
+    // Addition test (wrapping)
+    interval X = interval(1, 9, 0);
+    interval Y = interval(1, 1, 0);
+    std::cout << X << " + " << Y << " = " << A.Add(X, Y) << std::endl;
+
+    X = interval(0, INT_MAX/2, 0);
+    Y = interval(1, INT_MAX/2 + 1, 0);
+    std::cout << X << " + " << Y << " = " << A.Add(X, Y) << std::endl;
 }
