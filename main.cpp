@@ -212,11 +212,11 @@ int main()
     std::cout << "rsh(" << X << ", " << Y << ") = " << A.Rsh(X, Y) << std::endl; */
 
     // Addition test (wrapping)
-    interval X = interval(1, 9, 0);
-    interval Y = interval(1, 1, 0);
-    std::cout << X << " + " << Y << " = " << A.Add(X, Y) << std::endl;
+    interval X = interval(1, HUGE_VAL, 0);
+    interval Y = interval(1, HUGE_VAL, 0);
+    std::cout << X << " / " << Y << " = " << A.Div(X, Y) << std::endl;
 
-    X = interval(0, INT_MAX/2, 0);
-    Y = interval(1, INT_MAX/2 + 1, 0);
-    std::cout << X << " + " << Y << " = " << A.Add(X, Y) << std::endl;
+    X = interval(-HUGE_VAL, HUGE_VAL, 0);
+    Y = interval(-HUGE_VAL, HUGE_VAL, 0);
+    std::cout << X << " / " << Y << " = " << A.Div(X, Y) << std::endl;
 }
