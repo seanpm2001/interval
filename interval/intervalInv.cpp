@@ -44,8 +44,9 @@ interval interval_algebra::Inv(const interval& x)
     // if v is infinite, this means that images of interval elements will get closer and closer
     // but since we're writing the fixed-point numbers on at most 31 bits of MSB
     // we can take the max number to be an integer bound
+    // and this one will give a finite precision, unlike a floating-point infinity
     if (std::isinf(v))
-        sign == 1 ? v = INT_MAX : v = INT_MIN;
+        sign == -1 ? v = INT_MAX : v = INT_MIN;
 
     int precision = exactPrecisionUnary(inv, v, sign * pow(2, x.lsb()));
     if (precision == INT_MIN or taylor_lsb)
