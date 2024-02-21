@@ -212,11 +212,30 @@ int main()
     std::cout << "rsh(" << X << ", " << Y << ") = " << A.Rsh(X, Y) << std::endl; */
 
     // Addition test (wrapping)
-    interval X = interval(1, HUGE_VAL, 0);
+    /* interval X = interval(1, HUGE_VAL, 0);
     interval Y = interval(1, HUGE_VAL, 0);
-    std::cout << X << " / " << Y << " = " << A.Div(X, Y) << std::endl;
+    std::cout << X << " / " << Y << " = " << A.Div(X, Y) << std::endl;*/
 
-    X = interval(-HUGE_VAL, HUGE_VAL, 0);
-    Y = interval(-HUGE_VAL, HUGE_VAL, 0);
-    std::cout << X << " / " << Y << " = " << A.Div(X, Y) << std::endl;
+    /* interval X = interval(-HUGE_VAL, HUGE_VAL, -780);
+    interval Y = interval(-HUGE_VAL, HUGE_VAL, -804);
+    std::cout << X << " / " << Y << " = " << A.Div(X, Y) << std::endl;*/
+
+    interval X = interval(-HUGE_VAL, HUGE_VAL, -23);
+    std::cout << X << std::endl;
+    interval Y = A.Inv(X);
+    std::cout << Y << std::endl;
+    std::cout << A.Inv(Y) << std::endl;
+    X = interval(-HUGE_VAL, HUGE_VAL, -20);
+    std::cout << X << std::endl;
+    std::cout << A.Inv(X) << std::endl;
+    // propagateBackwardsUnaryMethod("inv", &interval_algebra::Inv, X, -24);
+    // std::cout << X << std::endl;
+
+    /* interval X = interval(10, 10, -29);
+    interval Y = interval(-HUGE_VAL, HUGE_VAL, -61);
+    std::cout << "Pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl;*/
+
+    /* interval X = interval(0.5,96000,-65);
+    interval Y = interval(23.4489,23.4489,-958);
+    std::cout << X << "/" << Y << " = " << A.Div(X, Y) << std::endl;*/
 }
