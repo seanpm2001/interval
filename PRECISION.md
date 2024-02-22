@@ -2,7 +2,7 @@ This document describes how we compute the output precision of a function over a
 
 # General principle
 
-We consider a function $f$ that we study over the interval $[lo;hi]$, with $lo < hi$. The fixpoint format for the input is given, we denote its lsb $l$ and $ε = 2^l$ the gap between two consecutive numbers. The goal is to determine the minimum of $|f(x) - f(y)|$ with $x$, $y$ ranging over $[lo;hi]$, which will inform us of the minimum number of digits needed to distinguish between all the images of $f$ over $[lo;hi]$.
+We consider a function $f$ that we study over the interval $[lo;hi]$, with $lo < hi$. The fixpoint format for the input is given, we denote its lsb $l$ and $u = 2^l$ the gap between two consecutive numbers. The goal is to determine the minimum of $|f(x) - f(y)|$ with $x$, $y$ ranging over $[lo;hi]$, which will inform us of the minimum number of digits needed to distinguish between all the images of $f$ over $[lo;hi]$.
 
 This minimum number of digits needed to distinguish between two numbers $x$ and $y$ is linked to the notion of their Least Common Bit (LCB), that is the position of the first bit at which they differ.
 If two non-negative numbers $x$ and $y$ have LCB $-k$, then $|x-y|\le 2^{-k}$ and $log_2|x-y| \le LCB(x, y)$: thus, $log_2|x-y|$ is a sound approximation of their LCB.
@@ -12,7 +12,7 @@ In the case of monotonous functions, this minimum will be attained for two conse
 
 When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions $sin$, $cos$ and $tan$. We study modified versions of these functions to get around this difficulty and get back to the case where the minimum is between two consecutive numbers.
 
-The overall goal is to find the proper $x$ and $±ε$ for each usual function $f$. After that, the target lsb is given by $prec(f, x, ±u) = ⌊log₂(|f(x±u) - f(x)|)⌋$.
+The overall goal is to find the proper $x$ and $±u$ for each usual function $f$. After that, the target lsb is given by $prec(f, x, ±u) = ⌊log₂(|f(x±u) - f(x)|)⌋$.
 
 ## Implementation conventions
 
@@ -33,7 +33,7 @@ acos is the reciprocal of the cosine function.
 
 It is defined over the interval ]-1;1[, so we restrict the input interval by intersecting it with this domain. If this intersection is empty, the output has no valid value and thus the output interval is empty as well.
 
-Its derivative attains a global minimum at point 0 (and diverges towards $\pm \infty$ at the bounds of the interval). If 0 is included in the interval $[lo; hi]$, we compute $prec(f, 0, ±ε)$. Otherwise, if $0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +u)$, and if $0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -u)$.
+Its derivative attains a global minimum at point 0 (and diverges towards $\pm \infty$ at the bounds of the interval). If 0 is included in the interval $[lo; hi]$, we compute $prec(f, 0, ±u)$. Otherwise, if $0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +u)$, and if $0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -u)$.
 
 If the precision computed with this method is not sound (ie, the inferred precision is infinite), then we fall back on a less accurate precision determination method, based on the Taylor expansion of $acos$:
 $|acos(x + u) - acos(x)| = |u\cdot\frac{-1}{\sqrt{1 - x^2}}|$.
@@ -48,7 +48,7 @@ It is a concave function.
 
 The derivative is decreasing, so the lowest slope is attained at the high end of the interval.
 
-We compute $prec(f, hi, -ε)$, with $-ε$ is in order to evaluate $f$ at a point that is in the interval.
+We compute $prec(f, hi, -u)$, with $-u$ is in order to evaluate $f$ at a point that is in the interval.
 
 # Typology of functions
 
@@ -72,7 +72,7 @@ We express it as the composition of multiplication and the inverse.
 
 The derivative is increasing, so the lowest slope is attained at the low end of the interval.
 
-We thus compute $prec(f, lo, +ε)$.
+We thus compute $prec(f, lo, +u)$.
 
 Functions: $exp$, inverse on $]0; +\infty[$
 
@@ -80,13 +80,13 @@ Functions: $exp$, inverse on $]0; +\infty[$
 
 The derivative is decreasing, so the lowest slope is attained at the high end of the interval.
 
-We compute $prec(f, hi, -ε)$, with $-ε$ is in order to evaluate $f$ at a point that is in the interval.
+We compute $prec(f, hi, -u)$, with $-u$ is in order to evaluate $f$ at a point that is in the interval.
 
 Functions: $log$, $log_{10}$, $acosh$, $\sqrt{\;}$, inverse on $]-\infty; 0[$
 
 ## The lowest slope is attained at one point (typically zero)
 
-The derivative attains a global minimum at a point $x0$. If $x0$ is included in the interval $[lo;hi]$, we compute $prec(f, x0, ±ε)$. Otherwise, if $x0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +ε)$, and if $x0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -ε)$.
+The derivative attains a global minimum at a point $x0$. If $x0$ is included in the interval $[lo;hi]$, we compute $prec(f, x0, ±u)$. Otherwise, if $x0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +u)$, and if $x0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -u)$.
 
 Functions: $acos$, $asin$, $atanh$, $cosh$, $sinh$ ($x_0=0$ for all).
 
@@ -94,7 +94,7 @@ Functions: $acos$, $asin$, $atanh$, $cosh$, $sinh$ ($x_0=0$ for all).
 
 The minimum of the derivative over $[lo;hi]$ is attained at whichever has the highest absolute value, since the derivative of an even function is odd.
 
-We thus compute $prec(f, hi, -ε)$ if $|hi| > |lo|$ and $prec(f, lo, +ε)$ otherwise.
+We thus compute $prec(f, hi, -u)$ if $|hi| > |lo|$ and $prec(f, lo, +u)$ otherwise.
 
 Functions: $asinh$, $atan$, $tanh$
 
@@ -104,8 +104,8 @@ Lowest slope is attained periodically at multiples or half-multiples of $π$. Ho
 
 Thus, we instead chose to study $cosPi : x \mapsto cos(π\*x)$, $sinPi : x \mapsto sin(π\*x)$ and $tanPi : x \mapsto tan(π\*x)$, where the lowest slopes are attained at integer or half-integer numbers, which have the advantage of being representable in a fixpoint format. Besides, this form corresponds to the one that is typically used in DSP applications.
 
-The input interval $[lo; hi]$ is normalised to $[lo'; hi']$ such that $0 ≤ lo' ≤ 2$ and $hi' - lo' = hi - lo$. We then test the translated interval for an integer or half-integer $k$, depending on the function considered. In that case, we compute $prec(f, k, ±ε)$. 
-If there is no integer in the translated interval, we compute $prec(f, lo', +ε)$ if $lo'$ is closer to its closest integer than $hi'$ and $prec(f, hi', -ε)$ otherwise.
+The input interval $[lo; hi]$ is normalised to $[lo'; hi']$ such that $0 ≤ lo' ≤ 2$ and $hi' - lo' = hi - lo$. We then test the translated interval for an integer or half-integer $k$, depending on the function considered. In that case, we compute $prec(f, k, ±u)$. 
+If there is no integer in the translated interval, we compute $prec(f, lo', +u)$ if $lo'$ is closer to its closest integer than $hi'$ and $prec(f, hi', -u)$ otherwise.
 
 This approach can cause some rounding issues in the implementation: there can be $x$ and $y$ such that $cos(π\*x)$ and $cos(π\*y)$ are mathematically equal but for which the roundings of $π\*x$ and $π\*y$ cause their images through cos to be slightly different, resulting in a measured lsb much lower than what is actually needed.
 
