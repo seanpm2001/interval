@@ -37,9 +37,11 @@ Determining the LSB is a more subtle task.
 On the one hand, we would like to minimise the use of resources, which means using the coarsest precision we can afford (i.e., the LSB with the highest value), but on the other hand, this should not be done at the cost of signal quality. 
 The property we have chosen as criterion to link the input and output LSBs is the pseudo-injectivity property defined as follows.
 
-**Notation**: $\lfloor x \rfloor_l$ denotes the truncation of the real number $x$ up to $l$ bits.
+**Notation**: $u = 2^l$ denotes the gap between two consecutive fixed-point numbers with precision $l$.
 
-**Notation**: $[a;b]_l$ denotes the interval $[a;b]$ with LSB $l$: $[a;b]_l = [a;b]\cap 2^l\mathbb{Z}$
+**Notation**: $\lfloor x \rfloor_l = u \cdot \lfloor \frac{x}{u} \rfloor\$ denotes the truncation of the real number $x$ up to $l$ bits.
+
+**Notation**: $[a;b]_l$ denotes the interval $[a;b]$ with LSB $l$: $[a;b]_l = [a;b]\cap u\mathbb{Z}$
 
 **Pseudo-injectivity property**:
 We say that the fixed-point representation of a unary, real function $f : [a; b] \rightarrow \mathbb{R}$ with input LSB $l_{in}$ and output LSB $l_{out}$ respects the pseudo-injectivity property if

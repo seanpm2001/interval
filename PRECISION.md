@@ -8,7 +8,7 @@ This minimum number of digits needed to distinguish between two numbers $x$ and 
 If two non-negative numbers $x$ and $y$ have LCB $-k$, then $|x-y|\le 2^{-k}$ and $log_2|x-y| \le LCB(x, y)$: thus, $log_2|x-y|$ is a sound approximation of their LCB.
 This is particularly useful in situations where we do not have direct access to the digits of the numbers, for example when studying them in a general abstract setting.
 
-In the case of monotonous functions, this minimum will be attained for two consecutive arguments: $|f(x) - f(x±ε)|$. This $x$ is determined as the point where function $f$ has lowest slope over $[lo;hi]$.
+In the case of monotonous functions, this minimum will be attained for two consecutive arguments: $|f(x) - f(x±u)|$. This $x$ is determined as the point where function $f$ has lowest slope over $[lo;hi]$.
 
 When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions $sin$, $cos$ and $tan$. We study modified versions of these functions to get around this difficulty and get back to the case where the minimum is between two consecutive numbers.
 
