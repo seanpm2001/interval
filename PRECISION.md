@@ -12,7 +12,43 @@ In the case of monotonous functions, this minimum will be attained for two conse
 
 When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions $sin$, $cos$ and $tan$. We study modified versions of these functions to get around this difficulty and get back to the case where the minimum is between two consecutive numbers.
 
-The overall goal is to find the proper $x$ and $±ε$ for each usual function $f$. After that, the target lsb is given by $prec(f, x, ±ε) = ⌊log₂(|f(x±ε) - f(x)|)⌋$.
+The overall goal is to find the proper $x$ and $±ε$ for each usual function $f$. After that, the target lsb is given by $prec(f, x, ±u) = ⌊log₂(|f(x±u) - f(x)|)⌋$.
+
+## Implementation conventions
+
+The point at which the precision is computed, called $x$ above, is called `v` in the implementation. 
+Whether the next point of the computation $x \pm \epsilon$ is the one before or after $x$ is encoded in `sign`. This mostly depends on whether $x$ is the higher or lower bound of the interval: we chose `sign` so that $x \pm u$ remains in the interval.
+
+# Faust primitives
+
+Here we explain the logic behind the implementation of precision inference in each Faust primitive. The interval $[lo; hi]$ is the input interval of the function, possibly restricted to its definition domain.
+
+## Abs
+
+abs is a function that is equal to the identity function on positive values and its opposite on negative values. As such, its output precision should be the same as its input precision.
+
+## Acos 
+
+acos is the reciprocal of the cosine function.
+
+It is defined over the interval ]-1;1[, so we restrict the input interval by intersecting it with this domain. If this intersection is empty, the output has no valid value and thus the output interval is empty as well.
+
+Its derivative attains a global minimum at point 0 (and diverges towards $\pm \infty$ at the bounds of the interval). If 0 is included in the interval $[lo; hi]$, we compute $prec(f, 0, ±ε)$. Otherwise, if $0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +u)$, and if $0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -u)$.
+
+If the precision computed with this method is not sound (ie, the inferred precision is infinite), then we fall back on a less accurate precision determination method, based on the Taylor expansion of $acos$:
+$|acos(x + u) - acos(x)| = |u\cdot\frac{-1}{\sqrt{1 - x^2}}|$.
+
+We take the $\log_2$ of this expression to retrieve the relevant number of bits:
+$l' = l + \frac{1}{2}\log_2(1 - x^2)$.
+
+## Acosh
+
+acosh is the reciprocal of the cosh (hyperbolic cosine) function.
+It is a concave function. 
+
+The derivative is decreasing, so the lowest slope is attained at the high end of the interval.
+
+We compute $prec(f, hi, -ε)$, with $-ε$ is in order to evaluate $f$ at a point that is in the interval.
 
 # Typology of functions
 
