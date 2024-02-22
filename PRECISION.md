@@ -12,7 +12,7 @@ In the case of monotonous functions, this minimum will be attained for two conse
 
 When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions $sin$, $cos$ and $tan$. We study modified versions of these functions to get around this difficulty and get back to the case where the minimum is between two consecutive numbers.
 
-The overall goal is to find the proper $x$ and $±u$ for each usual function $f$. After that, the target lsb is given by $prec(f, x, ±u) = ⌊log₂(|f(x±u) - f(x)|)⌋$.
+The overall goal is to find the proper $x$ and $±u$ for each usual function $f$. After that, the target lsb is given by $l' = prec(f, x, ±u) = ⌊log₂(|f(x±u) - f(x)|)⌋$.
 
 ## Implementation conventions
 
@@ -31,7 +31,7 @@ abs is a function that is equal to the identity function on positive values and 
 
 acos is the reciprocal of the cosine function.
 
-It is defined over the interval ]-1;1[, so we restrict the input interval by intersecting it with this domain. If this intersection is empty, the output has no valid value and thus the output interval is empty as well.
+It is defined over the interval $]-1;1[$, so we restrict the input interval by intersecting it with this domain. If this intersection is empty, the output has no valid value and thus the output interval is empty as well.
 
 Its derivative attains a global minimum at point 0 (and diverges towards $\pm \infty$ at the bounds of the interval). If 0 is included in the interval $[lo; hi]$, we compute $prec(f, 0, ±u)$. Otherwise, if $0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +u)$, and if $0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -u)$.
 
@@ -39,16 +39,28 @@ If the precision computed with this method is not sound (ie, the inferred precis
 $|acos(x + u) - acos(x)| = |u\cdot\frac{-1}{\sqrt{1 - x^2}}|$.
 
 We take the $\log_2$ of this expression to retrieve the relevant number of bits:
-$l' = l + \frac{1}{2}\log_2(1 - x^2)$.
+$l' = l - \frac{1}{2}\log_2(1 - x^2)$.
 
 ## Acosh
 
 acosh is the reciprocal of the cosh (hyperbolic cosine) function.
-It is a concave function. 
 
-The derivative is decreasing, so the lowest slope is attained at the high end of the interval.
+It is defined over the domain $[1; + \infty[$: we restrict the input interval by intersecting it with this domain. If the intersection is empty, the output interval is empty as well.
 
-We compute $prec(f, hi, -u)$, with $-u$ is in order to evaluate $f$ at a point that is in the interval.
+It is a concave function : its derivative is decreasing, so the lowest slope is attained at the high end of the interval. We compute $prec(f, hi, -u)$, with $-u$ is in order to always evaluate $f$ at a point that is in the interval.
+
+If this method computes an infinite precision, we fall back on a Taylor-based method: 
+$|acosh(x + u) - acosh(x)| = |u\cdot \frac{1}{x^ -1}|$,
+so $l' = l + \frac{1}{2}\log_2(hi^2 - 1)$.
+
+## Add
+
+Addition is a binary operator, and the above method, designed for unary, real functions, does not apply to it. We have to devise another precision computation technique. 
+
+Let us consider the addition of arguments $x$ and $y$, with respective precisions $l_x$ and $l_y$. Without loss of generality, let's assume that $l_x < l_y$, ie, $x$ is represented with more precision than $y$. In order to be able to distinguish the two sums $x + y$ and $x' + y$, where the operands $x$ and $x'$ only differ by their last bit, bits up to $l_x$ have to be conserved in the output.
+Thus, we establish that $l' = min(l_x, l_y)$ is the coarsest output precision that still respects pseudo-injectivity.
+
+Wrapping situations due to integer overflow have to be taken care of. In the case where both operands are integers, if their sum is higher than the biggest representable integer or lower than the smallest representable integer, the default behaviour is for the value to "wrap" around and get to the other end of the integer range. This results in the output interval of the operation being $[\texttt{INT_MIN}; \texttt{INT_MAX}]$.
 
 # Typology of functions
 
