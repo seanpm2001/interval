@@ -160,6 +160,18 @@ This is not the most satisfying solution, but since $\textrm{atan2}$ is not a fu
 
 atanh is the reciprocal of the tanh (hyperbolic tangent) function.
 
+It is defined over the $]-1;1[$ open interval. It tends towards $\pm \infty$ at the bounds of the interval. To account for the exclusion of $-1$ and $1$ from the definition interval, the `std::nexttoward` function is used to generate bounds as close to the excluded values as the `double` format permits.
+
+An empty input interval gives an empty output interval.
+
+Its derivative attains a minimum at $0$: we compute the precision at the point $x$ of smallest magnitude in the interval ($0$ if it is included).
+
+The Taylor fallback is computed as follows:
+$|atanh(x+u) - atanh(x)| = |u \cdot \frac{1}{1 - x^2}|$,
+so $l' = l' - \log_2(1 - x^2)$.
+
+
+
 # Typology of functions
 
 ## Binary operator
