@@ -118,9 +118,8 @@ so $l' = l - \log_2(1+ x^2)$.
 
 $\textrm{atan2}(y,x)$ represents the angle the vector of coordinates $(x,y)$ makes with the $(Ox^-)$ axis in the Cartesian plane. 
 
-It is computed using the following formula:
+It is computed using the following formula: $\textrm{atan2}(y, x) =$
 $$
-\textrm{atan2}(y, x) =
 \begin{align}
  \arctan\left(\frac{y}{x}\right) &\text{if } x > 0, \\
  \arctan\left(\frac{y}{x}\right) + \pi &\text{if } x < 0 \text{ and } y \ge 0, \\
@@ -150,7 +149,7 @@ The location of the minimum is determined with a similar method.
 
 ### Precision
 
-Computing the exact minimum precision verifying pseudo-injectivity is difficult for the $\textrm{atan2}$ function, as it has two arguments and is non-linear. We use the formula above to compute a sound precision, by applying the pseudo-injectivity closed formula on function $\atan$ and an input precision corresponding to the output precision of $\frac{y}{x}$.
+Computing the exact minimum precision verifying pseudo-injectivity is difficult for the $\textrm{atan2}$ function, as it has two arguments and is non-linear. We use the formula above to compute a sound precision, by applying the pseudo-injectivity closed formula on function $\arctan$ and an input precision corresponding to the output precision of $\frac{y}{x}$.
 
 We were not able to verify that this solution is optimal.
 
