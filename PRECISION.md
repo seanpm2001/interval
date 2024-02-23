@@ -31,7 +31,7 @@ abs is a function that is equal to the identity function on positive values and 
 
 acos is the reciprocal of the cosine function.
 
-It is defined over the interval $]-1;1[$, so we restrict the input interval by intersecting it with this domain. If this intersection is empty, the output has no valid value and thus the output interval is empty as well.
+It is defined over the interval $[-1;1]$, so we restrict the input interval by intersecting it with this domain. If this intersection is empty, the output has no valid value and thus the output interval is empty as well.
 
 Its derivative attains a global minimum at point 0 (and diverges towards $\pm \infty$ at the bounds of the interval). If 0 is included in the interval $[lo; hi]$, we compute $prec(f, 0, ±u)$. Otherwise, if $0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +u)$, and if $0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -u)$.
 
@@ -51,7 +51,7 @@ It is a concave function : its derivative is decreasing, so the lowest slope is 
 
 If this method computes an infinite precision, we fall back on a Taylor-based method: 
 $|acosh(x + u) - acosh(x)| = |u\cdot \frac{1}{x^ -1}|$,
-so $l' = l + \frac{1}{2}\log_2(hi^2 - 1)$.
+so $l' = l - \frac{1}{2}\log_2(hi^2 - 1)$.
 
 ## Add
 
