@@ -114,6 +114,46 @@ The Taylor fallback is:
 $atan(x+u) - atan(x) = |u\cdot \frac{1}{1+x^2}|$, 
 so $l' = l - \log_2(1+ x^2)$.
 
+## atan2
+
+$\atan2(y,x)$ represents the angle the vector of coordinates $(x,y)$ makes with the $(Ox^-)$ axis in the Cartesian plane. 
+
+It is computed using the following formula:
+$$\atan2(y, x) =
+\begin{cases}
+ \arctan\left(\frac y x\right) &\text{if } x > 0, \\[5mu]
+ \arctan\left(\frac y x\right) + \pi &\text{if } x < 0 \text{ and } y \ge 0, \\[5mu]
+ \arctan\left(\frac y x\right) - \pi &\text{if } x < 0 \text{ and } y < 0, \\[5mu]
+ +\frac{\pi}{2} &\text{if } x = 0 \text{ and } y > 0, \\[5mu]
+ -\frac{\pi}{2} &\text{if } x = 0 \text{ and } y < 0, \\[5mu]
+ \text{undefined} &\text{if } x = 0 \text{ and } y = 0.
+\end{cases}$$
+
+### Interval
+
+To determine its output interval, we have to compute the maximum and minimum value it takes over the input intervals $[\underline{x};\overline{x}]\times [\underline{y};\overline{y}]$. These values depend on the quadrant(s) with which this domain intersects.
+
+This function presents a discontinuity on the negative part of the x-axis, where the angle leaps from $\pi$ to $-\pi$.
+
+If the domain over which we study $\atan2$ intersects this discontinuity, we separate it between positive and negative values of $y$, so that $\atan2$ is continuous over each of these sub-domains.
+
+Then, when studying a domain over which $\atan2$ is continuous, the maximum and the minimum are determined in function of the quadrant(s) intersected by the domain, considered in clockwise order for the maximum and counter-clockwise for the minimum.
+
+* If the domain intersects $\{(x, y) | x \le 0, y\ge0\}$, then the maximum of $atan2$ over the domain is attained at $(\underline{x}, \underline{y})$.
+* The next quadrant to consider is $\{(x, y) | x \ge 0, y\ge0\}$, where the maximum would lie at $(\underline{x},\overline{y})$.
+* If there is an intersection with $\{(x, y) | x \ge 0, y< 0\}$ but not the previous quadrants, look for the maximum at $(\overline{x}, \overline{y})$.
+* Finally, if the domain is entirely contained in the last quadrant $\{(x, y) | x > 0, y<0\}$, the maximum will be at $(\overline{x}, \underline{y})$.
+
+The location of the minimum is determined with a similar method.
+
+### Precision
+
+Computing the exact minimum precision verifying pseudo-injectivity is difficult for the $\atan2$ function, as it has two arguments and is non-linear. We use the formula above to compute a sound precision, by applying the pseudo-injectivity closed formula on function $\atan$ and an input precision corresponding to the output precision of $\frac{y}{x}$.
+
+We were not able to verify that this solution is optimal.
+
+This is not the most satisfying solution, but since $\atan2$ is not a function that tends to be used a lot in Faust programs, the impact should be limited.
+
 # Typology of functions
 
 ## Binary operator
@@ -178,22 +218,6 @@ I ended up deciding against this solution because of the complications involved 
 These are functions such as $atan2$ (computing the angle between a vector $(x, y)$ and the x-axis) and $pow$ (computing $x^y$). 
 These are typically tackled by expressing them as the composition of a binary operator and of an unary function that has already been studied.
 
-### atan2
-
-Since $atan2(y,x)$ represents the angle of $(x,y)$, the location of the maximum and minimum value it takes over a product of intervals $[\underline{x};\overline{x}]\times [\underline{y};\overline{y}]$ depends on the quadrant(s) which this domain intersects.
-
-This function presents a discontinuity on the negative part of the x-axis, where the angle leaps from $\pi$ to $-\pi$.
-
-If the domain over which we study $atan2$ intersects this discontinuity, we separate it between positive and negative values of $y$, so that $atan2$ is continuous over each of these sub-domains.
-
-Then, when studying a domain over which $atan2$ is continuous, the maximum and the minimum are determined in function of the quadrant(s) intersected by the domain, considered in clockwise order for the maximum and counter-clockwise for the minimum.
-
-* If the domain intersects $\{(x, y) | x \le 0, y\ge0\}$, then the maximum of $atan2$ over the domain is attained at $(\underline{x}, \underline{y})$.
-* The next quadrant to consider is $\{(x, y) | x \ge 0, y\ge0\}$, where the maximum would lie at $(\underline{x},\overline{y})$.
-* If there is an intersection with $\{(x, y) | x \ge 0, y< 0\}$ but not the previous quadrants, look for the maximum at $(\overline{x}, \overline{y})$.
-* Finally, if the domain is entirely contained in the last quadrant $\{(x, y) | x > 0, y<0\}$, the maximum will be at $(\overline{x}, \underline{y})$.
-
-The location of the minimum is determined with a similar method.
 
 ### pow
 
