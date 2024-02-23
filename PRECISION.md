@@ -118,15 +118,16 @@ so $l' = l - \log_2(1+ x^2)$.
 
 $\textrm{atan2}(y,x)$ represents the angle the vector of coordinates $(x,y)$ makes with the $(Ox^-)$ axis in the Cartesian plane. 
 
-It is computed using the following formula: $\textrm{atan2}(y, x) =$
-$$
+It is computed using the following formula:
+
+$$\textrm{atan2}(y, x) =
 \begin{align}
- \arctan\left(\frac{y}{x}\right) &\text{if } x > 0, \\
- \arctan\left(\frac{y}{x}\right) + \pi &\text{if } x < 0 \text{ and } y \ge 0, \\
- \arctan\left(\frac{y}{x}\right) - \pi &\text{if } x < 0 \text{ and } y < 0, \\
- +\frac{\pi}{2} &\text{if } x = 0 \text{ and } y > 0, \\
- -\frac{\pi}{2} &\text{if } x = 0 \text{ and } y < 0, \\
- \text{undefined} &\text{if } x = 0 \text{ and } y = 0.
+\arctan\left(\frac{y}{x}\right) &\text{ if } x > 0, \\
+\arctan\left(\frac{y}{x}\right) + \pi &\text{ if } x < 0 \text{ and } y \ge 0, \\
+\arctan\left(\frac{y}{x}\right) - \pi &\text{ if } x < 0 \text{ and } y < 0, \\
++\frac{\pi}{2} &\text{if } x = 0 \text{ and } y > 0, \\
+-\frac{\pi}{2} &\text{if } x = 0 \text{ and } y < 0, \\
+\text{undefined} &\text{ if } x = 0 \text{ and } y = 0.
 \end{align}
 $$
 
