@@ -170,6 +170,22 @@ The Taylor fallback is computed as follows:
 $|atanh(x+u) - atanh(x)| = |u \cdot \frac{1}{1 - x^2}|$,
 so $l' = l' - \log_2(1 - x^2)$.
 
+## Button
+
+A button is a Faust UI element that takes values $0$ when it is up and $1$ when it is down.
+It thus outputs a boolean signal, that only needs $1$ bit to be represented, and by consequence a LSB of $l'=0$.
+
+## Ceil
+
+Ceil is the ceiling function $x \mapsto \lceil x \rceil$, returning the integer right above its argument. 
+
+It returns an empty interval on an empty argument.
+
+It outputs integers, so it doesn't need to represent bits after the binary point: $l'=0$.
+
+## Checkbox
+
+Checkbox functions similarly to Button intervals-wise. Its boolean output warrants a precision of $l'=0$.
 
 
 # Typology of functions
@@ -206,13 +222,6 @@ The derivative attains a global minimum at a point $x0$. If $x0$ is included in 
 
 Functions: $acos$, $asin$, $atanh$, $cosh$, $sinh$ ($x_0=0$ for all).
 
-## Even function with derivative decreasing towards zero at ±∞
-
-The minimum of the derivative over $[lo;hi]$ is attained at whichever has the highest absolute value, since the derivative of an even function is odd.
-
-We thus compute $prec(f, hi, -u)$ if $|hi| > |lo|$ and $prec(f, lo, +u)$ otherwise.
-
-Functions: $asinh$, $atan$, $tanh$
 
 ## Trigonometric functions
 
