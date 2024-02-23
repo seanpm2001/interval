@@ -60,17 +60,57 @@ Addition is a binary operator, and the above method, designed for unary, real fu
 Let us consider the addition of arguments $x$ and $y$, with respective precisions $l_x$ and $l_y$. Without loss of generality, let's assume that $l_x < l_y$, ie, $x$ is represented with more precision than $y$. In order to be able to distinguish the two sums $x + y$ and $x' + y$, where the operands $x$ and $x'$ only differ by their last bit, bits up to $l_x$ have to be conserved in the output.
 Thus, we establish that $l' = min(l_x, l_y)$ is the coarsest output precision that still respects pseudo-injectivity.
 
-Wrapping situations due to integer overflow have to be taken care of. In the case where both operands are integers, if their sum is higher than the biggest representable integer or lower than the smallest representable integer, the default behaviour is for the value to "wrap" around and get to the other end of the integer range. This results in the output interval of the operation being $[\texttt{INT_MIN}; \texttt{INT_MAX}]$.
+Wrapping situations due to integer overflow have to be taken care of. In the case where both operands are integers, if their sum is higher than the biggest representable integer or lower than the smallest representable integer, the default behaviour is for the value to "wrap" around and get to the other end of the integer range. This results in the output interval of the operation being $[\texttt{INT\_MIN}; \texttt{INT\_MAX}]$.
+
+## And 
+
+And is a bitwise boolean operator.
+
+Example: `And(1011, 1100) = 1000`. Only the positions where both operands have bits set to `1` get set to `1` in the result.  
+
+If the intervals contain each more than one element (they are not singletons), 
+
+**TODO**
+
+## Asin 
+
+asin is the reciprocal of the sine function. It is very similar to the acos function in its analysis.
+
+It is defined over the interval $[-1; 1]$: we restrict its input interval to this domain. Applying the function to an empty interval yields an empty interval.
+
+Its derivative has a minimum in $0$: this is where we compute the precision if $0$ is included in the interval. Otherwise, the boundary of the interval closest to $0$ is used: $lo$ if $0 < lo$, $hi$ if $0 > hi$.
+
+In case of an infinite precision, the Taylor formula is:
+$|asin(x\pm u) - asin(x)| = |u \cdot \frac{1}{sqrt{1- x^2}}|$, 
+hence $l' = l - \frac{1}{2}\log_2(1- x^2)$.
+
+## Asinh
+
+asinh is the reciprocal of the sinh (hyperbolic sine) function. 
+
+It is defined over the whole $\mathbb{R}$ set.
+
+It is an increasing function, its derivative tends to 0 in both $+\infty$ and $-\infty$. Thus, the precision is computed at the point of the interval of highest magnitude: $hi$ if $|hi| > |lo|$, $lo$ otherwise.
+
+The Taylor fallback is:
+$|asinh(x+u) - asinh(x)| = |u \cdot \frac{1}{\sqrt{1 + x^2}}|$,
+so $l' = l - \frac{1}{2} \log_2(1 + x^2)$.
+
+## Atan
+
+atan is the reciprocal of the tangent function. 
+
+It is defined over the whole $\mathbb{R}$ set.
+
+It is an increasing function, whose derivative tends to 0 in $+\infty$ and $-\infty$. Thus, its precision is computed at the point of highest magnitude: $hi$ if $|hi| > |lo|$, $lo$ otherwise.
+
+The Taylor fallback is:
+$atan(x+u) - atan(x) = |u\cdot \frac{1}{1+x^2}|$, 
+so $l' = l - \log_2(1+ x^2)$.
 
 # Typology of functions
 
 ## Binary operator
-
-### Add
-
-$min(l_x, l_y)$ is exact: attained
-
-**TODO** Attained for whom?
 
 ### Mul
 
