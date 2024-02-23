@@ -14,6 +14,12 @@ When a function is not monotonous, it can happen that two non-consecutive fixpoi
 
 The overall goal is to find the proper $x$ and $±u$ for each usual function $f$. After that, the target lsb is given by $l' = prec(f, x, ±u) = ⌊log₂(|f(x±u) - f(x)|)⌋$.
 
+## Possible pitfalls
+
+If the input precision $l$ is too fine, then $f(x+u)$ and $f(x)$ might be so close that they will be computed as the same floating-point number. In that case, the computation of $f(x+u) - f(x)$ will yield zero and the computed output precision $-\infty$. 
+
+When a situation of this type occur, we fall back on another method for precision computation, based on a Taylor expansion of $f$. We approximate $|f(x+u) - f(x)|$ with $u\cdot|f'(x)|$ and convert it into the output precision $l' = l + \log_2(|f'(x)|)$.
+
 ## Implementation conventions
 
 The point at which the precision is computed, called $x$ above, is called `v` in the implementation. 
@@ -53,7 +59,7 @@ If this method computes an infinite precision, we fall back on a Taylor-based me
 $|acosh(x + u) - acosh(x)| = |u\cdot \frac{1}{x^ -1}|$,
 so $l' = l - \frac{1}{2}\log_2(hi^2 - 1)$.
 
-## Add
+## Add 
 
 Addition is a binary operator, and the above method, designed for unary, real functions, does not apply to it. We have to devise another precision computation technique. 
 
