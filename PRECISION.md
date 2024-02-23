@@ -66,7 +66,7 @@ Addition is a binary operator, and the above method, designed for unary, real fu
 Let us consider the addition of arguments $x$ and $y$, with respective precisions $l_x$ and $l_y$. Without loss of generality, let's assume that $l_x < l_y$, ie, $x$ is represented with more precision than $y$. In order to be able to distinguish the two sums $x + y$ and $x' + y$, where the operands $x$ and $x'$ only differ by their last bit, bits up to $l_x$ have to be conserved in the output.
 Thus, we establish that $l' = min(l_x, l_y)$ is the coarsest output precision that still respects pseudo-injectivity.
 
-Wrapping situations due to integer overflow have to be taken care of. In the case where both operands are integers, if their sum is higher than the biggest representable integer or lower than the smallest representable integer, the default behaviour is for the value to "wrap" around and get to the other end of the integer range. This results in the output interval of the operation being $[\texttt{INT\_MIN}; \texttt{INT\_MAX}]$.
+Wrapping situations due to integer overflow have to be taken care of. In the case where both operands are integers, if their sum is higher than the biggest representable integer or lower than the smallest representable integer, the default behaviour is for the value to "wrap" around and get to the other end of the integer range. This results in the output interval of the operation being `[INT\_MIN; INT\_MAX]`.
 
 ## And 
 
