@@ -10,7 +10,7 @@ This is particularly useful in situations where we do not have direct access to 
 
 In the case of monotonous functions, this minimum will be attained for two consecutive arguments: $|f(x) - f(x±u)|$. This $x$ is determined as the point where function $f$ has lowest slope over $[lo;hi]$.
 
-When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions $sin$, $cos$ and $tan$. We study modified versions of these functions to get around this difficulty and get back to the case where the minimum is between two consecutive numbers.
+When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions $sin$, $cos$ and $tan$. For these functions, we relax the constraint and only seek the lowest difference between two consecutive arguments.
 
 The overall goal is to find the proper $x$ and $±u$ for each usual function $f$. After that, the target lsb is given by $l' = prec(f, x, ±u) = ⌊log₂(|f(x±u) - f(x)|)⌋$.
 
@@ -187,6 +187,16 @@ It outputs integers, so it doesn't need to represent bits after the binary point
 
 Checkbox functions similarly to Button intervals-wise. Its boolean output warrants a precision of $l'=0$.
 
+## Cos
+
+Cos is the cosine trigonometric function.
+
+It is a periodic function of period $2\pi$. 
+Its derivative periodically attains $0$ at points of the form $k\cdot\pi$, $k\in\mathbb{Z}$. 
+These values are irrationnal numbers, which are not representable using floating-point or fixed-point numbers.
+The smallest gap between two consecutive images is attained at one of the multiple of $\pi$ present in the interval.
+While it is possible to bound how close to a multiple of $\pi$ a fixed-point number will be, 
+it is too costly to compute for this application, and we will consider that the difference computed at the smallest multiple of $\pi$ (i.e. 0) gives a sufficient precision.
 
 # Typology of functions
 
