@@ -1,11 +1,11 @@
 /* Copyright 2023 Yann ORLAREY
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ interval interval_algebra::Ne(const interval& x, const interval& y) const
     if ((x.hi() < y.lo()) || x.lo() > y.hi()) {
         return interval{1.0};
     }
-    if ((x.hi() == y.lo()) || x.lo() == y.hi()) {
+    if ((x.hi() == y.lo()) && x.lo() == y.hi()) {
         return interval{0.0};
     }
     return {0, 1};
@@ -42,8 +42,8 @@ interval interval_algebra::Ne(const interval& x, const interval& y) const
 
 void interval_algebra::testNe() const
 {
-    check("test algebra Ne", Ne(interval(0, 5), interval(-3, 10)), interval(0, 1));
+    check("test algebra Ne", Ne(interval(0, 5), interval(5, 10)), interval(0, 1));
     check("test algebra Ne", Ne(interval(0, 5), interval(8, 10)), interval(1));
-    check("test algebra Ne", Ne(interval(0, 0), interval(0, 0)), interval(0));
+    check("test algebra Ne", Ne(interval(1, 1), interval(1, 1)), interval(0, 0));
 }
 }  // namespace itv
