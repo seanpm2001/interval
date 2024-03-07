@@ -26,7 +26,7 @@ using namespace itv;
 int main()
 {
     // test interval representation
-    /*check("interval()", interval());
+    check("interval()", interval());
     check("interval(0,100)", interval(100.0, 0.0));
     check("interval(0)", interval(0, 0));
     check("interval(-10,0)", interval(0, -10));
@@ -74,18 +74,18 @@ int main()
     std::cout << "must be true " << (reunion(a, n) == a) << std::endl;
     std::cout << "must be true " << (intersection(a, n) == n) << std::endl;
 
-    std::cout << std::endl;*/
+    std::cout << std::endl;
 
     // interval v = singleton(2);
-    /* std::cout << singleton(2.5) << std::endl;
+    std::cout << singleton(2.5) << std::endl;
     std::cout << singleton(2.25) << std::endl;
     std::cout << singleton(2.1) << std::endl;
     std::cout << singleton(24) << std::endl;
     std::cout << singleton(44) << std::endl;
-    std::cout << singleton(255) << std::endl;*/
+    std::cout << singleton(255) << std::endl;
 
     interval_algebra A;
-    // A.testAll();
+    A.testAll();
     /*A.testExp();
     A.testLog();*/
     /*A.testAcos(); 
@@ -128,7 +128,7 @@ int main()
     // A.testAdd();
     // A.testMul();
 
-    /*{
+    {
         double u = 0.0;
         double v = nextafter(u, -HUGE_VAL);
         double w = nextafter(v, -HUGE_VAL);
@@ -153,7 +153,7 @@ int main()
 
     analyzeUnaryFunction(10, 1000, "rint", interval(-10000, 10000), rint);
     analyzeUnaryFunction(10, 1000, "floor", interval(-10000, 10000), floor);
-    analyzeUnaryFunction(10, 1000, "ceil", interval(-10000, 10000), ceil);*/
+    analyzeUnaryFunction(10, 1000, "ceil", interval(-10000, 10000), ceil);
 
     /* interval X = interval(-10, 10, -10);
     propagateBackwardsUnaryMethod("exp", &interval_algebra::Exp, X, -24);
