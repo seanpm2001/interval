@@ -196,7 +196,7 @@ Its derivative periodically attains $0$ at points of the form $k\cdot\pi$, $k\in
 These values are irrationnal numbers, which are not representable using floating-point or fixed-point numbers.
 The smallest gap between two consecutive images is attained at one of the multiple of $\pi$ present in the interval.
 While it is possible to bound how close to a multiple of $\pi$ a fixed-point number will be, 
-it is too costly to compute for this application, and we will consider that the difference computed at the smallest multiple of $\pi$ (i.e. 0) gives a sufficient precision.
+it is too costly to compute for this application, and we will consider that the difference computed at the smallest multiple of $\pi$ (i.e. 0) gives sufficient precision.
 
 # Typology of functions
 
