@@ -34,9 +34,13 @@ void check(const std::string& expected, const itv::interval& exp)
     std::stringstream ss;
     ss << exp;
     if (ss.str().compare(expected) == 0) {
-        std::cout << "OK: " << expected << std::endl;
+        std::cout << "\033[32m"
+            << "OK: " << expected 
+            << "\033[0m" << std::endl;
     } else {
-        std::cout << "ERR:  We got " << ss.str() << " instead of " << expected << std::endl;
+        std::cout << "\033[31m"
+            << "ERR:  We got " << ss.str() << " instead of " << expected 
+            << "\033[0m" << std::endl;
     }
 }
 
@@ -50,11 +54,17 @@ void check(const std::string& expected, const itv::interval& exp)
 void check(const std::string& testname, const itv::interval& exp, const itv::interval& res)
 {
     if (exp == res) {
-        std::cout << "OK: " << testname << " " << exp << " = " << res << std::endl;
+        std::cout << "\033[32m"
+            << "OK: " << testname << " " << exp << " = " << res 
+            << "\033[0m" << std::endl;
         if (exp.lsb() != res.lsb())
-            std::cout << "\t But precisions differ by " << exp.lsb() - res.lsb() << std::endl;
+            std::cout << "\033[33m"
+                << "\t But precisions differ by " << exp.lsb() - res.lsb() 
+                << "\033[0m" << std::endl;
     } else {
-        std::cout << "ERR:" << testname << " FAILED. We got " << exp << " instead of " << res << std::endl;
+        std::cout << "\033[31m"
+            << "ERR:" << testname << " FAILED. We got " << exp << " instead of " << res 
+            << "\033[0m" << std::endl;
     }
 }
 
@@ -68,9 +78,13 @@ void check(const std::string& testname, const itv::interval& exp, const itv::int
 void check(const std::string& testname, bool exp, bool res)
 {
     if (exp == res) {
-        std::cout << "OK: " << testname << std::endl;
+        std::cout << "\033[32m"
+            << "OK: " << testname 
+            << "\033[0m" << std::endl;
     } else {
-        std::cout << "ERR:" << testname << " FAILED. We got " << exp << " instead of " << res << std::endl;
+        std::cout << "\033[31m"
+            << "ERR:" << testname << " FAILED. We got " << exp << " instead of " << res 
+            << "\033[0m" << std::endl;
     }
 }
 
