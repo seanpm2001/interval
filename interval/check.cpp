@@ -51,6 +51,8 @@ void check(const std::string& testname, const itv::interval& exp, const itv::int
 {
     if (exp == res) {
         std::cout << "OK: " << testname << " " << exp << " = " << res << std::endl;
+        if (exp.lsb() != res.lsb())
+            std::cout << "\t But precisions differ by " << exp.lsb() - res.lsb() << std::endl;
     } else {
         std::cout << "ERR:" << testname << " FAILED. We got " << exp << " instead of " << res << std::endl;
     }

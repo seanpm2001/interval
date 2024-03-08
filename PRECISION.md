@@ -33,6 +33,16 @@ Here we explain the logic behind the implementation of precision inference in ea
 
 abs is a function that is equal to the identity function on positive values and its opposite on negative values. As such, its output precision should be the same as its input precision.
 
+### Integers
+
+When applied to integers, Abs is implemented using the `std::abs` C++ function. 
+This function has undefined behaviour when applied to `INT_MIN`, since `-INT_MIN = INT_MAX + 1` is not representable.
+We chose to interpret this fact as the indication that `INT_MIN` is out of bounds for Abs. 
+We deal with it the same way we deal with other domain violations: 
+we restrict the input interval to legal values and apply Abs to the restricted interval.
+
+`Abs([INT_MIN; x]) = [0; INT_MAX]`
+
 ## Acos 
 
 acos is the reciprocal of the cosine function.
@@ -65,6 +75,8 @@ Addition is a binary operator, and the above method, designed for unary, real fu
 
 Let us consider the addition of arguments $x$ and $y$, with respective precisions $l_x$ and $l_y$. Without loss of generality, let's assume that $l_x < l_y$, ie, $x$ is represented with more precision than $y$. In order to be able to distinguish the two sums $x + y$ and $x' + y$, where the operands $x$ and $x'$ only differ by their last bit, bits up to $l_x$ have to be conserved in the output.
 Thus, we establish that $l' = min(l_x, l_y)$ is the coarsest output precision that still respects pseudo-injectivity.
+
+### Integers
 
 Wrapping situations due to integer overflow have to be taken care of. In the case where both operands are integers, if their sum is higher than the biggest representable integer or lower than the smallest representable integer, the default behaviour is for the value to "wrap" around and get to the other end of the integer range. This results in the output interval of the operation being `[INT_MIN; INT_MAX]`.
 
