@@ -34,7 +34,11 @@ interval interval_algebra::Abs(const interval& x)
     }
     
     if (x.lsb() >= 0 and x.lo() <= (double)INT_MIN){ 
-        return {0, (double)INT_MAX, x.lsb()};
+        double lo = std::min(std::abs(x.hi()), (double)INT_MAX);
+        if (x.hi()>= 0) lo = 0;
+        return {lo,
+                (double)INT_MAX, 
+                x.lsb()};
     }
     if (x.hi() <= 0) {
         return {-x.hi(), -x.lo(), x.lsb()};
@@ -50,8 +54,12 @@ void interval_algebra::testAbs()
     analyzeUnaryMethod(
         10, 10000, "abs", interval(-10, 10, -15), [](double x) { return std::abs(x); }, &interval_algebra::Abs);
     // testing the behaviour on integers
-    check("abs", Abs(interval(INT_MIN, INT_MIN, 0)), interval(0, INT_MAX, 0));
-    check("abs", Abs(interval(INT_MIN, INT_MIN, 5)), interval(0, INT_MAX, 5));
+    check("abs", Abs(interval(INT_MIN, INT_MIN, 0)), interval(INT_MAX, INT_MAX, 0));
+    check("abs", Abs(interval(INT_MIN, -10, 0)), interval(10, INT_MAX, 0));
+    check("abs", Abs(interval(INT_MIN, 10, 0)), interval(0, INT_MAX, 0));
+    check("abs", Abs(interval(-10, INT_MAX, 0)), interval(0, INT_MAX, 0));
+
+    check("abs", Abs(interval(INT_MIN, INT_MIN, 5)), interval(INT_MAX, INT_MAX, 5));
     check("abs", Abs(interval(INT_MIN, INT_MIN, -5)), interval(-(float)INT_MIN, -(float)INT_MIN, -5));
 }
 }  // namespace itv

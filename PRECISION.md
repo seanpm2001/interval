@@ -41,7 +41,8 @@ We chose to interpret this fact as the indication that `INT_MIN` is out of bound
 We deal with it the same way we deal with other domain violations: 
 we restrict the input interval to legal values and apply Abs to the restricted interval.
 
-`Abs([INT_MIN; x]) = [0; INT_MAX]`
+
+**TODO**: Modifications will have to be made to the code generator as well to warn about domain violations.
 
 ## Acos 
 
