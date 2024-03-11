@@ -87,9 +87,27 @@ And is a bitwise boolean operator.
 
 Example: `And(1011, 1100) = 1000`. Only the positions where both operands have bits set to `1` get set to `1` in the result.  
 
-If the intervals contain each more than one element (they are not singletons), 
+`And` behaves like a mask: one of the arguments will "mask" the other in that only the bits where the first argument has a `1` will be preserved in the other, while the remaining bits will be indiscriminately set to `0`.
 
-**TODO**
+Considering that all bits beyond the LSB of an argument have value `0`, all output bits in these positions will have value `0` as well. 
+From the point of view of pseudo-injectivity, this means that these bits cannot be used to distinguish outputs, and can be ditched as such. 
+As a consequence, the output LSB will coarser or equal than the coarsest input LSB: $l' \ge max(l_x, l_y)$.
+
+In the case where neither of the intervals are singletons, ie when they both containt at least two values, this bound is attained.
+Indeed, these intervals are guaranteed to contain values with the last bit set to both `0` and `1` values. 
+This means that the "mask of 0s" will not expand prior to the LSB.
+
+*Example:* $[000; 010]_0 \wedge [100; 110]_1 = \{000; 001; 010\} \wedge \{100; 110\} = \{000; 010\} = [000; 010]_1$
+
+If one (or both) of the interval is a singleton, the mask can extend prior to the LSB. 
+We detect the position of bit with value `1` and the least weight, and treat it as the "actual" LSB of the singleton-interval. 
+The output LSB is the maximum of both input LSBs. 
+
+*Example:* $[000; 110]_0 \wedge [100]_1 = \{000; 001; 010; 011; 100; 101; 110\} \wedge \{100\} = \{000; 100\} = [000; 100]_2$
+
+Even though the input interval are specified with LSBs $0$ and $1$, the actual output interval can be represented with LSB $2$ without loss of information.
+
+**TODO** Explain the bounds of the interval.
 
 ## Asin 
 
