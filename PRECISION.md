@@ -212,7 +212,8 @@ Ceil is the ceiling function $x \mapsto \lceil x \rceil$, returning the integer 
 
 It returns an empty interval on an empty argument.
 
-It outputs integers, so it doesn't need to represent bits after the binary point: $l'=0$.
+Although its result is mathematically an integer, the implementation of the primitive uses `std::ceil`, whose return value is a floating-point number.
+We thus chose to set the output precision to $-1$, which might be under-optimal, but will force the interval library and the code generator to treat the result as floating-point.
 
 ## Checkbox
 
@@ -228,6 +229,15 @@ These values are irrationnal numbers, which are not representable using floating
 The smallest gap between two consecutive images is attained at one of the multiple of $\pi$ present in the interval.
 While it is possible to bound how close to a multiple of $\pi$ a fixed-point number will be, 
 it is too costly to compute for this application, and we will consider that the difference computed at the smallest multiple of $\pi$ (i.e. 0) gives sufficient precision.
+
+## Floor
+
+Floor is the floor function $x \mapsto \lfloor x \rfloor$, returning the integer right above its argument.
+
+It returns an empty interval on an empty argument.
+
+Although its result is mathematically an integer, the implementation of the primitive uses `std::floor`, whose return value is a floating-point number.
+We thus chose to set the output precision to $-1$, which might be under-optimal, but will force the interval library and the code generator to treat the result as floating-point.
 
 # Typology of functions
 

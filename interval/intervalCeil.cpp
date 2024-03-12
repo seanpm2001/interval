@@ -31,7 +31,9 @@ interval interval_algebra::Ceil(const interval& x)
     if (x.isEmpty()) {
         return x;
     }
-    return {ceil(x.lo()), ceil(x.hi()), 0};  // ceil yields integers, thus with LSB 0
+    return {ceil(x.lo()), ceil(x.hi()), -1 };  // even though the output of floor are mathematical integers,
+                                            // they are implemented as floats and thus should not be given precision 0,
+                                            // lest it be cast as an int
 }
 
 void interval_algebra::testCeil()
