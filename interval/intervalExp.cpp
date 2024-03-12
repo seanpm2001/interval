@@ -37,8 +37,8 @@ interval interval_algebra::Exp(const interval& x)
     double delta = exp(pow(2, x.lsb())) - 1;
     int    p1    = floor(x.lo() * log2(M_E));  // log2(exp(x.lo()))
     int    p2    = 0;
-    if (delta == 0) {  // avoid absorption of 2^l into x
-        p2 = x.lsb();  // exp(x) - 1 ≃ x if x very small, so delta2 ≃ pow(2, x.lsb())
+    if (delta == 0) {  // avoid absorption of 2^l into v
+        p2 = x.lsb();  // exp(v) - 1 ≃ v if v very small, so delta2 ≃ pow(2, x.lsb())
     } else {
         p2 = floor((double)log2(delta));
     }

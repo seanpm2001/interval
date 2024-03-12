@@ -29,6 +29,11 @@ namespace itv {
 interval interval_algebra::FloatCast(const interval& x)
 {
     return x;
+
+    // alternatively, to force the float typing
+    /*
+        return {x.lo(), x.hi(), std::min(x.lsb(), -1)};
+    */
 }
 
 void interval_algebra::testFloatCast()

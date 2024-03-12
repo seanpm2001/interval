@@ -230,6 +230,72 @@ The smallest gap between two consecutive images is attained at one of the multip
 While it is possible to bound how close to a multiple of $\pi$ a fixed-point number will be, 
 it is too costly to compute for this application, and we will consider that the difference computed at the smallest multiple of $\pi$ (i.e. 0) gives sufficient precision.
 
+## Cosh
+
+Cosh is the hyperbolic cosine function. 
+
+It is defined by $cosh(x) = \frac{e^x + e^{-x}}{2}$ over the whole $\mathbb{R}$ set.
+
+The derivative of $cosh$ is $sinh$, which attains its lowest absolute value $0$ in $0$. If $0 \in [lo; hi]$, then the precision is computed at 0, otherwise it is computed at the point of lowest magnitude: $hi$ if $|hi| < |lo|$, $lo$ otherwise.
+
+The Taylor fallback is:
+* if $x = 0$, we use the second-order Taylor expansion of $cosh$: $cosh(u) = \frac{u^2}{2} + o(u^2)$, so $l' = 2*l -1$.
+* if $x\neq 0$, $cosh(x + u) - cosh(x) = |u \cdot sinh(x)|$ so $l' = l + \log_2(|sinh(x)|)$.
+
+## Delay
+
+Delay is a Faust primitive used to temporally shift a signal. It takes two arguments: the signal that is delayed, and the signal indicating the amount of delay.  
+
+The output signal is composed of the same samples as the input signal, so it should be represented with the same precision. 
+
+## Div
+
+Div is the division operator. 
+It is expressed as the composition of multiplication and the inverse. 
+Both the bounds and the precision of the output interval are computed from the result of the Mul function.
+
+## Eq
+
+Eq is the boolean equality test between two signals. 
+It can return either $0$ or $1$, so no more than 1 bit is needed to represent the result: output precision is $0$.
+
+## Exp 
+
+Exp is the exponential function. 
+
+It is a convex function that is defined on the whole $\mathbb{R}$ set. 
+It is equal to its own derivative and the derivative has a minimum in $lo$.
+
+Due to the very high dynamic range of the exponential function, it actually has the potential to push usual floating-point formats to their limits (ie generate overflows and underflows).
+To manage that phenomenon, precision computation is implemented differently for the exponential than for other real functions.
+**TODO** Give a concrete example as to how a straightforward implementation could fail.
+
+The general formula for the computation of the output precision is $\log_2(e^{x+u} - e^x)$.
+Due to the properties of the exponential function, this expression can be rewritten as $\log_2(e^x\cdot(e^u -1)) = x\cdot\log_2(e) + \log_2(e^u - 1)$.
+We denote $\delta = e^u - 1$, $p_1 = x \cdot \log_2(e)$ and $p_2 = \log_2(\delta)$ to simplify proofs.
+
+If $u$ is too small, then $e^u$ is computed to be $1$ and $\delta = 0$.
+The threshold for such a $u$ is $2\cdot 10^{-16}$ (the difference between `1` and the next representable `double`), corresponding to an input LSB of $l = -52$. 
+
+If $u$ has large enough magnitude, $\delta$ can be computed directly as $e^u-1$ and $p_2$ as $\log_2(\delta)$.
+
+If $\delta$ is computed to be $0$, we replace it by the Taylor approximation of $e^u - 1 \approx u$, and then $p_2 = l$.
+
+## FloatCast
+
+FloatCast is the operator casting values into floats.
+
+The same precision is needed for the output as for the input.
+
+**Question:** what happens if we cast an `int` value in `float` using that rule? 
+The precision will remain above $0$ and the output value will be interpreted as `int` because of that, defeating the purpose of a `float` cast.
+It would maybe be better to reassign precisions greater than $0$ to $-1$ in order to force the `float` typing.
+
+## FloatNum
+
+FloatNum is the operator constructing a singleton interval from a floating-point number.
+The creation of the interval, including its precision, is deferred to the `singleton` function.
+
 ## Floor
 
 Floor is the floor function $x \mapsto \lfloor x \rfloor$, returning the integer right above its argument.
@@ -247,9 +313,6 @@ We thus chose to set the output precision to $-1$, which might be under-optimal,
 
 $l_x + l_y$: not sure if always attained but is a sound over-approximation.
 
-### Div
-
-We express it as the composition of multiplication and the inverse.
 
 ## Convex functions
 
@@ -330,15 +393,7 @@ $log_a(\overline{x} - 2^l) = log_a(\overline{x}\cdot(1 - \frac{2^l}{\overline{x}
 
 When $2^l/\overline{x}$ is so small that $x + 2^l$ gets rounded to $x$ (we will call that phenomenon absorption), it is reasonable to replace it by its first-order series expansion: $log_a(1 - \frac{2^l}{\overline{x}}) \approx -log_a(e)\cdot \frac{2^l}{\overline{x}}$.
 
-The final form of the precision is then $\lfloor log_2(log_a(e)\cdot \frac{2^l}{\overline{x}})\rfloor = \lfloor log_2(log_a(e)) + l - log_2(\overline{x})\rfloor$
-
-## Exponential
-
-$exp(\underline{x} + 2^l) - exp(\underline{x}) = exp(\underline{x})\cdot (exp(2^l) - 1)$
-
-If $2^l$ is very small, $exp(2^l) \approx 1 + 2^l$ and thus the former expression becomes $exp(\underline{x})\cdot 2^l$.
-
-Reinjected into the precision, this becomes $\lfloor log_2(exp(\underline{x})) + l\rfloor$.
+The final form of the precision is then $\lfloor log_2(log_a(e)\cdot \frac{2^l}{\overline{x}})\rfloor = \lfloor log_2(log_a(e)) + l - log_2(\overline{x})\rfloor$.
 
 ## Integer power
 
