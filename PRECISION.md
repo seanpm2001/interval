@@ -302,6 +302,103 @@ It returns an empty interval on an empty argument.
 Although its result is mathematically an integer, the implementation of the primitive uses `std::floor`, whose return value is a floating-point number.
 We thus chose to set the output precision to $-1$, which might be under-optimal, but will force the interval library and the code generator to treat the result as floating-point.
 
+## Ge
+
+Ge is the "greater than or equal" ($\ge$) boolean test.
+It can return either $0$ or $1$, so no more than 1 bit is needed to represent the result: output precision is $0$.
+
+## Gt 
+
+Gt is the "greater than" ($>$) boolean test.
+It can return either $0$ or $1$, so no more than 1 bit is needed to represent the result: output precision is $0$.
+
+## HSlider
+
+HSlider is the horizontal slider primitive, used to input numbers contained in a given range, with a given step between two values of the slider.
+The output interval represents all the value that can be represented by the slider.
+The input intervals are those representing the lower bound of the slider's range, its higher bound, its initial value and its step.
+Elements of a slider with range $[\underline{x}; \overline{x}]$ and step $s$ are of the form $\underline{x} + k \cdot s \le \overline{x}$ with $k\in \mathbb{Z}$.
+The values of the slider are aligned with the lower bound and regularly placed according to the step.
+In order to be able to correctly represent these values, the output precision should be the finer between the precision of the lower bound interval, the precision of the step interval, and the precision implied by the step (given by $\lfloor \log_2(s) \rfloor$)
+
+## IntCast
+
+IntCast is the operator casting values into integers.
+
+The result is an integer and thus has precision 0.
+
+## IntNum
+
+IntNum is the operator constructing a singleton interval from an integer.
+As an integer interval, its precision is set to $0$.
+
+## Inv
+
+Inv is the inverse function $x \mapsto \frac{1}{x}$.
+It is defined over the $\mathbb{R} - \{0\}$.
+
+The point of lowest slope is the point of highest magnitude.
+
+The Taylor fallback is 
+$\frac{1}{x + u} - \frac{1}{x} = \frac{-u}{x^2}$,
+so $l' = l - 2 \cdot \log_2(|x|)$.
+
+**Remarks:** 
+* We explored whether we could use the 31 MSB cap on fixed-point formats to cap the LSB of the inverse to -31.
+The experiments were not concluding, and we found that it is unwise to use properties of fixed-point numbers to infer properties that will be used by all manners of number representations.
+* Similarly, we wondered whether we could assume that no actual division by 0 will occur to give a lower boundary on the magnitude of numbers that will be inverted, and by consequence a higher boundary on the result.
+The experiments were not concluding either.
+
+## Label
+
+Label is used to create labels for UI elements.
+It is a string and doesn't represent a numerical value, thus its assigned interval is the empty interval.
+
+## Le
+
+Le is the "lower than or equal" ($\le$) boolean test.
+It can return either $0$ or $1$, so no more than 1 bit is needed to represent the result: output precision is $0$.
+It is implemented by inverting the arguments of `Ge`.
+
+## Log
+
+Log is the base-$e$ logarithm, or natural logarithm, denoted $\ln$ in mathematics. 
+
+Its lowest slope is attained at the higer bound of the interval.
+
+The Taylor fallback is expressed as:
+$\log(x+u) - \log(x) = \frac{u}{x}$,
+from which $l' = l - \log_2(|x|)$.
+
+## Log10 
+
+Log10 is the base-$10$ logarithm. 
+
+Like for the natural logarithm, its lowest slope is attained at the higher bound of the interval.
+
+The Taylor fallback is expressed as:
+$\log_{10}(x+u) - \log_{10}(x) = \frac{u}{x \cdot \ln(10)}$, 
+thus $l' = l - \log_2(|x|) - \log_2(\ln(10))$.
+
+## Lsh
+
+Lsh is the binary left-shift operator, also denoted `<<` in various languages.
+
+*Example:* `0b00001010 << 2 = 0b00101000`
+
+In terms of precision, this will shift the LSB by the number of positions $k$ indicated by the bitshift: 
+$l' = l + k$.
+
+The change in MSB will be reflected by a change of mangnitude in the bounds of the intervals: 
+output interval will be $[\underline{x}*2^k; \overline{x}*2^k]$.
+
+## Lt 
+
+Lt is the "lower than" ($<$) boolean test.
+It can return either $0$ or $1$, so no more than 1 bit is needed to represent the result: output precision is $0$.
+It is implemented by inverting the arguments to `Gt`.
+
+
 # Typology of functions
 
 ## Binary operator
