@@ -315,9 +315,14 @@ It can return either $0$ or $1$, so no more than 1 bit is needed to represent th
 ## HSlider
 
 HSlider is the horizontal slider primitive, used to input numbers contained in a given range, with a given step between two values of the slider.
+
 The output interval represents all the value that can be represented by the slider.
 The input intervals are those representing the lower bound of the slider's range, its higher bound, its initial value and its step.
-Elements of a slider with range $[\underline{x}; \overline{x}]$ and step $s$ are of the form $\underline{x} + k \cdot s \le \overline{x}$ with $k\in \mathbb{Z}$.
+
+The bounds of the output interval are computed from the bounds of the parameters' intervals:
+if the minimum value of the slider lies in $[\underline{x_{lo}}; \overline{x_{lo}}]$ and its maximum value in $[\underline{x_{hi}}; \overline{x_{hi}}]$, its output values lie in $[\underline{x_{lo}}; \overline{x_{hi}}]$.
+
+Discrete values that can be taken by a slider with range $[x_{lo}; x_{hi}]$ and step $s$ are of the form $x_{lo} + k \cdot s \le x_{hi}$ with $k\in \mathbb{Z}$.
 The values of the slider are aligned with the lower bound and regularly placed according to the step.
 In order to be able to correctly represent these values, the output precision should be the finer between the precision of the lower bound interval, the precision of the step interval, and the precision implied by the step (given by $\lfloor \log_2(s) \rfloor$)
 
