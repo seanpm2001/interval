@@ -285,11 +285,8 @@ If $\delta$ is computed to be $0$, we replace it by the Taylor approximation of 
 
 FloatCast is the operator casting values into floats.
 
-The same precision is needed for the output as for the input.
-
-**Question:** what happens if we cast an `int` value in `float` using that rule? 
-The precision will remain above $0$ and the output value will be interpreted as `int` because of that, defeating the purpose of a `float` cast.
-It would maybe be better to reassign precisions greater than $0$ to $-1$ in order to force the `float` typing.
+If we cast an `int` value in `float` without modifying the precision, it will remain above $0$ and the output value will be interpreted as `int` because of that, defeating the purpose of a `float` cast.
+Having observed that, we reassign precisions greater than $0$ to $-1$ in order to force the `float` typing.
 
 ## FloatNum
 
