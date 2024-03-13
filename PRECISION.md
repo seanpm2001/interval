@@ -2,13 +2,13 @@ This document describes how we compute the output precision of a function over a
 
 # General principle
 
-We consider a function $f$ that we study over the interval $[lo;hi]$, with $lo < hi$. The fixpoint format for the input is given, we denote its lsb $l$ and $u = 2^l$ the gap between two consecutive numbers. The goal is to determine the minimum of $|f(x) - f(y)|$ with $x$, $y$ ranging over $[lo;hi]$, which will inform us of the minimum number of digits needed to distinguish between all the images of $f$ over $[lo;hi]$.
+We consider a function $f$ that we study over the interval $[\underline{x};\overline{x}]$, with $\underline{x} < \overline{x}$. The fixpoint format for the input is given, we denote its lsb $l$ and $u = 2^l$ the gap between two consecutive numbers. The goal is to determine the minimum of $|f(x) - f(y)|$ with $x$, $y$ ranging over $[\underline{x};\overline{x}]$, which will inform us of the minimum number of digits needed to distinguish between all the images of $f$ over $[\underline{x};\overline{x}]$.
 
 This minimum number of digits needed to distinguish between two numbers $x$ and $y$ is linked to the notion of their Least Common Bit (LCB), that is the position of the first bit at which they differ.
 If two non-negative numbers $x$ and $y$ have LCB $-k$, then $|x-y|\le 2^{-k}$ and $log_2|x-y| \le LCB(x, y)$: thus, $log_2|x-y|$ is a sound approximation of their LCB.
 This is particularly useful in situations where we do not have direct access to the digits of the numbers, for example when studying them in a general abstract setting.
 
-In the case of monotonous functions, this minimum will be attained for two consecutive arguments: $|f(x) - f(x±u)|$. This $x$ is determined as the point where function $f$ has lowest slope over $[lo;hi]$.
+In the case of monotonous functions, this minimum will be attained for two consecutive arguments: $|f(x) - f(x±u)|$. This $x$ is determined as the point where function $f$ has lowest slope over $[\underline{x};\overline{x}]$.
 
 When a function is not monotonous, it can happen that two non-consecutive fixpoint arguments have images closer than any two consecutive fixpoints. The usual functions subjected to this phenomenon are the periodic trigonometric functions $sin$, $cos$ and $tan$. For these functions, we relax the constraint and only seek the lowest difference between two consecutive arguments.
 
@@ -27,7 +27,7 @@ Whether the next point of the computation $x \pm \epsilon$ is the one before or 
 
 # Faust primitives
 
-Here we explain the logic behind the implementation of precision inference in each Faust primitive. The interval $[lo; hi]$ is the input interval of the function, possibly restricted to its definition domain.
+Here we explain the logic behind the implementation of precision inference in each Faust primitive. The interval $[\underline{x}; \overline{x}]$ is the input interval of the function, possibly restricted to its definition domain.
 
 ## Abs
 
@@ -50,7 +50,7 @@ acos is the reciprocal of the cosine function.
 
 It is defined over the interval $[-1;1]$, so we restrict the input interval by intersecting it with this domain. If this intersection is empty, the output has no valid value and thus the output interval is empty as well.
 
-Its derivative attains a global minimum at point 0 (and diverges towards $\pm \infty$ at the bounds of the interval). If 0 is included in the interval $[lo; hi]$, we compute $prec(f, 0, ±u)$. Otherwise, if $0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +u)$, and if $0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -u)$.
+Its derivative attains a global minimum at point 0 (and diverges towards $\pm \infty$ at the bounds of the interval). If 0 is included in the interval $[\underline{x}; \overline{x}]$, we compute $prec(f, 0, ±u)$. Otherwise, if $0 < \underline{x}$, the minimum derivative is at $\underline{x}$ and we compute $prec(f, \underline{x}, +u)$, and if $0 > \overline{x}$, the minimum derivative is at $\overline{x}$ and we compute $prec(f, \overline{x}, -u)$.
 
 If the precision computed with this method is not sound (ie, the inferred precision is infinite), then we fall back on a less accurate precision determination method, based on the Taylor expansion of $acos$:
 $|acos(x + u) - acos(x)| = |u\cdot\frac{-1}{\sqrt{1 - x^2}}|$.
@@ -64,11 +64,11 @@ acosh is the reciprocal of the cosh (hyperbolic cosine) function.
 
 It is defined over the domain $[1; + \infty[$: we restrict the input interval by intersecting it with this domain. If the intersection is empty, the output interval is empty as well.
 
-It is a concave function : its derivative is decreasing, so the lowest slope is attained at the high end of the interval. We compute $prec(f, hi, -u)$, with $-u$ is in order to always evaluate $f$ at a point that is in the interval.
+It is a concave function : its derivative is decreasing, so the lowest slope is attained at the high end of the interval. We compute $prec(f, \overline{x}, -u)$, with $-u$ is in order to always evaluate $f$ at a point that is in the interval.
 
 If this method computes an infinite precision, we fall back on a Taylor-based method: 
 $|acosh(x + u) - acosh(x)| = |u\cdot \frac{1}{x^ -1}|$,
-so $l' = l - \frac{1}{2}\log_2(hi^2 - 1)$.
+so $l' = l - \frac{1}{2}\log_2(\overline{x}^2 - 1)$.
 
 ## Add 
 
@@ -115,7 +115,7 @@ asin is the reciprocal of the sine function. It is very similar to the acos func
 
 It is defined over the interval $[-1; 1]$: we restrict its input interval to this domain. Applying the function to an empty interval yields an empty interval.
 
-Its derivative has a minimum in $0$: this is where we compute the precision if $0$ is included in the interval. Otherwise, the boundary of the interval closest to $0$ is used: $lo$ if $0 < lo$, $hi$ if $0 > hi$.
+Its derivative has a minimum in $0$: this is where we compute the precision if $0$ is included in the interval. Otherwise, the boundary of the interval closest to $0$ is used: $\underline{x}$ if $0 < \underline{x}$, $\overline{x}$ if $0 > \overline{x}$.
 
 In case of an infinite precision, the Taylor formula is:
 $|asin(x\pm u) - asin(x)| = |u \cdot \frac{1}{sqrt{1- x^2}}|$, 
@@ -127,7 +127,7 @@ asinh is the reciprocal of the sinh (hyperbolic sine) function.
 
 It is defined over the whole $\mathbb{R}$ set.
 
-It is an increasing function, its derivative tends to 0 in both $+\infty$ and $-\infty$. Thus, the precision is computed at the point of the interval of highest magnitude: $hi$ if $|hi| > |lo|$, $lo$ otherwise.
+It is an increasing function, its derivative tends to 0 in both $+\infty$ and $-\infty$. Thus, the precision is computed at the point of the interval of highest magnitude: $\overline{x}$ if $|\overline{x}| > |\underline{x}|$, $\underline{x}$ otherwise.
 
 The Taylor fallback is:
 $|asinh(x+u) - asinh(x)| = |u \cdot \frac{1}{\sqrt{1 + x^2}}|$,
@@ -139,7 +139,7 @@ atan is the reciprocal of the tangent function.
 
 It is defined over the whole $\mathbb{R}$ set.
 
-It is an increasing function, whose derivative tends to 0 in $+\infty$ and $-\infty$. Thus, its precision is computed at the point of highest magnitude: $hi$ if $|hi| > |lo|$, $lo$ otherwise.
+It is an increasing function, whose derivative tends to 0 in $+\infty$ and $-\infty$. Thus, its precision is computed at the point of highest magnitude: $\overline{x}$ if $|\overline{x}| > |\underline{x}|$, $\underline{x}$ otherwise.
 
 The Taylor fallback is:
 $atan(x+u) - atan(x) = |u\cdot \frac{1}{1+x^2}|$, 
@@ -236,7 +236,7 @@ Cosh is the hyperbolic cosine function.
 
 It is defined by $cosh(x) = \frac{e^x + e^{-x}}{2}$ over the whole $\mathbb{R}$ set.
 
-The derivative of $cosh$ is $sinh$, which attains its lowest absolute value $0$ in $0$. If $0 \in [lo; hi]$, then the precision is computed at 0, otherwise it is computed at the point of lowest magnitude: $hi$ if $|hi| < |lo|$, $lo$ otherwise.
+The derivative of $cosh$ is $sinh$, which attains its lowest absolute value $0$ in $0$. If $0 \in [\underline{x}; \overline{x}]$, then the precision is computed at 0, otherwise it is computed at the point of lowest magnitude: $\overline{x}$ if $|\overline{x}| < |\underline{x}|$, $\underline{x}$ otherwise.
 
 The Taylor fallback is:
 * if $x = 0$, we use the second-order Taylor expansion of $cosh$: $cosh(u) = \frac{u^2}{2} + o(u^2)$, so $l' = 2*l -1$.
@@ -264,7 +264,7 @@ It can return either $0$ or $1$, so no more than 1 bit is needed to represent th
 Exp is the exponential function. 
 
 It is a convex function that is defined on the whole $\mathbb{R}$ set. 
-It is equal to its own derivative and the derivative has a minimum in $lo$.
+It is equal to its own derivative and the derivative has a minimum in $\underline{x}$.
 
 Due to the very high dynamic range of the exponential function, it actually has the potential to push usual floating-point formats to their limits (ie generate overflows and underflows).
 To manage that phenomenon, precision computation is implemented differently for the exponential than for other real functions.
@@ -315,7 +315,7 @@ $l_x + l_y$: not sure if always attained but is a sound over-approximation.
 
 The derivative is increasing, so the lowest slope is attained at the low end of the interval.
 
-We thus compute $prec(f, lo, +u)$.
+We thus compute $prec(f, \underline{x}, +u)$.
 
 Functions: $exp$, inverse on $]0; +\infty[$
 
@@ -323,13 +323,13 @@ Functions: $exp$, inverse on $]0; +\infty[$
 
 The derivative is decreasing, so the lowest slope is attained at the high end of the interval.
 
-We compute $prec(f, hi, -u)$, with $-u$ is in order to evaluate $f$ at a point that is in the interval.
+We compute $prec(f, \overline{x}, -u)$, with $-u$ is in order to evaluate $f$ at a point that is in the interval.
 
 Functions: $log$, $log_{10}$, $acosh$, $\sqrt{\;}$, inverse on $]-\infty; 0[$
 
 ## The lowest slope is attained at one point (typically zero)
 
-The derivative attains a global minimum at a point $x0$. If $x0$ is included in the interval $[lo;hi]$, we compute $prec(f, x0, ±u)$. Otherwise, if $x0 < lo$, the minimum derivative is at $lo$ and we compute $prec(f, lo, +u)$, and if $x0 > hi$, the minimum derivative is at $hi$ and we compute $prec(f, hi, -u)$.
+The derivative attains a global minimum at a point $x0$. If $x0$ is included in the interval $[\underline{x};\overline{x}]$, we compute $prec(f, x0, ±u)$. Otherwise, if $x0 < \underline{x}$, the minimum derivative is at $\underline{x}$ and we compute $prec(f, \underline{x}, +u)$, and if $x0 > \overline{x}$, the minimum derivative is at $\overline{x}$ and we compute $prec(f, \overline{x}, -u)$.
 
 Functions: $acos$, $asin$, $atanh$, $cosh$, $sinh$ ($x_0=0$ for all).
 
@@ -340,8 +340,8 @@ Lowest slope is attained periodically at multiples or half-multiples of $π$. Ho
 
 Thus, we instead chose to study $cosPi : x \mapsto cos(π\*x)$, $sinPi : x \mapsto sin(π\*x)$ and $tanPi : x \mapsto tan(π\*x)$, where the lowest slopes are attained at integer or half-integer numbers, which have the advantage of being representable in a fixpoint format. Besides, this form corresponds to the one that is typically used in DSP applications.
 
-The input interval $[lo; hi]$ is normalised to $[lo'; hi']$ such that $0 ≤ lo' ≤ 2$ and $hi' - lo' = hi - lo$. We then test the translated interval for an integer or half-integer $k$, depending on the function considered. In that case, we compute $prec(f, k, ±u)$. 
-If there is no integer in the translated interval, we compute $prec(f, lo', +u)$ if $lo'$ is closer to its closest integer than $hi'$ and $prec(f, hi', -u)$ otherwise.
+The input interval $[\underline{x}; \overline{x}]$ is normalised to $[\underline{x}'; \overline{x}']$ such that $0 ≤ \underline{x}' ≤ 2$ and $\overline{x}' - \underline{x}' = \overline{x} - \underline{x}$. We then test the translated interval for an integer or half-integer $k$, depending on the function considered. In that case, we compute $prec(f, k, ±u)$. 
+If there is no integer in the translated interval, we compute $prec(f, \underline{x}', +u)$ if $\underline{x}'$ is closer to its closest integer than $\overline{x}'$ and $prec(f, \overline{x}', -u)$ otherwise.
 
 This approach can cause some rounding issues in the implementation: there can be $x$ and $y$ such that $cos(π\*x)$ and $cos(π\*y)$ are mathematically equal but for which the roundings of $π\*x$ and $π\*y$ cause their images through cos to be slightly different, resulting in a measured lsb much lower than what is actually needed.
 
