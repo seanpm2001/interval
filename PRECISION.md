@@ -397,12 +397,91 @@ $l' = l + k$.
 The change in MSB will be reflected by a change of mangnitude in the bounds of the intervals: 
 output interval will be $[\underline{x}*2^k; \overline{x}*2^k]$.
 
-## Lt 
+## Lt  
 
 Lt is the "lower than" ($<$) boolean test.
 It can return either $0$ or $1$, so no more than 1 bit is needed to represent the result: output precision is $0$.
 It is implemented by inverting the arguments to `Gt`.
 
+## Max
+
+Max is the function returning the maximum of two values.
+
+The interval representing the result must be able to represent values from both arguments' intervals, and thus should be as precise as the most precise of both:
+$l' = min(l_x, l_y)$.
+
+## Mem
+
+Mem is the one-sample delay operator.
+
+The output signal contains the same value as the input signal, and thus should be represented with the same precision.
+
+## Min
+
+Min is the function returning the minimum of two values.
+
+The interval representing the result must be able to represent values from both arguments' intervals, and thus should be as precise as the most precise of both:
+$l' = min(l_x, l_y)$.
+
+## Missing
+
+The `intervalMissing.cpp` file implement placeholders for primitives that have not been dealt with yet.
+
+## Mod
+
+Mod is the modulo operator. 
+
+It is implemented using C++ function `std::fmod`, which has the property that $fmod(x, y) = x - y \cdot \lfloor \frac{x}{y} \rfloor$. 
+$\lfloor \frac{x}{y}\rfloor$ will be called the quotient of $x$ by $y$.
+
+Let's denote the input intervals $X = [\underline{x}; \overline{x}]$ for the dividend and $Y =[\underline{y}; \overline{y}]$ for the divisor.
+The computation of the result interval is split between two functions, `positiveFMod`, dealing with the case where intervals for both arguments are positive, and `Mod`, which reduces the general case to the first function by splitting the arguments intervals between positive and negative values. 
+
+In the positive case, the result interval is automatically included in $[0; \overline{y}[$.
+This is a direct consequence of the definition of $\lfloor~\rfloor$:
+$\lfloor \frac{x}{y} \rfloor \le \frac{x}{y} < \lfloor \frac{x}{y} \rfloor + 1$,
+so $y\cdot \lfloor \frac{x}{y} \rfloor \le x < y \lfloor \frac{x}{y} \rfloor + y$
+and $0 \le x - y\cdot \lfloor \frac{x}{y} \rfloor  < y \le \overline{y}$.
+
+The $fmod$ function is a piecewise linear function, with discontinuities along the lines of equation $x = k\cdot y$, $k \in \mathbb{Z}$. 
+These discontinuities correspond to the places where $x$ is a multiple of $y$ (and the remainder is thus null).
+- On the $x \ge ky$ side of the line, the limit of $fmod(x, y)$ is $0$ as we approach the line and the quotient $\lfloor\frac{x}{y}\rfloor = k$.
+- On the $x < ky$ side, the limit of $fmod(x, y)$ is $y$ and $\lfloor \frac{x}{y} \rfloor = k-1$.
+
+We have to distinguish two cases, depending on whether the interval product $X \times Y$ spans a discontinuity or not.
+Let us pose $n = \lfloor \frac{\underline{x}}{\overline{y}}\rfloor$, which is the smallest value that can be taken by the integral quotient between $x$ and $y$.
+
+
+If it doesn't span a discontinuity, the quotient $\lfloor \frac{x}{y}\rfloor$ is constant with value $n$.
+The $fmod$ function is thus linear over the domain: $fmod(x, y) = x - n\cdot y$, and has maximum value $\overline{x} - n \cdot\underline{y}$ and minimum $\underline{x} - n \cdot \overline{y}$.
+This is the case represented by the last `return` statement in the implementation.
+
+If the domain does span discontinuities, the minimum value is $0$ and is attained on the discontinuities.
+Regarding the maximum, the function $fmod$ presents local suprema along these discontinuities of equation $x = k\cdot y, ~k \ge n+1$.
+We exclude the discontinuity $x = n \cdot y$ because $n = \lfloor \frac{\underline{x}}{\overline{y}} \rfloor$ (by definition of $n$) means that $\underline{x} \ge n \overline{y}$ (by definition of $\lfloor ~\rfloor$), from which we can deduce that $\forall x \in X, y \in Y, x > n \cdot y$, except maybe in the case $x = \underline{x}, y = \overline{y}$, where the discontinuity line intersects the rectangle domain in the single point $(\underline{x}, \overline{y})$.
+
+We are looking for the largest value of $fmod(x, y)$. 
+We have seen that the limit of this value is $y$ along lines of equation $x = k\cdot y, ~k\ge n+1$.
+We are thus looking for the largest $y$ that verify $\exists x \in X, k \ge n+1, y = \frac{1}{k} x$.
+
+The value of the global upper bound we are looking for is thus in $Y \cap \bigcup_{k \ge n+1} \frac{1}{k} X = \bigcup_{k\ge n+1} Y \cap \frac{1}{k}X$, and is the maximum of this set.
+Since all $Y \cap \frac{1}{k}X$ are (possibly empty) intervals, $max(\bigcup_{k\ge n+1} Y \cap \frac{1}{k}X) = max_{k\ge n+1} (max (Y \cap \frac{1}{k} X))$.
+
+For $k \ge n+1$, $max(Y\cap \frac{1}{k} X) = min(\overline{y}, \frac{1}{k}\overline{x}) \le min(\overline{y}, \frac{1}{n+1}\overline{x}) = max(Y\cap \frac{1}{n+1} X)$, so $max_{k\ge n+1} (max (Y \cap \frac{1}{k} X)) = min(\overline{y}, \frac{1}{n+1}\overline{x})$.
+
+Thus, the upper bound of the output interval is:
+- $\overline{y}$ if $\overline{y} \ge \frac{1}{n+1} \overline{x}$
+- $\frac{1}{n+1} \overline{x}$ if $\overline{y} < \frac{1}{n+1} \overline{x}$ (and $\underline{y} \le \frac{1}{n+1}\overline{x}$ because the domain $X \times Y$ has an intersection with the $x = (n+1)\cdot y$ discontinuity).
+
+### Precision
+
+Output precision is the finest precision between those of the two arguments: this will be the one to determine which discrete grid the result aligns with.
+
+### Remark on the sampling tests
+
+Some inputs can measure an output interval that excludes $0$ as a lower bound.
+This is normal and due to the fact that the discontinuities $x = k\cdot y$ do not always intersect the discrete fixed-point grid from which `analyzeBinaryMethod` samples.
+Validity of the result on these inputs should instead be checked using `check` (which implies computing the output interval by hand).
 
 # Typology of functions
 
@@ -412,14 +491,6 @@ It is implemented by inverting the arguments to `Gt`.
 
 $l_x + l_y$: not sure if always attained but is a sound over-approximation.
 
-
-## Convex functions
-
-The derivative is increasing, so the lowest slope is attained at the low end of the interval.
-
-We thus compute $prec(f, \underline{x}, +u)$.
-
-Functions: $exp$, inverse on $]0; +\infty[$
 
 ## Concave functions
 
