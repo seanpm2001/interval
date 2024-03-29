@@ -38,7 +38,7 @@ interval interval_algebra::Cos(const interval& x)
     if (precision == INT_MIN or taylor_lsb) precision = 2*x.lsb() - 1; // if x.lsb() is so small that the automatic computation doesn't work
 
     if (x.isEmpty()) {
-        return {};
+        return empty();
     }
     if (x.size() >= 2*M_PI) {
         return {-1, 1, precision};

@@ -34,7 +34,7 @@ static double myGe(double x, double y)
 interval interval_algebra::Ge(const interval& x, const interval& y)
 {
     // boolean value => precision 0
-    if (x.isEmpty() || y.isEmpty()) return interval{};
+    if (x.isEmpty() || y.isEmpty()) return empty();
     if (x.lo() >= y.hi()) return interval{1,1,0};
     if (x.hi() < y.lo()) return interval{0,0,0};
     return interval{0, 1, 0};

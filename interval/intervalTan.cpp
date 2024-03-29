@@ -35,7 +35,7 @@ static double tanPi(double x)
 interval interval_algebra::Tan(const interval& x)
 {
     if (x.isEmpty()) {
-        return x;
+        return empty();
     }
     if (x.size() >= M_PI) {  // spans asymptots and contains an integer multiple of pi
         // std::cout << "Spanning more than one period" << std::endl;

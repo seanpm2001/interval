@@ -29,7 +29,7 @@ namespace itv {
 interval interval_algebra::Sinh(const interval& x)
 {
     if (x.isEmpty()) {
-        return x;
+        return empty();
     }
 
     double v    = 0;  // absolute lowest slope is at zero

@@ -28,6 +28,9 @@ namespace itv {
 
 interval interval_algebra::Abs(const interval& x)
 {
+    if (x.isEmpty())
+        return empty();
+
     // precision stays the same
     if (x.lo() >= 0) {
         return x;

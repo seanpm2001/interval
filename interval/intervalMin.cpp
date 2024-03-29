@@ -28,7 +28,7 @@ namespace itv {
 
 interval interval_algebra::Min(const interval& x, const interval& y)
 {
-    if (x.isEmpty() || y.isEmpty()) return {};
+    if (x.isEmpty() || y.isEmpty()) return empty();
 
     return {std::min(x.lo(), y.lo()), std::min(x.hi(), y.hi()), std::min(x.lsb(), y.lsb())}; // resulting interval should be as precise as the most precise of the operands
 }

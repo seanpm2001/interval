@@ -30,7 +30,7 @@ namespace itv {
 interval interval_algebra::Tanh(const interval& x)
 {
     if (x.isEmpty()) {
-        return {};
+        return empty();
     }
 
     // value at which the lowest slope is attained: bound of the interval with the highest absolute value

@@ -22,6 +22,9 @@ namespace itv {
 interval interval_algebra::NumEntry(const interval& name, const interval& init, const interval& lo, const interval& hi,
                                     const interval& step)
 {
+    if (init.isEmpty() || lo.isEmpty() || hi.isEmpty() || step.isEmpty())
+        return empty();
+
     // elements of a slider with range [lo; hi] and step step are of the form lo + k·step <= hi with k an integer
     // the precision needed to represent such elements is the minimum between
     int lsb = std::min(step.lsb(), lo.lsb());       // the precision of the lower bound and that of the step

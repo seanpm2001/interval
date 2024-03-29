@@ -32,7 +32,7 @@ namespace itv {
 interval interval_algebra::Atan(const interval& x)
 {
     if (x.isEmpty()) {
-        return x;
+        return empty();
     }
 
     double v    = maxValAbs(x);  // value at which the min slope is attained, here the bound of highest absolute value

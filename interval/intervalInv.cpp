@@ -35,7 +35,7 @@ static double inv(double x)
 interval interval_algebra::Inv(const interval& x)
 {
     if (x.isEmpty()) {
-        return {};
+        return empty();
     }
 
     int    sign = signMaxValAbs(x);

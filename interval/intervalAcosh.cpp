@@ -32,7 +32,7 @@ interval interval_algebra::Acosh(const interval& x)
 {
     interval i = intersection(domain, x);
     if (i.isEmpty()) {
-        return i;
+        return empty();
     }
 
     // the min slope is attained at the highest bound of the interval

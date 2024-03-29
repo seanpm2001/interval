@@ -29,7 +29,7 @@ namespace itv {
 interval interval_algebra::Ceil(const interval& x)
 {
     if (x.isEmpty()) {
-        return x;
+        return empty();
     }
     return {ceil(x.lo()), ceil(x.hi()), -1 };  // even though the output of floor are mathematical integers,
                                             // they are implemented as floats and thus should not be given precision 0,

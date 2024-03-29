@@ -29,7 +29,7 @@ namespace itv {
 interval interval_algebra::Log(const interval& x)
 {
     if (x.isEmpty()) {
-        return {};
+        return empty();
     }
 
     // lowest slope is at the highest bound of the interval

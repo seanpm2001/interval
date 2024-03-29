@@ -74,6 +74,9 @@ static interval ipow(const interval& x, int y)
  */
 interval interval_algebra::fPow(const interval& x, const interval& y)
 {
+    if (x.isEmpty() || y.isEmpty())
+        return empty();
+
     assert(x.lo() > 0);
     // x all positive
     return Exp(Mul(y, Log(x)));
@@ -81,6 +84,9 @@ interval interval_algebra::fPow(const interval& x, const interval& y)
 
 interval interval_algebra::iPow(const interval& x, const interval& y)
 {
+    if (x.isEmpty() || y.isEmpty())
+        return empty();
+
     int      y0 = std::max(0, saturatedIntCast(y.lo()));
     int      y1 = std::max(0, saturatedIntCast(y.hi()));
     interval z  = ipow(x, y0);

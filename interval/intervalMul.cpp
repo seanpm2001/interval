@@ -43,7 +43,7 @@ static double specialmultint(double a, double b)
 interval interval_algebra::Mul(const interval& x, const interval& y)
 {
     if (x.isEmpty() || y.isEmpty()) {
-        return {};
+        return empty();
     }
 
     if (x.lsb() >= 0 and y.lsb() >= 0) // operation between integers

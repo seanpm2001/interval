@@ -33,6 +33,9 @@ static double rsh(double x, double y)
 
 interval interval_algebra::Rsh(const interval& x, const interval& y)
 {
+    if (x.isEmpty() || y.isEmpty())
+        return empty();
+
     interval j{pow(2, -y.hi()), pow(2, -y.lo())};
     interval z = Mul(x, j);
 

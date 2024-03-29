@@ -28,6 +28,9 @@ namespace itv {
 
 interval interval_algebra::Round(const interval& x)
 {
+    if (x.isEmpty())
+        return empty();
+
     return {round(x.lo()), round(x.hi()), 0}; // round to integral value (regardless of rounding direction) => integer => precision 0
 }
 

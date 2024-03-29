@@ -29,6 +29,9 @@ static const interval domain(-HUGE_VAL, HUGE_VAL);
 
 interval interval_algebra::Asinh(const interval& x)
 {
+    if (x.isEmpty())
+        return empty();
+
     double v    = maxValAbs(x);  // value at which the min slope is attained, here the bound of highest absolute value
     int    sign = signMaxValAbs(x);  // whether we compute the difference between f(v) and f(v+ε) or f(v-ε)
 

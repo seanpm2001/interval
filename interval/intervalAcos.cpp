@@ -32,7 +32,7 @@ interval interval_algebra::Acos(const interval& x)
 {
     interval i = intersection(AcosDomain, x); // TODO: warn about interval violations
     if (i.isEmpty()) {
-        return i;
+        return empty();
     }
 
     double v = 0;  // value at which the min slope is attained, zero if it is present

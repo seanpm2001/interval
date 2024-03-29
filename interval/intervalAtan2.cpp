@@ -31,6 +31,9 @@ namespace itv {
 // (where (x,y) are the cartesian coordinates of the point we wish to retrieve the angle of)
 interval interval_algebra::Atan2(const interval& y, const interval& x)
 {
+    if (x.isEmpty() || y.isEmpty())
+        return empty();
+
     double lo = -M_PI;
     double hi = M_PI;
 

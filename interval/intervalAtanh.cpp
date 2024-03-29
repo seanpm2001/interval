@@ -33,7 +33,7 @@ interval interval_algebra::Atanh(const interval& x)
 {
     interval i = intersection(domain, x);
     if (i.isEmpty()) {
-        return i;
+        return empty();
     }
 
     double v = minValAbs(x);
