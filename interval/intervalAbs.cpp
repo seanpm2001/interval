@@ -33,9 +33,9 @@ interval interval_algebra::Abs(const interval& x)
         return x;
     }
     
+    // integer overflowing
     if (x.lsb() >= 0 and x.lo() <= (double)INT_MIN){ 
-        double lo = std::min(std::abs(x.hi()), (double)INT_MAX);
-        if (x.hi()>= 0) lo = 0;
+        double lo = (x.hi() >= 0) ? 0 : std::min(std::abs(x.hi()), (double)INT_MAX);
         return {lo,
                 (double)INT_MAX, 
                 x.lsb()};
@@ -49,11 +49,13 @@ interval interval_algebra::Abs(const interval& x)
 
 void interval_algebra::testAbs()
 {
+    std::cout << "Testing abs on finite intervals" << std::endl;
     analyzeUnaryMethod(
         10, 10000, "abs", interval(-10, 10, 0), [](double x) { return std::abs(x); }, &interval_algebra::Abs);
     analyzeUnaryMethod(
         10, 10000, "abs", interval(-10, 10, -15), [](double x) { return std::abs(x); }, &interval_algebra::Abs);
-    // testing the behaviour on integers
+
+    std::cout << "Testing abs on intervals with limit bounds" << std::endl;
     check("abs", Abs(interval(INT_MIN, INT_MIN, 0)), interval(INT_MAX, INT_MAX, 0));
     check("abs", Abs(interval(INT_MIN, -10, 0)), interval(10, INT_MAX, 0));
     check("abs", Abs(interval(INT_MIN, 10, 0)), interval(0, INT_MAX, 0));
