@@ -65,7 +65,7 @@ interval interval_algebra::Add(const interval& x, const interval& y)
         }
         
         // if there is a discontinuity by the higher end of integers
-        if (lo <= (double)INT_MAX and hi >= (double)INT_MAX)
+        if (lo <= (double)INT_MAX and hi >= (double)INT_MAX+1)
         {
             return {(double)INT_MIN, (double)INT_MAX, std::min(x.lsb(), y.lsb())};
         }
@@ -81,16 +81,24 @@ interval interval_algebra::Add(const interval& x, const interval& y)
 
 void interval_algebra::testAdd()
 {
-    // check("test algebra Add", Add(interval(0, 100), interval(10, 500)), interval(10, 600));
-    // analyzeBinaryMethod(10, 2000, "add", interval(0, 10, 0), interval(0, 10, 0), add, &interval_algebra::Add);
+    std::cout << "Testing add on regular intervals" << std::endl;
+    check("test algebra Add", Add(interval(0, 100), interval(10, 500)), interval(10, 600));
+
+    std::cout << "Testing add on positive intervals" << std::endl;
+    analyzeBinaryMethod(5, 2000, "add", interval(0, 10, 0), interval(0, 10, 0), add, &interval_algebra::Add);
+    analyzeBinaryMethod(5, 2000, "add", interval(0, 10, -10), interval(0, 10, 0), add, &interval_algebra::Add);
+    analyzeBinaryMethod(5, 2000, "add", interval(0, 10, 0), interval(0, 10, -10), add, &interval_algebra::Add);
+    analyzeBinaryMethod(5, 2000, "add", interval(0, 10, -10), interval(0, 10, -10), add, &interval_algebra::Add);
+
+    std::cout << "Testing add on negative intervals" << std::endl;
+    analyzeBinaryMethod(5, 2000, "add", interval(-10, 10, -5), interval(-10, 0, -5), add, &interval_algebra::Add);
+    analyzeBinaryMethod(5, 2000, "add", interval(-10, 0, -5), interval(-10, 0, -5), add, &interval_algebra::Add);
+
+    std::cout << "Testing add with wrapping" << std::endl;
+
     analyzeBinaryMethod(10, 2000, "add", interval(0, pow(2, 31), 0), interval(0, pow(2, 31), 0), addint, &interval_algebra::Add);
     analyzeBinaryMethod(10, 2000, "add", interval((double)INT_MAX/2, (double)INT_MAX, 0), interval((double)INT_MAX/2, (double)INT_MAX, 0), addint, &interval_algebra::Add);
-    /* analyzeBinaryMethod(10, 2000, "add", interval(0, 10, -5), interval(0, 10, 0), add, &interval_algebra::Add);
-    analyzeBinaryMethod(10, 2000, "add", interval(0, 10, -10), interval(0, 10, 0), add, &interval_algebra::Add);
-    analyzeBinaryMethod(10, 2000, "add", interval(0, 10, -15), interval(0, 10, 0), add, &interval_algebra::Add);
-    analyzeBinaryMethod(10, 2000, "add", interval(0, 10, 0), interval(0, 10, -10), add, &interval_algebra::Add);
-    analyzeBinaryMethod(10, 2000, "add", interval(0, 10, -5), interval(0, 10, -10), add, &interval_algebra::Add);
-    analyzeBinaryMethod(10, 2000, "add", interval(0, 10, -10), interval(0, 10, -10), add, &interval_algebra::Add);
-    analyzeBinaryMethod(10, 2000, "add", interval(0, 10, -15), interval(0, 10, -10), add, &interval_algebra::Add);*/
+    analyzeBinaryMethod(10, 2000, "add", interval((double)INT_MIN, (double)INT_MIN/2, 0), interval((double)INT_MAX/2, (double)INT_MAX, 0), addint, &interval_algebra::Add);
+    analyzeBinaryMethod(10, 2000, "add", interval((double)INT_MIN, (double)INT_MIN/2, 0), interval((double)INT_MIN, (double)INT_MIN/2, 0), addint, &interval_algebra::Add);
 }
 }  // namespace itv

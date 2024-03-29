@@ -79,7 +79,15 @@ Thus, we establish that $l' = min(l_x, l_y)$ is the coarsest output precision th
 
 ### Integers
 
-Wrapping situations due to integer overflow have to be taken care of. In the case where both operands are integers, if their sum is higher than the biggest representable integer or lower than the smallest representable integer, the default behaviour is for the value to "wrap" around and get to the other end of the integer range. This results in the output interval of the operation being `[INT_MIN; INT_MAX]`.
+Wrapping situations due to integer overflow have to be taken care of. In the case where both operands are integers, if their sum is higher than the biggest representable integer or lower than the smallest representable integer, the default behaviour is for the value to "wrap" around and get to the other end of the integer range. 
+
+The boundaries of the output interval are computed as `double`s in order to test whether the output interval wraps. 
+
+If both `INT\_MAX` and `INT\_MAX+1`, or `INT\_MIN-1` and `INT\_MIN` are both present in the double-value output interval, then the output interval contains both wrapped value and unwrapped values, and thus spans `[INT\_MIN; INT\_MAX]`.
+
+Otherwise, the bounds of the output interval are computed by adding the bounds of the input intervals as integers, with potential wrapping.
+
+**Note:** The gap between `INT\_MAX` and the double right below is smaller than one: all values in an integer interval are representable as doubles.
 
 ## And 
 
