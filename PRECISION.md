@@ -439,36 +439,36 @@ The `intervalMissing.cpp` file implement placeholders for primitives that have n
 
 Mod is the modulo operator. 
 
-It is implemented using C++ function `std::fmod`, which has the property that $fmod(x, y) = x - y \cdot \lfloor \frac{x}{y} \rfloor$. 
-$\lfloor \frac{x}{y}\rfloor$ will be called the quotient of $x$ by $y$.
+It is implemented using C++ function `std::fmod`, which has the property that $\mathrm{fmod}(x, y) = x - y \cdot \lfloor \frac{x}{y} \rfloor$. 
+The value $\lfloor \frac{x}{y}\rfloor$ will be called the quotient of $x$ by $y$.
 
 Let's denote the input intervals $X = [\underline{x}; \overline{x}]$ for the dividend and $Y =[\underline{y}; \overline{y}]$ for the divisor.
-The computation of the result interval is split between two functions, `positiveFMod`, dealing with the case where intervals for both arguments are positive, and `Mod`, which reduces the general case to the first function by splitting the arguments intervals between positive and negative values. 
+The case where both intervals are positive is a particular case, implemented with function `positiveFMod`, and the general case can be reduced to the positive case by splitting the arguments intervals between positive and negative values, which is done in function `Mod`.
 
 In the positive case, the result interval is automatically included in $[0; \overline{y}[$.
 This is a direct consequence of the definition of $\lfloor~\rfloor$:
 $\lfloor \frac{x}{y} \rfloor \le \frac{x}{y} < \lfloor \frac{x}{y} \rfloor + 1$,
-so $y\cdot \lfloor \frac{x}{y} \rfloor \le x < y \lfloor \frac{x}{y} \rfloor + y$
+so $y\cdot \lfloor \frac{x}{y} \rfloor \le x < y \cdot \lfloor \frac{x}{y} \rfloor + y$
 and $0 \le x - y\cdot \lfloor \frac{x}{y} \rfloor  < y \le \overline{y}$.
 
-The $fmod$ function is a piecewise linear function, with discontinuities along the lines of equation $x = k\cdot y$, $k \in \mathbb{Z}$. 
+The $\mathrm{fmod}$ function is a piecewise linear function, with discontinuities along the lines of equation $x = k\cdot y$, $k \in \mathbb{Z}$. 
 These discontinuities correspond to the places where $x$ is a multiple of $y$ (and the remainder is thus null).
-- On the $x \ge ky$ side of the line, the limit of $fmod(x, y)$ is $0$ as we approach the line and the quotient $\lfloor\frac{x}{y}\rfloor = k$.
-- On the $x < ky$ side, the limit of $fmod(x, y)$ is $y$ and $\lfloor \frac{x}{y} \rfloor = k-1$.
+- On the $x \ge ky$ side of the line, the limit of $\mathrm{fmod}(x, y)$ is $0$ as we approach the line and the quotient $\lfloor\frac{x}{y}\rfloor = k$.
+- On the $x < ky$ side, the limit of $\mathrm{fmod}(x, y)$ is $y$ and $\lfloor \frac{x}{y} \rfloor = k-1$.
 
 We have to distinguish two cases, depending on whether the interval product $X \times Y$ spans a discontinuity or not.
 Let us pose $n = \lfloor \frac{\underline{x}}{\overline{y}}\rfloor$, which is the smallest value that can be taken by the integral quotient between $x$ and $y$.
 
 
 If it doesn't span a discontinuity, the quotient $\lfloor \frac{x}{y}\rfloor$ is constant with value $n$.
-The $fmod$ function is thus linear over the domain: $fmod(x, y) = x - n\cdot y$, and has maximum value $\overline{x} - n \cdot\underline{y}$ and minimum $\underline{x} - n \cdot \overline{y}$.
+The $\mathrm{fmod}$ function is thus linear over the domain: $\mathrm{fmod}(x, y) = x - n\cdot y$, and has maximum value $\overline{x} - n \cdot\underline{y}$ and minimum $\underline{x} - n \cdot \overline{y}$.
 This is the case represented by the last `return` statement in the implementation.
 
 If the domain does span discontinuities, the minimum value is $0$ and is attained on the discontinuities.
-Regarding the maximum, the function $fmod$ presents local suprema along these discontinuities of equation $x = k\cdot y, ~k \ge n+1$.
+Regarding the maximum, the function $\mathrm{fmod}$ presents local suprema along these discontinuities of equation $x = k\cdot y, ~k \ge n+1$.
 We exclude the discontinuity $x = n \cdot y$ because $n = \lfloor \frac{\underline{x}}{\overline{y}} \rfloor$ (by definition of $n$) means that $\underline{x} \ge n \overline{y}$ (by definition of $\lfloor ~\rfloor$), from which we can deduce that $\forall x \in X, y \in Y, x > n \cdot y$, except maybe in the case $x = \underline{x}, y = \overline{y}$, where the discontinuity line intersects the rectangle domain in the single point $(\underline{x}, \overline{y})$.
 
-We are looking for the largest value of $fmod(x, y)$. 
+We are looking for the largest value of $\mathrm{fmod}(x, y)$. 
 We have seen that the limit of this value is $y$ along lines of equation $x = k\cdot y, ~k\ge n+1$.
 We are thus looking for the largest $y$ that verify $\exists x \in X, k \ge n+1, y = \frac{1}{k} x$.
 
@@ -482,6 +482,11 @@ Thus, the upper bound of the output interval is:
 - $\frac{1}{n+1} \overline{x}$ if $\overline{y} < \frac{1}{n+1} \overline{x}$ (and $\underline{y} \le \frac{1}{n+1}\overline{x}$ because the domain $X \times Y$ has an intersection with the $x = (n+1)\cdot y$ discontinuity).
 
 ### Precision
+
+Let us assume that $x$ is represented with precision $l_x$, from which the ulp $u_x$, and $y$ has precision $l_y$ and ulp $u_y$.
+If we assume that $u_x < u_y$, we can write $x = p \cdot u_x$ and $y = q \cdot u_x$, where $p, q \in \mathbb{Z}$.
+Then, $\mathrm{fmod}(x, y) = x - \lfloor\frac{x}{y}\rfloor \cdot y = (p - \lfloor \frac{x}{y} \rfloor \cdot q)\cdot u_x$, thus $\mathrm{fmod}(x, y)$ can be represented with precision $l_x$.
+A similar reasoning takes place when $u_y < u_x$.
 
 Output precision is the finest precision between those of the two arguments: this will be the one to determine which discrete grid the result aligns with.
 
