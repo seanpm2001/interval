@@ -26,26 +26,30 @@ namespace itv {
 // interval Sqrt(const interval& x);
 // void testSqrt();
 
+static const interval SqrtDomain(0, HUGE_VAL, 0);
+
 interval interval_algebra::Sqrt(const interval& x)
 {
-    if (x.isEmpty()) {
-        return x;
+    interval i = intersection(SqrtDomain, x);
+
+    if (i.isEmpty()) {
+        return i;
     }
-    if (x.lo() < 0) {
+    if (i.lo() < 0) {
         return {};  // sqrt of negative numbers
     }
 
     // lowest slope at the highest bound of the interval
-    int precision = exactPrecisionUnary(sqrt, x.hi(), -pow(2, x.lsb()));
+    int precision = exactPrecisionUnary(sqrt, i.hi(), -pow(2, i.lsb()));
     if (precision == INT_MIN or taylor_lsb)
     {
-        if (x.hi() == 0)
-            precision = floor(x.lsb()/2);
+        if (i.hi() == 0)
+            precision = floor(i.lsb()/2);
         else
-            precision = floor(x.lsb() - log2(x.hi()) - 1); // sqrt(x+u) - sqrt(x) = 1/2 u/sqrt(x)
+            precision = floor(i.lsb() - log2(i.hi()) - 1); // sqrt(x+u) - sqrt(x) = 1/2 u/sqrt(x)
     }
 
-    return {sqrt(x.lo()), sqrt(x.hi()), precision};
+    return {sqrt(i.lo()), sqrt(i.hi()), precision};
 }
 
 void interval_algebra::testSqrt()
