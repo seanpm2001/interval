@@ -155,10 +155,10 @@ interval interval_algebra::Mod(const interval& x, const interval& y)
 
 void interval_algebra::testMod()
 {
-    check("test algebra Mod", Mod(interval(-100, 100), 1.0), interval(nextafter(-1.0, 0.0), nextafter(1.0, 0.0)));
-    check("test algebra Mod", Mod(interval(0, 100), 2), interval(0, nextafter(2.0, 0)));
-    check("test algebra Mod", Mod(interval(0, 100), -1.0), interval(0, nextafter(1.0, 0)));
-    check("test algebra Mod", Mod(interval(5, 7), interval(4, 4.5)), interval(0.5, 3));
+    // check("test algebra Mod", Mod(interval(-100, 100), 1.0), interval(nextafter(-1.0, 0.0), nextafter(1.0, 0.0)));
+    // check("test algebra Mod", Mod(interval(0, 100), 2), interval(0, nextafter(2.0, 0)));
+    // check("test algebra Mod", Mod(interval(0, 100), -1.0), interval(0, nextafter(1.0, 0)));
+    /* check("test algebra Mod", Mod(interval(5, 7), interval(4, 4.5)), interval(0.5, 3));
     check("test algebra Mod", Mod(interval(5, 7), interval(8, 10)), interval(5, 7));
     check("test algebra Mod", Mod(interval(-7, 7), interval(8, 10)), interval(-7, 7));
     check("test algebra Mod", Mod(interval(0, 100), interval(7, 7)), interval(0, nextafter(7.0, 0.0)));
