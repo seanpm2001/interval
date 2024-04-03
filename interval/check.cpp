@@ -257,7 +257,7 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
             measurements.insert(y);
 
             // interval bounds
-            if (!std::isnan(y)) {
+            if (!std::isnan(pre_y)) {
                 /* if (y < y0) {
                     y0 = y;
                 }
@@ -288,19 +288,20 @@ void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D,
         }
 
         itv::interval Y(y0, y1, lsb);
+        if (y0 > y1) Y = itv::empty(); // if we didn't manage to draw any samples
         itv::interval Z = (A.*mp)(X);
 
         if (Z >= Y and Z.lsb() <= Y.lsb()) {
             double precision = (Z.size() == 0) ? 1 : Y.size() / Z.size();
 
             std::cout << "\033[32m"
-                      << "OK    " << e << ": " << title << "(" << X << ") = \t" << Z << "\t >= \t" << Y
-                      << "\t (precision " << precision << ", LSB diff = " << Y.lsb() - Z.lsb() << ")"
+                      << "OK    " << e << ": " << title << "(" << X << ") = \n" << Z << "(c)\t >= \t" << Y
+                      << "(m)\t (precision " << precision << ", LSB diff = " << Y.lsb() - Z.lsb() << ")"
                       << "\033[0m" << std::endl;
         } else {
             std::cout << "\033[31m"
-                      << "ERROR " << e << ": " << title << "(" << X << ") = \t" << Z << "\t INSTEAD OF \t" << Y
-                      << ", \t LSB diff = " << Y.lsb() - Z.lsb() << "\033[0m" << std::endl;
+                      << "ERROR " << e << ": " << title << "(" << X << ") = \n" << Z << "(c)\t INSTEAD OF \t" << Y
+                      << "(m), \t LSB diff = " << Y.lsb() - Z.lsb() << "\033[0m" << std::endl;
         }
         std::cout << std::endl;
     }
@@ -334,7 +335,6 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
 
         // store output values in order to measure the output precision
         std::set<double> measurements;
-
         if (Dx.lsb() < 0 or Dy.lsb() < 0) // if we're not doing an integer operation
         {
         // X: random input interval X < Dx
@@ -402,6 +402,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
         }
 
         itv::interval Zm(zlo, zhi, lsb);    // the measured Z
+        if (zlo > zhi) Zm = itv::empty(); // if we didn't manage to draw any samples
         itv::interval Zc  = (A.*bm)(X, Y);  // the computed Z
         double        precision = (Zm.size() == Zc.size()) ? 1 : Zm.size() / Zc.size();
 
@@ -409,18 +410,18 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
             std::string color = "\033[32m"; 
             if (precision < 0.8 or Zm.lsb() - Zc.lsb() >= 10) color = "\033[36m"; // cyan instead of green if approximation is technically correct but of poor quality
             std::cout << color 
-                      << "OK    " << e << ": " << title << "(" << X << ",\t" << Y << ")\t =c=> " << Zc << "(c) >= " << Zm << "(m)"
+                      << "OK    " << e << ": " << title << "(" << X << ",\t" << Y << ")\n =c=> " << Zc << "(c) >= " << Zm << "(m)"
                       << "\t (precision " << precision << "), \t LSB diff = " << Zm.lsb() - Zc.lsb()  
                       << "\033[0m" << std::endl;
         } else {
             std::cout << "\033[31m"
-                      << "ERROR " << e << ": " << title << "(" << X << ",\t" << Y << ")\t =c=> " << Zc << "(c) != " << Zm << "(m)"
+                      << "ERROR " << e << ": " << title << "(" << X << ",\t" << Y << ")\n =c=> " << Zc << "(c) != " << Zm << "(m)"
                       << "\t LSB diff = " << Zm.lsb() - Zc.lsb()  
                       << "\033[0m" << std::endl;
         }
         
         } else { // integer operation
-        std::cout << "Testing integer version of " << title << std::endl;
+        // std::cout << "Testing integer version of " << title << std::endl;
         // X: random input interval X < Dx
         double     x0 = truncate(rdx(generator), Dx.lsb());
         double     x1 = truncate(rdx(generator), Dx.lsb());
@@ -455,15 +456,22 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
 
         // measure the interval Z using the numerical function f
         for (int m = 0; m < M; m++) {  // M measurements
-            z = f(truncate(ivx(generator), Dx.lsb()), truncate(ivy(generator), Dy.lsb()));
+            int pre_x = ivx(generator);
+            int x = truncate(pre_x, Dx.lsb());
+            int pre_y = ivy(generator);
+            int y = truncate(pre_y, Dy.lsb());
+            z = f(x, y);
+            int pre_z = f(pre_x, pre_y);
 
             measurements.insert(z);
 
-            if (z < zlo) {
-                zlo = z;
-            }
-            if (z > zhi) {
-                zhi = z;
+            if (!std::isnan(pre_z)){
+                if (z < zlo) {
+                    zlo = pre_z;
+                }
+                if (z > zhi) {
+                    zhi = pre_z;
+                }
             }
         }
 
@@ -489,12 +497,12 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
             std::string color = "\033[32m"; 
             if (precision < 0.8 or Zm.lsb() - Zc.lsb() >= 10) color = "\033[36m"; // cyan instead of green if approximation is technically correct but of poor quality
             std::cout << color 
-                      << "OK    " << e << ": " << title << "(" << X << ",\t" << Y << ")\t =c=> " << Zc << "(c) >= " << Zm << "(m)"
+                      << "OK    " << e << ": " << title << "(" << X << ",\t" << Y << ")\n =c=> " << Zc << "(c) >= " << Zm << "(m)"
                       << "\t (precision " << precision << "), \t LSB diff = " << Zm.lsb() - Zc.lsb()  
                       << "\033[0m" << std::endl;
         } else {
             std::cout << "\033[31m"
-                      << "ERROR " << e << ": " << title << "(" << X << ",\t" << Y << ")\t =c=> " << Zc << "(c) != " << Zm << "(m)"
+                      << "ERROR " << e << ": " << title << "(" << X << ",\t" << Y << ")\n =c=> " << Zc << "(c) != " << Zm << "(m)"
                       << "\t LSB diff = " << Zm.lsb() - Zc.lsb()  
                       << "\033[0m" << std::endl;
         }
@@ -586,10 +594,10 @@ void propagateBackwardsComposition(std::vector<const char*> titles, std::vector<
         return;
     }
 
-    int n = titles.size();
+    unsigned long n = titles.size();
 
     std::cout << "Shaving input " << X << " of ";
-    for(auto t: titles) 
+    for(const auto *t: titles) 
         std::cout << t << " ○ ";
     std::cout << "\b\b\b";
     std::cout << " to achieve an output lsb of " << l << std::endl << std::endl;
