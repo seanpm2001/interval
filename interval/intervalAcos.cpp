@@ -47,7 +47,7 @@ interval interval_algebra::Acos(const interval& x)
     int precision = exactPrecisionUnary(acos, v, sign * pow(2, i.lsb()));
 
     if (precision == INT_MIN or taylor_lsb)
-        precision = floor(x.lsb() - (double)log2(1 - v*v)/2);
+        precision = floor(i.lsb() - (double)log2(1 - v*v)/2);
 
     return {acos(i.hi()), acos(i.lo()), precision};
 }

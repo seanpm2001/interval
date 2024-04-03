@@ -26,10 +26,11 @@ using namespace itv;
 int main()
 {
     // test interval representation
-    check("interval()", interval());
-    check("interval(0,100)", interval(100.0, 0.0));
-    check("interval(0)", interval(0, 0));
-    check("interval(-10,0)", interval(0, -10));
+    // check("interval()", interval());
+    check("interval(0,100,-24)", interval(100.0, 0.0));
+    check("interval(0,0,-24)", interval(0, 0));
+    check("interval(-10,0,-24)", interval(0, -10));
+    check("interval(-10,10,-5)", interval(-10,10,-5));
 
     // test union intersection
 

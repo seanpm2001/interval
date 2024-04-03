@@ -34,7 +34,7 @@ interval interval_algebra::Ne(const interval& x, const interval& y)
     if ((x.hi() < y.lo()) || x.lo() > y.hi()) {
         return interval{1, 1, 0};
     }
-    if ((x.hi() == y.lo()) && x.lo() == y.hi()) {
+    if ((x.hi() == y.hi() && x.lo() == y.lo()) && x.lo() == y.hi()) {
         return interval{0, 0, 0};
     }
     return {0, 1, 0};

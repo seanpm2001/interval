@@ -97,6 +97,18 @@ Example: `And(1011, 1100) = 1000`. Only the positions where both operands have b
 
 `And` behaves like a mask: one of the arguments will "mask" the other in that only the bits where the first argument has a `1` will be preserved in the other, while the remaining bits will be indiscriminately set to `0`.
 
+The correct precision to use then depends on whether we want to prioritise pseudo-injectivity or the concrete use case of bitwise boolean operators.
+
+### Bitwise boolean operator
+
+If we consider that all bits are significant, including the trailing zeroes, then the output precision precision should be the finest of both input precisions, floored to $0$ as the output is an integer.
+
+This solution is the one that is used in the code, but the alternative is implemented in comments.
+
+### Pseudo-injectivity
+
+If we prioritise pseudo-injectivity (i.e., consider that we can ), then the reasoning goes as follow:
+
 Considering that all bits beyond the LSB of an argument have value `0`, all output bits in these positions will have value `0` as well. 
 From the point of view of pseudo-injectivity, this means that these bits cannot be used to distinguish outputs, and can be ditched as such. 
 As a consequence, the output LSB will coarser or equal than the coarsest input LSB: $l' \ge max(l_x, l_y)$.
@@ -332,7 +344,7 @@ if the minimum value of the slider lies in $[\underline{x_{lo}}; \overline{x_{lo
 
 Discrete values that can be taken by a slider with range $[x_{lo}; x_{hi}]$ and step $s$ are of the form $x_{lo} + k \cdot s \le x_{hi}$ with $k\in \mathbb{Z}$.
 The values of the slider are aligned with the lower bound and regularly placed according to the step.
-In order to be able to correctly represent these values, the output precision should be the finer between the precision of the lower bound interval, the precision of the step interval, and the precision implied by the step (given by $\lfloor \log_2(s) \rfloor$)
+In order to be able to correctly represent these values, the output precision should be the finer between the precision of the lower bound interval, the precision of the step interval, and the precision implied by the step (given by $\lfloor \log_2(s) \rfloor$).
 
 ## IntCast
 
@@ -375,7 +387,8 @@ It is implemented by inverting the arguments of `Ge`.
 
 ## Log
 
-Log is the base-$e$ logarithm, or natural logarithm, denoted $\ln$ in mathematics. 
+Log is the base-$e$ logarithm, or natural logarithm, denoted $\ln$ in mathematics.
+It is defined over the $\mathbb{R}_+^*$, and has a limit of $-\infty$ in $0$.
 
 Its lowest slope is attained at the higer bound of the interval.
 
@@ -496,65 +509,230 @@ Some inputs can measure an output interval that excludes $0$ as a lower bound.
 This is normal and due to the fact that the discontinuities $x = k\cdot y$ do not always intersect the discrete fixed-point grid from which `analyzeBinaryMethod` samples.
 Validity of the result on these inputs should instead be checked using `check` (which implies computing the output interval by hand).
 
-# Typology of functions
+## Mul 
 
-## Binary operator
+$0$ is considered an absorbant element when it comes to interval bounds.
+Indeed, even though $0\times\infty$ is an indeterminate form in the realms of mathematics, a bound of $\infty$ does not mean that values in the interval can be infinite, but rather that they are unbounded.
+They nonetheless remain finite, and hence their multiplication by $0$ yields $0$.
 
-### Mul
+### Overflow
 
-$l_x + l_y$: not sure if always attained but is a sound over-approximation.
+When both input intervals represent integers, there is a possibility for overflow to occur.
+These happen when multiplying two values in the intervals $x$ and $y$ yields a result $|x\times y| \ge \texttt{INT\_MAX}, |\texttt{INT\_MIN}|$.
+In practice, the test detecting overflows is $\max(|\underline{x}|, |\overline{x}|) \times \max(|\underline{y}|, |\overline{y}|) \ge \texttt{INT\_MAX}$.
+
+If an overflow does occur, then the output value can pass from `INT\_MIN` to `INT\_MAX` (or conversely), thus the output interval will be between those two values (cast to `double`).
+This interval is not optimal, but it seems difficult to compute the actual interval.
+
+If an overflow does not occur, the boundaries are computed by casting the boundaries to `int`, computing all the possible multiplications combinations, and setting the minimum and the maximum as boundaries for the output interval.
+
+### Precision
+
+The output precision is the sum of the input precisions.
+
+**TODO** Proof that it is optimal
+
+## Ne
+
+Boolean operator testing whether two arguments are not equal.
+
+If the intervals do not intersect (the lower bound of one is higher than the higher bound of the other), the result is necessarily $1$ (`True`).
+If the intervals are singletons and are equal, then the result is necessarily $0$ (`False`).
+Otherwise, both values are possible.
+
+Being a boolean function, its output has precision $0$.
+
+## Neg
+
+Computes the opposite of a value: $x \mapsto -x$.
+
+The precision remains the same.
+
+## Not 
+
+Bitwise negation on integers.
+
+The output interval is computed by brute-force iterating through the integer elements of the input interval.
+
+The output is made of integers, so its precision is at least $0$.
+If the input precision was above $0$, it remains identical.
+
+## NumEntry 
+
+UI primitive used to input a number.
+
+Like for `HSlider`, the precision is the finest of those induced by the lower bound and the step.
+
+## Or
+
+Or is a bitwise boolean "or" function.
+
+Example: `Or((0101)b, (0110)b) = 0111b`.
+
+The reasoning is similar to that for `And`, except that the trailing *zeroes* are here trailing *ones*.
+
+The final implementation prioritises keeping all bits, as they are deemed to all be significant; however, an implementation prioritising pseudo-injectivity is present in comments.
+
+**TODO:** Document `bitwiseSignedOr`.
+
+## Pow 
+
+Pow is the binary "power" function: $(x, y) \mapsto x^y$.
+
+It implementation is split into two functions: `fPow`, that deals with elevating a real base value to a power that is a real number as well, and `iPow`, that deals with elevating a real value to an integer power.
+
+This distinction is necessary because while it is possible to elevate a negative base value to an integer power, it is a domain violation for a real-valued power.
+
+### fPow
+
+`fPow` is expressed as the composition of `Exp`, `Mul` and `Log`, following the formula $x^y = e^{y\cdot \ln(x)}$.
+
+The interval of the first argument $x$ is constrained to positive values.
+
+### iPow
+
+`iPow` is expressed with the help of the auxiliary function `ipow`, which computes the result of an real-valued interval elevated to a single integer power (instead of an interval of integers).
+
+A case disjunction is operated in `ipow`, depending on whether the exponent `k` is even () or odd ().
+
+The precision is computed using the same principle as `exactPrecisionUnary`, but without actually using it, since the function we are computing the precision of is parameterised by `k`.
+The finest precision is attained at the lower bound $\underline{x}$ of the interval: we are computing $\log_2(|(\underline{x}+u)^k - \underline{x}^k|)$.
+- If $\underline{x} = 0$, this formula is reduced to $\log_2(u^k) = k\cdot l$.
+- Otherwise, $(\underline{x} + u)k - \underline{x}^k \approx u\cdot k \cdot x^{k-1}$, thus $\ell_{out} = \log_2(k) + \ell + (k-1)\cdot \log_2(\underline{x})$, which we split into $p_1 = (k-1)\cdot \log_2(\underline{x})$ and $p_2 = $.
+
+## Rem
+
+Rem is the function giving the remainder of the floating-point division. 
+It is defined as $\mathrm{rem}(x, y) = x - \lfloor \frac{x}{y} \rceil \cdot y$, where $\lfloor \frac{x}{y} \rceil$ is the closest integer to $\frac{x}{y}$ (chosed to be an even number if $\frac{x}{y}$ is exactly halfway between two integers).
+
+The reasoning is very similar as the one for Mod.
+
+The discontinuities are lines of equation
+
+## Rint
+
+Rint is the function rounding its argument to an integer value, using the current rounding mode.
+It is implemented using the `std::rint` C++ function.
+
+The boundaries of the output interval are the result of rounding the input boundaries, and since the output is an integer, precision is set to $0$ (unless the input precision was already $\ge 0$, in which case it remains unchanged).
+
+**Remark:** The rounding mode might be different when compiling the Faust compiler and when compiling the produced code. 
+This might cause incoherence.
+
+## Round 
+
+Round is the function rounding its argument to the *nearest* integer value, regardless of the current rounding mode.
+It is implemented using the `std::round` C++ function.
+
+The boundaries of the output interval are the result of rounding the input boundaries to nearest, and since the output is an integer, precision is set to $0$ (unless the input precision was already $\ge 0$, in which case it remains unchanged).
+
+## Rsh 
+
+Rsh is the binary right-shift operator, also denoted `>>` in various languages.
+
+*Example:* `0b00001010 >> 2 = 0b00000010`
+
+In terms of precision, this will shift the LSB by the number of positions $k$ indicated by the bitshift: 
+$l' = l - k$.
+
+The change in MSB will be reflected by a change of mangnitude in the bounds of the intervals: 
+output interval will be $[\underline{x}/2^k; \overline{x}/2^k]$.
+
+## Sin
+
+Sin is the cosine trigonometric function.
+
+It is a periodic function of period $2\pi$. 
+Its derivative periodically attains $0$ at points of the form $k\cdot 2\pi + \frac{\pi}{2}$, $k\in\mathbb{Z}$. 
+These values are irrationnal numbers, which are not representable using floating-point or fixed-point numbers.
+The smallest gap between two consecutive images is attained at one of these values present in the interval.
+While it is possible to bound how close to such a value a fixed-point number will be, 
+it is too costly to compute for this application, and we will consider that the difference computed at the smallest value of the form $k\cdot 2\pi + \frac{\pi}{2}$ (i.e. $\frac{pi}{2}$) gives sufficient precision.
+
+Taylor fallback:
+
+**Remark:** This might cause some discrepancy between the precision computed by the test function and that computed by the interval version of `Sin`. 
+A LSB difference $\gtrsim -10$ should not be taken to mean that the function implementation is false.
+
+## Sinh
+
+Sinh is the hyperbolic sine function.
+It is defined as $sinh(x) = \frac{e^x - e^{-x}}{2}$ over the whole $\mathbb{R}$ set.
+
+The derivative of $sinh$ is $cosh$, which attains its lower value at $0$.
+Like for cosh, the precision is computed at the point $x$ in the interval of lowest magnitude.
+
+The Taylor fallback is:
+- if $x = 0$, we use the second-order Taylor approximation of $sinh(u) \approx $
+- if $x\neq 0$, $\ell' = \ell + \log_2(cosh(x))$ 
+
+## Sqrt 
+
+Sqrt is the square root function. 
+It is defined over the $\mathbb{R}_{+}$ set.
+
+Its derivative is decreasing and thus attains its lower value at the highest bound of the interval.
+
+The Taylor fallback is:
+- if $\overline{x} = 0$ (the definition interval is a singleton), then the second-order Taylor development is used: $\sqrt{u} \approx$
+- otherwise, $\sqrt{x+u} - \sqrt{x}$
+
+## Sub
+
+Sub is the subtraction function.
+
+It is equivalent to the composition of the addition and the opposite function, and as such, its output precision is the finest of the input precisions.
+
+## Tan
+
+Tan is the trigonometric tangent function. 
+
+It is periodic of period $\pi$.
+It periodically present vertical asymptotes at points $k\cdot \pi + \frac{\pi}{2}$, $k \in \mathbb{Z}$, the asymptote tending to $+\infty$ before these points and to $- \infty$ after.
+Its derivative periodically attains $0$ at points of the form $k\cdot \pi$, $k \in \mathbb{Z}$.
+
+Similarly to what has been done for sin and cos, we do not compute the tightest precision respecting pseudo-injectivity, but an approximation computing the precision at multiples of $\pi$.
+
+Taylor fallback:
+
+**Remark:** This might cause some discrepancy between the precision computed by the test function and that computed by the interval version of `Sin`. 
+A LSB difference $\gtrsim -10$ should not be taken to mean that the function implementation is false.
+
+## Tanh 
+
+Tanh is the hyperbolic tangent function.
+It is defined as $tanh(x) = \frac{sinh(x)}{cosh(x)}$.
+
+Its derivative tends to $0$ in $\pm \infty$, thus the LSB is computed at the interval boundary with the highest absolute value.
+
+Taylor fallback:
 
 
-## Concave functions
+## VSlider
 
-The derivative is decreasing, so the lowest slope is attained at the high end of the interval.
+VSlider is the horizontal slider primitive, used to input numbers contained in a given range, with a given step between two values of the slider.
 
-We compute $prec(f, \overline{x}, -u)$, with $-u$ is in order to evaluate $f$ at a point that is in the interval.
+The output interval represents all the value that can be represented by the slider.
+The input intervals are those representing the lower bound of the slider's range, its higher bound, its initial value and its step.
 
-Functions: $log$, $log_{10}$, $acosh$, $\sqrt{\;}$, inverse on $]-\infty; 0[$
+The bounds of the output interval are computed from the bounds of the parameters' intervals:
+if the minimum value of the slider lies in $[\underline{x_{lo}}; \overline{x_{lo}}]$ and its maximum value in $[\underline{x_{hi}}; \overline{x_{hi}}]$, its output values lie in $[\underline{x_{lo}}; \overline{x_{hi}}]$.
 
-## The lowest slope is attained at one point (typically zero)
+Discrete values that can be taken by a slider with range $[x_{lo}; x_{hi}]$ and step $s$ are of the form $x_{lo} + k \cdot s \le x_{hi}$ with $k\in \mathbb{Z}$.
+The values of the slider are aligned with the lower bound and regularly placed according to the step.
+In order to be able to correctly represent these values, the output precision should be the finer between the precision of the lower bound interval, the precision of the step interval, and the precision implied by the step (given by $\lfloor \log_2(s) \rfloor$)
 
-The derivative attains a global minimum at a point $x0$. If $x0$ is included in the interval $[\underline{x};\overline{x}]$, we compute $prec(f, x0, ±u)$. Otherwise, if $x0 < \underline{x}$, the minimum derivative is at $\underline{x}$ and we compute $prec(f, \underline{x}, +u)$, and if $x0 > \overline{x}$, the minimum derivative is at $\overline{x}$ and we compute $prec(f, \overline{x}, -u)$.
+## Xor
 
-Functions: $acos$, $asin$, $atanh$, $cosh$, $sinh$ ($x_0=0$ for all).
+Xor is the bitwise "exclusive or" function.
 
+Similarily to And and Or, the output precision preserving all the bits is the finest of both input precisions.
 
-## Trigonometric functions
+If we chose to prioritise pseudo-injectivity, 
 
-Lowest slope is attained periodically at multiples or half-multiples of $π$. However, those are irrational numbers and thus not representable, so this lowest slope is never *quite* attained. The smallest gap is theoretically attained for two consecutive representable numbers framing a multiple (or half-multiple) of $π$. Identifying the pair of numbers attaining this minimum is a difficult problem. 
-
-Thus, we instead chose to study $cosPi : x \mapsto cos(π\*x)$, $sinPi : x \mapsto sin(π\*x)$ and $tanPi : x \mapsto tan(π\*x)$, where the lowest slopes are attained at integer or half-integer numbers, which have the advantage of being representable in a fixpoint format. Besides, this form corresponds to the one that is typically used in DSP applications.
-
-The input interval $[\underline{x}; \overline{x}]$ is normalised to $[\underline{x}'; \overline{x}']$ such that $0 ≤ \underline{x}' ≤ 2$ and $\overline{x}' - \underline{x}' = \overline{x} - \underline{x}$. We then test the translated interval for an integer or half-integer $k$, depending on the function considered. In that case, we compute $prec(f, k, ±u)$. 
-If there is no integer in the translated interval, we compute $prec(f, \underline{x}', +u)$ if $\underline{x}'$ is closer to its closest integer than $\overline{x}'$ and $prec(f, \overline{x}', -u)$ otherwise.
-
-This approach can cause some rounding issues in the implementation: there can be $x$ and $y$ such that $cos(π\*x)$ and $cos(π\*y)$ are mathematically equal but for which the roundings of $π\*x$ and $π\*y$ cause their images through cos to be slightly different, resulting in a measured lsb much lower than what is actually needed.
-
-Functions: $cos$, $tan$, $sin$
-
-### Update 23/06
-
-I ended up deciding against this solution because of the complications involved (in particular, the fact that using this correctly would involve having to detect expressions of the form $cos(\pi·x)$), and because distinguishing between images that are not adjacent doesn't seem to be necessary (this will have to be validated by experiments).
-
-## Binary functions
-
-These are functions such as $atan2$ (computing the angle between a vector $(x, y)$ and the x-axis) and $pow$ (computing $x^y$). 
-These are typically tackled by expressing them as the composition of a binary operator and of an unary function that has already been studied.
+**TODO:** Document `bitwiseSignedXOr`.
 
 
-### pow
-
-$x^y = exp(y\cdot ln(x))$: since $exp$, $ln$ and multiplication have already be studied, we can thus compute the output interval and the LSB by chaining these well-known operations.
-
-### Mod, Remainder and Rint
-
-* Mod is implemented using the `std::fmod` C++ function, which is specified as: $fmod(x, y) = x - \lfloor \frac{x}{y} \rfloor \cdot y$. 
-Two conditions apply to it: it should be the same sign as $x$, and lesser than $y$ in magnitude.
-* Remainder is implemented using the `std::remainder` C++ function, which is specified as 
-$remainder(x,y) = x - n\cdot y$ where $n$ is the integer closest to $\frac{x}{y}$ (ties to even).
-This value might have sign opposite to $x$, unlike what $fmod$ does.
-* Rint is implemented using the `std::rint` C++ function, which rounds the argument to an integer value using the current rounding mode. 
 
 # Avoiding absorption
 
@@ -564,19 +742,7 @@ These can quickly get very fine precisions, and result in computations of the fo
 We thus need to rewrite precision computations so that these forms do not appear.
 We need to rewrite them in the case of $log$ and $exp$.
 
-## Logarithm
 
-Precision computation for base $a$ logarithm studied over interval $[\underline{x};\overline{x}]\_l$ looks like this in its basic form:
-$\lfloor log_2(log\_a(\overline{x}) - log\_a(\overline{x} - 2^l))\rfloor$
-
-In cases where $l$ is negative enough (and thus $2^l$ very small), the representation of $\overline{x} - 2^l$ is identical to that of $\overline{x}$, and the computation yields a precision of $-\infty$.
-
-To avoid such a phenomenon, we rewrite the computation as follows:
-$log_a(\overline{x} - 2^l) = log_a(\overline{x}\cdot(1 - \frac{2^l}{\overline{x}})) = log_a(\overline{x}) + log_a(1 - \frac{2^l}{\overline{x}})$, thus the precision becomes $\lfloor log_2(- log_a(1 - \frac{2^l}{\overline{x}}))\rfloor$.
-
-When $2^l/\overline{x}$ is so small that $x + 2^l$ gets rounded to $x$ (we will call that phenomenon absorption), it is reasonable to replace it by its first-order series expansion: $log_a(1 - \frac{2^l}{\overline{x}}) \approx -log_a(e)\cdot \frac{2^l}{\overline{x}}$.
-
-The final form of the precision is then $\lfloor log_2(log_a(e)\cdot \frac{2^l}{\overline{x}})\rfloor = \lfloor log_2(log_a(e)) + l - log_2(\overline{x})\rfloor$.
 
 ## Integer power
 

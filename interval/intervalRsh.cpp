@@ -26,20 +26,20 @@ namespace itv {
 // interval Rsh(const interval& x, const interval& y);
 // void testRsh();
 
-static double rsh(double x, double y)
+static double rsh(double x, double k)
 {
-    return x * pow(2, -y);
+    return x * pow(2, -k);
 }
 
-interval interval_algebra::Rsh(const interval& x, const interval& y)
+interval interval_algebra::Rsh(const interval& x, const interval& k)
 {
-    if (x.isEmpty() || y.isEmpty())
+    if (x.isEmpty() || k.isEmpty())
         return empty();
 
-    interval j{pow(2, -y.hi()), pow(2, -y.lo())};
+    interval j{pow(2, -k.hi()), pow(2, -k.lo())};
     interval z = Mul(x, j);
 
-    return {z.lo(), z.hi(), x.lsb() - (int)y.hi()};  // rshifts add some precision to the numbers, at most y.hi() bits
+    return {z.lo(), z.hi(), x.lsb() - (int)k.hi()};  // rshifts add some precision to the numbers, at most y.hi() bits
 }
 
 void interval_algebra::testRsh()

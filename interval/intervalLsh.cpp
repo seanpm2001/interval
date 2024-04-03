@@ -27,21 +27,21 @@ namespace itv {
 // interval Lsh(const interval& x, const interval& y);
 // void testLsh();
 
-static double lsh(double x, double y)
+static double lsh(double x, double k)
 {
-    return x * pow(2, y);
+    return x * pow(2, k);
 }
 
-interval interval_algebra::Lsh(const interval& x, const interval& y)
+interval interval_algebra::Lsh(const interval& x, const interval& k)
 {
-    if (x.isEmpty() || y.isEmpty())
+    if (x.isEmpty() || k.isEmpty())
         return empty();
 
-    interval j{pow(2, y.lo()), pow(2, y.hi())};
+    interval j{pow(2, k.lo()), pow(2, k.hi())};
     interval z = Mul(x, j);
 
     return {z.lo(), z.hi(),
-            x.lsb() + (int)y.lo()};  // lshifts shave some precision off the numbers, at least y.lo() bits
+            x.lsb() + (int)k.lo()};  // lshifts shave some precision off the numbers, at least y.lo() bits
 }
 
 void interval_algebra::testLsh()

@@ -35,7 +35,7 @@ interval interval_algebra::Asin(const interval& x)
 {
     interval i = intersection(domain, x);
     if (i.isEmpty()) {
-        return i;
+        return empty();
     }
 
     double v    = 0;   // value at which the min slope is attained, zero if it is present

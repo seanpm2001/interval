@@ -26,32 +26,37 @@ namespace itv {
 // interval Log(const interval& x);
 // void testLog();
 
+static const interval domain{0, HUGE_VAL, 0};
+
 interval interval_algebra::Log(const interval& x)
 {
-    if (x.isEmpty()) {
+    interval i = intersection(x, domain);
+
+    if (i.isEmpty()) {
         return empty();
     }
 
     // lowest slope is at the highest bound of the interval
     int precision = exactPrecisionUnary(
-       log, x.hi(), -pow(2, x.lsb()));  // -pow because we take the FP number right before the higher bound
+       log, i.hi(), -pow(2, i.lsb()));  // -pow because we take the FP number right before the higher bound
     if (precision == INT_MIN or taylor_lsb)
     {
-        /* double delta     = -log(1 - pow(2, x.lsb()) / x.hi());
+        /* double delta     = -log(1 - pow(2, i.lsb()) / i.hi());
         precision = floor((double)log2(delta));*/
-        precision = floor(x.lsb() - (double)log2(abs(x.hi())));
+        precision = floor(i.lsb() - (double)log2(abs(i.hi())));
     }
 
-    interval i = intersection(interval(0, HUGE_VAL), x);
     return {log(i.lo()), log(i.hi()), precision};
 }
 
 void interval_algebra::testLog()
 {
-    analyzeUnaryMethod(10, 10000, "log", interval(0, 10, -6), log, &interval_algebra::Log);
+    /* analyzeUnaryMethod(10, 10000, "log", interval(0, 10, -6), log, &interval_algebra::Log);
     analyzeUnaryMethod(10, 10000, "log", interval(0, 10, -12), log, &interval_algebra::Log);
     analyzeUnaryMethod(10, 10000, "log", interval(0, 10, -20), log, &interval_algebra::Log);
-    analyzeUnaryMethod(10, 10000, "log", interval(0, 10, -24), log, &interval_algebra::Log);
+    analyzeUnaryMethod(10, 10000, "log", interval(0, 10, -24), log, &interval_algebra::Log);*/
+
+    analyzeUnaryMethod(10, 10000, "log", interval(-10, 10, -24), log, &interval_algebra::Log);
 
     // check("test algebra Log", Log(interval(1, 10)), interval(log(1), log(10)));
     // check("test algebra Log", Log(interval(0, 10)), interval(log(0), log(10)));

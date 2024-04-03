@@ -32,6 +32,6 @@ interval interval_algebra::NumEntry(const interval& name, const interval& init, 
         lsb = std::min(lsb, (int)log2(step.lo()));  // and that associated to the smallest value the step can take
     }
 
-    return {lo.lo(), hi.hi(), -24};  // TODO: step, init
+    return {lo.lo(), hi.hi(), lsb};
 }
 }  // namespace itv

@@ -139,7 +139,9 @@ interval interval_algebra::And(const interval& x, const interval& y)
 
     SInterval z = bitwiseSignedAnd({x0, x1}, {y0, y1});
 
-    int precision = std::max(x.lsb(), y.lsb());  // output precision cannot be finer than that of the input intervals
+    int precision = std::min(x.lsb(), y.lsb());
+
+    /* int precision = std::max(x.lsb(), y.lsb());  // output precision cannot be finer than that of the input intervals
 
     // however, if one of the intervals is reduced to one element, the mask can make it so
     int precisionx = 0;
@@ -162,9 +164,11 @@ interval interval_algebra::And(const interval& x, const interval& y)
             v = v / 2;
             precisiony++;
         }
-    }
+    }*/
 
-    return {double(z.lo), double(z.hi), std::max(precision, std::max(precisionx, precisiony))};
+    return {double(z.lo), double(z.hi), 
+            // std::max(precision, std::max(precisionx, precisiony))
+            precision};
 }
 
 void interval_algebra::testAnd()
