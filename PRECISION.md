@@ -83,11 +83,11 @@ Wrapping situations due to integer overflow have to be taken care of. In the cas
 
 The boundaries of the output interval are computed as `double`s in order to test whether the output interval wraps. 
 
-If both `INT\_MAX` and `INT\_MAX+1`, or `INT\_MIN-1` and `INT\_MIN` are both present in the double-value output interval, then the output interval contains both wrapped value and unwrapped values, and thus spans `[INT\_MIN; INT\_MAX]`.
+If `INT_MAX` and `INT_MAX+1`, or `INT_MIN-1` and `INT_MIN` are both present in the double-value output interval, then the output interval contains both wrapped value and unwrapped values, and thus spans `[INT_MIN; INT_MAX]`.
 
 Otherwise, the bounds of the output interval are computed by adding the bounds of the input intervals as integers, with potential wrapping.
 
-**Note:** The gap between `INT\_MAX` and the double right below is smaller than one: all values in an integer interval are representable as doubles.
+**Note:** The gap between `INT_MAX` and the double right below is smaller than one: all values in an integer interval are representable as doubles.
 
 ## And 
 
@@ -107,7 +107,7 @@ This solution is the one that is used in the code, but the alternative is implem
 
 ### Pseudo-injectivity
 
-If we prioritise pseudo-injectivity (i.e., consider that we can ), then the reasoning goes as follow:
+If we prioritise pseudo-injectivity (i.e., consider that we can discard bits as long as they're not useful to distinguish outputs), then the reasoning goes as follow:
 
 Considering that all bits beyond the LSB of an argument have value `0`, all output bits in these positions will have value `0` as well. 
 From the point of view of pseudo-injectivity, this means that these bits cannot be used to distinguish outputs, and can be ditched as such. 
@@ -123,7 +123,7 @@ If one (or both) of the interval is a singleton, the mask can extend prior to th
 We detect the position of bit with value `1` and the least weight, and treat it as the "actual" LSB of the singleton-interval. 
 The output LSB is the maximum of both input LSBs. 
 
-*Example:* $[000; 110]_0 \wedge [100]_1 = \{000; 001; 010; 011; 100; 101; 110\} \wedge \{100\} = \{000; 100\} = [000; 100]_2$
+*Example:* $[000; 110]_0 \wedge [100]_1 = \{000; 001; 010; 011; 100; 101; 110\} \wedge {100} = \{000; 100\} = [000; 100]_2$
 
 Even though the input interval are specified with LSBs $0$ and $1$, the actual output interval can be represented with LSB $2$ without loss of information.
 
@@ -138,7 +138,7 @@ It is defined over the interval $[-1; 1]$: we restrict its input interval to thi
 Its derivative has a minimum in $0$: this is where we compute the precision if $0$ is included in the interval. Otherwise, the boundary of the interval closest to $0$ is used: $\underline{x}$ if $0 < \underline{x}$, $\overline{x}$ if $0 > \overline{x}$.
 
 In case of an infinite precision, the Taylor formula is:
-$|asin(x\pm u) - asin(x)| = |u \cdot \frac{1}{sqrt{1- x^2}}|$, 
+$|asin(x\pm u) - asin(x)| = |u \cdot \frac{1}{\sqrt{1- x^2}}|$, 
 hence $l' = l - \frac{1}{2}\log_2(1- x^2)$.
 
 ## Asinh
@@ -219,7 +219,7 @@ Its derivative attains a minimum at $0$: we compute the precision at the point $
 
 The Taylor fallback is computed as follows:
 $|atanh(x+u) - atanh(x)| = |u \cdot \frac{1}{1 - x^2}|$,
-so $l' = l' - \log_2(1 - x^2)$.
+so $l' = l - \log_2(1 - x^2)$.
 
 ## Button
 
@@ -288,6 +288,7 @@ It is equal to its own derivative and the derivative has a minimum in $\underlin
 
 Due to the very high dynamic range of the exponential function, it actually has the potential to push usual floating-point formats to their limits (ie generate overflows and underflows).
 To manage that phenomenon, precision computation is implemented differently for the exponential than for other real functions.
+
 **TODO** Give a concrete example as to how a straightforward implementation could fail.
 
 The general formula for the computation of the output precision is $\log_2(e^{x+u} - e^x)$.
@@ -336,7 +337,7 @@ It can return either $0$ or $1$, so no more than 1 bit is needed to represent th
 
 HSlider is the horizontal slider primitive, used to input numbers contained in a given range, with a given step between two values of the slider.
 
-The output interval represents all the value that can be represented by the slider.
+The output interval represents all the values that can be represented by the slider.
 The input intervals are those representing the lower bound of the slider's range, its higher bound, its initial value and its step.
 
 The bounds of the output interval are computed from the bounds of the parameters' intervals:
@@ -387,7 +388,7 @@ It is implemented by inverting the arguments of `Ge`.
 
 ## Log
 
-Log is the base-$e$ logarithm, or natural logarithm, denoted $\ln$ in mathematics.
+Log is the base $e$ logarithm, or natural logarithm, denoted $\ln$ in mathematics.
 It is defined over the $\mathbb{R}_+^*$, and has a limit of $-\infty$ in $0$.
 
 Its lowest slope is attained at the higer bound of the interval.
@@ -398,7 +399,7 @@ from which $l' = l - \log_2(|x|)$.
 
 ## Log10 
 
-Log10 is the base-$10$ logarithm. 
+Log10 is the base $10$ logarithm. 
 
 Like for the natural logarithm, its lowest slope is attained at the higher bound of the interval.
 
@@ -518,10 +519,10 @@ They nonetheless remain finite, and hence their multiplication by $0$ yields $0$
 ### Overflow
 
 When both input intervals represent integers, there is a possibility for overflow to occur.
-These happen when multiplying two values in the intervals $x$ and $y$ yields a result $|x\times y| \ge \texttt{INT\_MAX}, |\texttt{INT\_MIN}|$.
-In practice, the test detecting overflows is $\max(|\underline{x}|, |\overline{x}|) \times \max(|\underline{y}|, |\overline{y}|) \ge \texttt{INT\_MAX}$.
+These happen when multiplying two values in the intervals $x$ and $y$ yields a result $|x\times y| \ge$ `INT_MAX, |INT_MIN|`.
+In practice, the test detecting overflows is $\max(|\underline{x}|, |\overline{x}|) \times \max(|\underline{y}|, |\overline{y}|) \ge$ `INT_MAX`.
 
-If an overflow does occur, then the output value can pass from `INT\_MIN` to `INT\_MAX` (or conversely), thus the output interval will be between those two values (cast to `double`).
+If an overflow does occur, then the output value can pass from `INT_MIN` to `INT_MAX` (or conversely), thus the output interval will be between those two values (cast to `double`).
 This interval is not optimal, but it seems difficult to compute the actual interval.
 
 If an overflow does not occur, the boundaries are computed by casting the boundaries to `int`, computing all the possible multiplications combinations, and setting the minimum and the maximum as boundaries for the output interval.
