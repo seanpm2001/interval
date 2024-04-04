@@ -221,14 +221,14 @@ int main()
     interval Y = interval(-HUGE_VAL, HUGE_VAL, -804);
     std::cout << X << " / " << Y << " = " << A.Div(X, Y) << std::endl;*/
 
-    interval X = interval(-HUGE_VAL, HUGE_VAL, -23);
+    /* interval X = interval(-HUGE_VAL, HUGE_VAL, -23);
     std::cout << X << std::endl;
     interval Y = A.Inv(X);
     std::cout << Y << std::endl;
     std::cout << A.Inv(Y) << std::endl;
     X = interval(-HUGE_VAL, HUGE_VAL, -20);
     std::cout << X << std::endl;
-    std::cout << A.Inv(X) << std::endl;
+    std::cout << A.Inv(X) << std::endl;*/
     // propagateBackwardsUnaryMethod("inv", &interval_algebra::Inv, X, -24);
     // std::cout << X << std::endl;
 
