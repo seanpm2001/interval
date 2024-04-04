@@ -309,6 +309,8 @@ FloatCast is the operator casting values into floats.
 If we cast an `int` value in `float` without modifying the precision, it will remain above $0$ and the output value will be interpreted as `int` because of that, defeating the purpose of a `float` cast.
 Having observed that, we reassign precisions greater than $0$ to $-1$ in order to force the `float` typing.
 
+If the input interval is empty, then the constructed ouput interval is empty as well.
+
 ## FloatNum
 
 FloatNum is the operator constructing a singleton interval from a floating-point number.
@@ -339,6 +341,8 @@ HSlider is the horizontal slider primitive, used to input numbers contained in a
 
 The output interval represents all the values that can be represented by the slider.
 The input intervals are those representing the lower bound of the slider's range, its higher bound, its initial value and its step.
+
+If one of the numerical parameters of the slider is an empty interval, then the slider cannot generate values and its ouput is empty as well. 
 
 The bounds of the output interval are computed from the bounds of the parameters' intervals:
 if the minimum value of the slider lies in $[\underline{x_{lo}}; \overline{x_{lo}}]$ and its maximum value in $[\underline{x_{hi}}; \overline{x_{hi}}]$, its output values lie in $[\underline{x_{lo}}; \overline{x_{hi}}]$.
@@ -417,7 +421,7 @@ In terms of precision, this will shift the LSB by the number of positions $k$ in
 $l' = l + k$.
 
 The change in MSB will be reflected by a change of mangnitude in the bounds of the intervals: 
-output interval will be $[\underline{x}*2^k; \overline{x}*2^k]$.
+output interval will be $[\underline{x}\cdot 2^k; \overline{x}\cdot 2^k]$.
 
 ## Lt  
 

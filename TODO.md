@@ -45,11 +45,31 @@ La précision mesurée d'un singleton est de `INT_MAX`, car il faut au moins deu
 
 # Fonctions d'intervalles à compléter
 
+## Fonctions bitwise
+
+And, Or, Xor: il faut expliquer comment on obtient les bornes des intervalles (pour Yann car c'est lui qui a écrit ce code).
+
+## Inv
+
+Expliquer les expériences faites et pourquoi ca n'était pas concluant.
+
+## Mul 
+
+Prouver l'optimalité de la précision $l_x + l_y$ par rapport à la pseudo-injectivité.
+
+## Pow
+
+Expliquer l'implémentation de la précision pour les puissances entières.
+A reprendre du reliquat de texte à la fin.
+
 ## Rem
 Refaire le meme raisonnement que pour Mod, en prenant en compte les changements dûs à tie to even.
 
-## Fonctions trigonométriques
-Refaire le raisonnement des Taylor fallback.
+## Fonctions trigonométriques et hyperboliques
+Cos, Sin, Tan, Sinh, Tanh: Refaire le raisonnement des Taylor fallback.
+
+## Neg et sub
+Prendre en compte le wrapping sur le meme principe que pour Add (`-INT_MIN > INT_MAX`).
 
 ## Probablement d'autres fonctions
 Faire une passe sur toutes les primitives pour vérifier que tout est en ordre.

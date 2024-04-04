@@ -1,10 +1,13 @@
-Notes on testing the intervals results
+These notes on testing the intervals results are destined to future library contributors who might want to add tests to validate their additions to the library.
 
 # Testing functions
+
+How the various test functions work.
 
 ## `check`
 
 # Number of samples
+
 In a number of cases, the number of samples needs to be higher than usual to give valid results.
 
 ## Large intervals
