@@ -34,12 +34,13 @@ static double cosPi(double x)
 
 interval interval_algebra::Cos(const interval& x)
 {
-    int precision = exactPrecisionUnary(cos, 0, pow(2, x.lsb()));
-    if (precision == INT_MIN or taylor_lsb) precision = 2*x.lsb() - 1; // if x.lsb() is so small that the automatic computation doesn't work
-
     if (x.isEmpty()) {
         return empty();
     }
+
+    int precision = exactPrecisionUnary(cos, 0, pow(2, x.lsb()));
+    if (precision == INT_MIN or taylor_lsb) precision = 2*x.lsb() - 1; // if x.lsb() is so small that the automatic computation doesn't work
+
     if (x.size() >= 2*M_PI) {
         return {-1, 1, precision};
     }

@@ -28,11 +28,11 @@ namespace itv {
 
 interval interval_algebra::Cosh(const interval& x)
 {
-    double v = 0;  // absolute lowest slope is at zero
-
     if (x.isEmpty()) {
         return empty();
     }
+
+    double v = 0;  // absolute lowest slope is at zero
 
     if (x.hasZero()) {
         int precision = exactPrecisionUnary(cosh, v, pow(2, x.lsb()));
