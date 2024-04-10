@@ -1,11 +1,11 @@
 /* Copyright 2023 Yann ORLAREY
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,9 @@ static double myXor(double x, double y)
 // BRUTE FORCE
 interval interval_algebra::Xor(const interval& x, const interval& y) const
 {
-    if (x.isEmpty() || y.isEmpty()) return {};
+    if (x.isEmpty() || y.isEmpty()) {
+        return Empty();
+    }
     auto x0 = saturatedIntCast(x.lo());
     auto x1 = saturatedIntCast(x.hi());
     auto y0 = saturatedIntCast(y.lo());

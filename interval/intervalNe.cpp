@@ -29,7 +29,7 @@ namespace itv {
 interval interval_algebra::Ne(const interval& x, const interval& y) const
 {
     if (x.isEmpty() || y.isEmpty()) {
-        return {};
+        return Empty();
     }
     if ((x.hi() < y.lo()) || x.lo() > y.hi()) {
         return interval{1.0};

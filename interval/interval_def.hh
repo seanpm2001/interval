@@ -21,10 +21,10 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <limits>
-#include <algorithm>
 #include <string>
 
 // ***************************************************************************
@@ -54,7 +54,7 @@ class interval {
     // constructors
     //-------------------------------------------------------------------------
 
-    interval() = default;
+    // interval() = default;
 
     interval(double n, double m, int lsb = -24) noexcept
     {
@@ -62,11 +62,11 @@ class interval {
             fLo = NAN;
             fHi = NAN;
         } else {
-            double u = pow(2, lsb);
-            double n_trunc = u*(double)floor(n/u);
-            double m_trunc = u*(double)floor(m/u);
-            fLo = std::min(n_trunc, m_trunc);
-            fHi = std::max(n_trunc, m_trunc);
+            double u       = pow(2, lsb);
+            double n_trunc = u * (double)floor(n / u);
+            double m_trunc = u * (double)floor(m / u);
+            fLo            = std::min(n_trunc, m_trunc);
+            fHi            = std::max(n_trunc, m_trunc);
         }
         fLSB = lsb;
     }
@@ -108,7 +108,7 @@ class interval {
     int    lsb() const { return fLSB; }
 
     // position of the most significant bit of the value, without taking the sign bit into account
-    int    msb() const
+    int msb() const
     {
         // amplitude of the interval
         // can be < 1.0, in which case the msb will be negative and indicate the number of implicit leading zeroes
@@ -127,6 +127,39 @@ class interval {
         }
     }
 };
+
+//-------------------------------------------------------------------------
+// specific intervals
+//-------------------------------------------------------------------------
+
+inline interval Empty()
+{
+    return {NAN, NAN};
+}
+inline interval Full()
+{
+    return {std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max()};
+}
+inline interval Zero()
+{
+    return {0, 0};
+}
+inline interval One()
+{
+    return {1, 1};
+}
+inline interval Positive()
+{
+    return {0, std::numeric_limits<double>::max()};
+}
+inline interval StrictPositive()
+{
+    return {nexttoward(0.0, INFINITY), std::numeric_limits<double>::max()};
+}
+inline interval StrictNegative()
+{
+    return {std::numeric_limits<double>::lowest(), nexttoward(0.0, -INFINITY)};
+}
 
 //-------------------------------------------------------------------------
 // printing
@@ -155,7 +188,7 @@ inline interval intersection(const interval& i, const interval& j)
         double l = std::max(i.lo(), j.lo());
         double h = std::min(i.hi(), j.hi());
         if (l > h) {
-            return {};
+            return Empty();
         } else {
             return {l, h};
         }

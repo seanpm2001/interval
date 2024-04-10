@@ -14,7 +14,7 @@ namespace itv {
 
 interval interval_algebra::XXX(const interval& x) const
 {
-    return {};
+    return Empty();
 }
 
 void interval_algebra::testXXX() const

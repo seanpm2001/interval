@@ -68,10 +68,50 @@ interval interval_algebra::iPow(const interval& x, const interval& y) const
 
 interval interval_algebra::Pow(const interval& x, const interval& y) const
 {
-    if (x.lo() > 0) {
-        return fPow(x, y);
+    // if (x.lo() > 0) {
+    //     return fPow(x, y);
+    // }
+    // return iPow(x, y);
+
+    // std::cerr << "Pow(" << x << "," << y << ")" << std::endl;
+    interval xp = intersection(x, Positive());
+    // std::cerr << "xp=" << xp << std::endl;
+    interval xn = intersection(x, StrictNegative());
+    // std::cerr << "xn=" << xn << std::endl;
+    interval yp = intersection(y, Positive());
+    // std::cerr << "yp=" << yp << std::endl;
+    interval yn = intersection(y, StrictNegative());
+    // std::cerr << "yn=" << yn << std::endl;
+
+    interval r(NAN, NAN);  // the result is empty
+
+    if (!yn.isEmpty()) {
+        interval ynn = Neg(yn);
+        interval z   = Inv(Pow(x, ynn));
+        r            = reunion(r, z);
+        // std::cerr << "yn=" << yn << " ynn=" << ynn << " z=" << z << std::endl;
     }
-    return iPow(x, y);
+
+    if (!xp.isEmpty() && !yp.isEmpty()) {
+        double a0 = std::pow(xp.lo(), yp.lo());
+        double a1 = std::pow(xp.hi(), yp.lo());
+        double b0 = std::pow(xp.lo(), yp.hi());
+        double b1 = std::pow(xp.hi(), yp.hi());
+
+        double   z0 = std::min(std::min(a0, a1), std::min(b0, b1));
+        double   z1 = std::max(std::max(a0, a1), std::max(b0, b1));
+        interval z  = interval(z0, z1);
+        r           = reunion(r, z);
+        // std::cerr << "xp=" << xp << " yp=" << yp << " z=" << z << std::endl;
+    }
+
+    if (!xn.isEmpty() && !yp.isEmpty()) {
+        interval z = iPow(xn, yp);
+        r          = reunion(r, z);
+        // std::cerr << "xn=" << xn << " yp=" << yp << " z=" << z << std::endl;
+    }
+    // std::cerr << "Pow(" << x << "," << y << ") = " << r << std::endl;
+    return r;
 }
 
 static double myfPow(double x, double y)
@@ -86,6 +126,10 @@ static double myiPow(double x, double y)
 
 void interval_algebra::testPow() const
 {
+    analyzeBinaryMethod(10, 2000, "Pow", interval(-1, 1), interval(0.1, 6), myfPow, &interval_algebra::Pow);
+    analyzeBinaryMethod(10, 2000, "Pow", interval(0, 1), interval(0, 1), myfPow, &interval_algebra::Pow);
+    analyzeBinaryMethod(10, 2000, "Pow", interval(0, 10), interval(0, 4), myfPow, &interval_algebra::Pow);
+    analyzeBinaryMethod(10, 2000, "Pow", interval(0, 10), interval(-4, 4), myfPow, &interval_algebra::Pow);
     analyzeBinaryMethod(10, 2000, "iPow2", interval(-100, 100), interval(0, 20), myiPow, &interval_algebra::iPow);
     analyzeBinaryMethod(10, 2000, "iPow2", interval(-1, 1), interval(1, 3), myiPow, &interval_algebra::iPow);
     analyzeBinaryMethod(10, 2000, "iPow2", interval(-1, 1), interval(1, 10), myiPow, &interval_algebra::iPow);

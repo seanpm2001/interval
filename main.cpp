@@ -1,11 +1,11 @@
 /* Copyright 2023 Yann ORLAREY
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,7 @@ using namespace itv;
 int main()
 {
     // test interval representation
-    check("interval()", interval());
+    // check("interval()", interval());
     check("interval(0,100)", interval(100.0, 0.0));
     check("interval(0)", interval(0, 0));
     check("interval(-10,0)", interval(0, -10));
@@ -34,12 +34,12 @@ int main()
     // test union intersection
 
     check("test2", intersection(interval(0, 100), interval(-10, 0)), interval(0));
-    check("test3", intersection(interval(10, 100), interval(-10, 0)), interval());
+    check("test3", intersection(interval(10, 100), interval(-10, 0)), Empty());
     check("test4", reunion(interval(0, 100), interval(-100, 50)), interval(-100, 100));
     check("test5", reunion(interval(0, 100), interval(10, 500)), interval(0, 500));
 
     // test predicates
-    interval a(1, 100), b(10, 20), c(-10, 0), n;
+    interval a(1, 100), b(10, 20), c(-10, 0), n(NAN, NAN);
 
     std::cout << a << " == " << b << " = " << (a == b) << std::endl;
     std::cout << a << " <= " << b << " = " << (a <= b) << std::endl;
@@ -77,7 +77,8 @@ int main()
     std::cout << std::endl;
 
     interval_algebra A;
-    A.testAll();
+    // A.testAll();
+    A.testPow();
 
     {
         double u = 0.0;

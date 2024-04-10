@@ -1,11 +1,11 @@
 /* Copyright 2023 Yann ORLAREY
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,12 +31,18 @@ interval interval_algebra::Cos(const interval& x) const
 {
     double TWOPI = 2 * M_PI;
 
-    if (x.isEmpty()) return {};
-    if (x.size() >= TWOPI) return {-1, 1};
+    if (x.isEmpty()) {
+        return Empty();
+    }
+    if (x.size() >= TWOPI) {
+        return {-1, 1};
+    }
 
     // normalize input interval between 0..4PI
     double l = fmod(x.lo(), TWOPI);
-    if (l < 0) l += TWOPI;
+    if (l < 0) {
+        l += TWOPI;
+    }
     interval i(l, l + x.size());
 
     // compute the default boundaries
@@ -46,8 +52,12 @@ interval interval_algebra::Cos(const interval& x) const
     double hi = std::max(a, b);
 
     // check if n*PI are included
-    if (i.has(0) || i.has(2 * M_PI)) hi = 1;
-    if (i.has(M_PI) || i.has(3 * M_PI)) lo = -1;
+    if (i.has(0) || i.has(2 * M_PI)) {
+        hi = 1;
+    }
+    if (i.has(M_PI) || i.has(3 * M_PI)) {
+        lo = -1;
+    }
 
     return {lo, hi};
 }
