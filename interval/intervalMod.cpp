@@ -97,7 +97,7 @@ interval positiveFMod(const interval& x, const interval& y)
         return empty();
     }
     int n = int(x.lo() / y.hi());
-    std::cout << "n = " << n << std::endl;
+    //std::cout << "n = " << n << std::endl;
     int precision = std::min(x.lsb(), y.lsb());
 
     // n == 0 obeys the same rules as the general case
