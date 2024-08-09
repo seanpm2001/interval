@@ -1,0 +1,4 @@
+find interval -path -prune -o -iname '*.cpp' -execdir clang-format -i -style=file {} \;
+find interval -path -prune -o -iname '*.hh' -execdir clang-format -i -style=file {} \;
+find interval -path -prune -o -iname '*.h' -execdir clang-format -i -style=file {} \;
+
