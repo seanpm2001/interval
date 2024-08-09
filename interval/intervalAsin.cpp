@@ -47,8 +47,9 @@ interval interval_algebra::Asin(const interval& x)
     }
     int precision = exactPrecisionUnary(asin, v, sign * pow(2, i.lsb()));
 
-    if (precision == INT_MIN or taylor_lsb)
-        precision = floor(x.lsb() - (double)log2(1 - v*v)/2);
+    if (precision == INT_MIN or taylor_lsb) {
+        precision = floor(x.lsb() - (double)log2(1 - v * v) / 2);
+    }
 
     return {asin(i.lo()), asin(i.hi()), precision};
 }

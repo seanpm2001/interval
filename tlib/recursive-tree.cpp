@@ -141,7 +141,9 @@ int CTree::calcTreeAperture(const Node& n, const tvec& br)
         tvec::const_iterator b  = br.begin();
         tvec::const_iterator z  = br.end();
         while (b != z) {
-            if ((*b)->aperture() > rc) rc = (*b)->aperture();
+            if ((*b)->aperture() > rc) {
+                rc = (*b)->aperture();
+            }
             ++b;
         }
         return rc;
@@ -281,8 +283,12 @@ static Tree calcsubstitute(Tree t, int level, Tree id)
         // fprintf(stderr, "aperture %d < level %d !!\n", t->aperture(), level);
         return t;
     }
-    if (isRef(t, l)) return (l == level) ? id : t;
-    if (isRec(t, body)) return rec(substitute(body, level + 1, id));
+    if (isRef(t, l)) {
+        return (l == level) ? id : t;
+    }
+    if (isRec(t, body)) {
+        return rec(substitute(body, level + 1, id));
+    }
 
     int ar = t->arity();
     // Tree	br[4];

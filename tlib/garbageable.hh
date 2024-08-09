@@ -32,8 +32,7 @@
 
 // To be inherited by all garbageable classes
 
-class LIBFAUST_API Garbageable
-{
+class LIBFAUST_API Garbageable {
    public:
     Garbageable() {}
     virtual ~Garbageable() {}
@@ -47,8 +46,7 @@ class LIBFAUST_API Garbageable
 };
 
 template <class P>
-class GarbageablePtr : public virtual Garbageable
-{
+class GarbageablePtr : public virtual Garbageable {
    private:
     P* fPtr;
 

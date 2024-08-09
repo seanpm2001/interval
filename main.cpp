@@ -28,9 +28,9 @@ using namespace itv;
 void print_help()
 {
     std::cout << "Usage: ./TestInterval [option]\n"
-    << "Options:\n"
-    << "  -h       Show this help message\n"
-    << "  -norand  Enable deterministic computation (non random)\n";
+              << "Options:\n"
+              << "  -h       Show this help message\n"
+              << "  -norand  Enable deterministic computation (non random)\n";
 }
 
 int main(int argc, char* argv[])
@@ -38,20 +38,20 @@ int main(int argc, char* argv[])
     // Check if an argument is passed
     if (argc > 1) {
         std::string arg = argv[1];
-        if (arg == "-h" || arg == "--help" ) {
+        if (arg == "-h" || arg == "--help") {
             print_help();
             return 0;  // Exit after showing help
         } else if (arg == "-norand") {
             gRandom = false;
         }
     }
-    
+
     // test interval representation
     // check("interval()", interval());
     check("interval(0,100,-24)", interval(100.0, 0.0));
     check("interval(0,0,-24)", interval(0, 0));
     check("interval(-10,0,-24)", interval(0, -10));
-    check("interval(-10,10,-5)", interval(-10,10,-5));
+    check("interval(-10,10,-5)", interval(-10, 10, -5));
 
     // test union intersection
 
@@ -108,10 +108,10 @@ int main(int argc, char* argv[])
 
     interval_algebra A;
     A.testAll();
-    
+
     /*A.testExp();
     A.testLog();*/
-    /*A.testAcos(); 
+    /*A.testAcos();
     A.testAcosh();
     A.testAsin();*/
     // A.testAsinh();
@@ -186,33 +186,33 @@ int main(int argc, char* argv[])
     /* interval X = interval(-10, 10, -24);
     std::vector<const char*> titles{ "sin", "exp", "cos"};
     std::vector<umth> mps{&interval_algebra::Sin, &interval_algebra::Exp, &interval_algebra::Cos};
-    std::cout << std::endl << "sin(exp(cos("<< X << "))) = " << A.Sin(A.Exp(A.Cos(X))) << std::endl << std::endl;
-    propagateBackwardsComposition(titles, mps, X, -24);
-    std::cout << std::endl << "sin(exp(cos("<< X << "))) = " << A.Sin(A.Exp(A.Cos(X))) << std::endl;
-    std::cout << "----------------" << std::endl << std::endl;
+    std::cout << std::endl << "sin(exp(cos("<< X << "))) = " << A.Sin(A.Exp(A.Cos(X))) << std::endl
+    << std::endl; propagateBackwardsComposition(titles, mps, X, -24); std::cout << std::endl <<
+    "sin(exp(cos("<< X << "))) = " << A.Sin(A.Exp(A.Cos(X))) << std::endl; std::cout <<
+    "----------------" << std::endl << std::endl;
 
     X = interval(1, 10, -24);
     std::vector<const char*> titles2{"log", "exp"};
     std::vector<umth> mps2{ &interval_algebra::Log, &interval_algebra::Exp};
-    std::cout << std::endl << "log(exp("<< X << ")) = " << A.Log(A.Exp(X)) << std::endl << std::endl;
-    propagateBackwardsComposition(titles2, mps2, X, -24);
-    std::cout << std::endl << "log(exp("<< X << ")) = " << A.Log(A.Exp(X)) << std::endl;
-    std::cout << "----------------" << std::endl << std::endl;
+    std::cout << std::endl << "log(exp("<< X << ")) = " << A.Log(A.Exp(X)) << std::endl <<
+    std::endl; propagateBackwardsComposition(titles2, mps2, X, -24); std::cout << std::endl <<
+    "log(exp("<< X << ")) = " << A.Log(A.Exp(X)) << std::endl; std::cout << "----------------" <<
+    std::endl << std::endl;
 
     X = interval(1, 10, -24);
     std::vector<const char*> titles3{"exp", "log"};
     std::vector<umth> mps3{ &interval_algebra::Exp, &interval_algebra::Log};
-    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl << std::endl;
-    propagateBackwardsComposition(titles3, mps3, X, -24);
-    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl;
-    std::cout << "----------------" << std::endl << std::endl; */
+    std::cout << std::endl << "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl <<
+    std::endl; propagateBackwardsComposition(titles3, mps3, X, -24); std::cout << std::endl <<
+    "exp(log("<< X << ")) = " << A.Exp(A.Log(X)) << std::endl; std::cout << "----------------" <<
+    std::endl << std::endl; */
 
     /* interval X = interval(1, 2, -24);
     interval Y = interval(1, 10, -24);
     std::cout << "pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl << std::endl;
     propagateBackwardsBinaryMethod("pow", &interval_algebra::Pow, X, Y, -24);
     std::cout << std::endl;
-    std::cout << "pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl; 
+    std::cout << "pow(" << X << ", " << Y << ") = " << A.Pow(X, Y) << std::endl;
     interval Z = A.Pow(X, Y);
     std::cout << "exp(" << Z << ") = " <<  A.Exp(Z) << std::endl;
     propagateBackwardsUnaryMethod("exp", &interval_algebra::Exp, Z, -24);
@@ -262,4 +262,3 @@ int main(int argc, char* argv[])
     interval Y = interval(23.4489,23.4489,-958);
     std::cout << X << "/" << Y << " = " << A.Div(X, Y) << std::endl;*/
 }
-

@@ -100,16 +100,16 @@ typedef std::vector<Tree>    tvec;
  * WARNING : in the current implementation CTrees are allocated but never deleted.
  **/
 
-class LIBFAUST_API CTree : public virtual Garbageable
-{
+class LIBFAUST_API CTree : public virtual Garbageable {
    private:
     static const int kHashTableSize = 400009;     ///< size of the hash table (prime number)
     static size_t    gSerialCounter;              ///< the serial number counter
     static Tree      gHashTable[kHashTableSize];  ///< hash table used for "hash consing"
 
    public:
-    static bool         gDetails;    ///< Ctree::print() print with more details when true
-    static unsigned int gVisitTime;  ///< Should be incremented for each new visit to keep track of visited tree
+    static bool gDetails;  ///< Ctree::print() print with more details when true
+    static unsigned int
+        gVisitTime;  ///< Should be incremented for each new visit to keep track of visited tree
 
    private:
     // fields
@@ -123,32 +123,44 @@ class LIBFAUST_API CTree : public virtual Garbageable
     unsigned int fVisitTime;   ///< keep track of visits
     tvec         fBranch;      ///< the subtrees
 
-    CTree(size_t hk, const Node& n, const tvec& br);  ///< construction is private, uses tree::make instead
+    CTree(size_t hk, const Node& n,
+          const tvec& br);  ///< construction is private, uses tree::make instead
 
-    bool          equiv(const Node& n, const tvec& br) const;  ///< used to check if an equivalent tree already exists
-    static size_t calcTreeHash(const Node& n,
-                               const tvec& br);  ///< compute the hash key of a tree according to its node and branches
-    static int    calcTreeAperture(const Node& n, const tvec& br);  ///< compute how open is a tree
+    bool          equiv(const Node& n,
+                        const tvec& br) const;  ///< used to check if an equivalent tree already exists
+    static size_t calcTreeHash(
+        const Node& n,
+        const tvec& br);  ///< compute the hash key of a tree according to its node and branches
+    static int calcTreeAperture(const Node& n, const tvec& br);  ///< compute how open is a tree
 
    public:
     virtual ~CTree();
 
-    static Tree make(const Node& n, int ar, Tree br[]);  ///< return a new tree or an existing equivalent one
-    static Tree make(const Node& n, const tvec& br);     ///< return a new tree or an existing equivalent one
+    static Tree make(const Node& n, int ar,
+                     Tree br[]);  ///< return a new tree or an existing equivalent one
+    static Tree make(const Node& n,
+                     const tvec& br);  ///< return a new tree or an existing equivalent one
 
     // Accessors
-    const Node& node() const { return fNode; }                 ///< return the content of the tree
-    int         arity() const { return (int)fBranch.size(); }  ///< return the number of branches (subtrees) of a tree
-    Tree        branch(int i) const { return fBranch[i]; }     ///< return the ith branch (subtree) of a tree
-    const tvec& branches() const { return fBranch; }           ///< return all branches (subtrees) of a tree
-    size_t      hashkey() const { return fHashKey; }           ///< return the hashkey of the tree
-    size_t      serial() const { return fSerial; }             ///< return the serial of the tree
-    int         aperture() const { return fAperture; }  ///< return how "open" is a tree in terms of free variables
-    void        setAperture(int a) { fAperture = a; }   ///< modify the aperture of a tree
+    const Node& node() const { return fNode; }  ///< return the content of the tree
+    int         arity() const
+    {
+        return (int)fBranch.size();
+    }  ///< return the number of branches (subtrees) of a tree
+    Tree branch(int i) const { return fBranch[i]; }   ///< return the ith branch (subtree) of a tree
+    const tvec& branches() const { return fBranch; }  ///< return all branches (subtrees) of a tree
+    size_t      hashkey() const { return fHashKey; }  ///< return the hashkey of the tree
+    size_t      serial() const { return fSerial; }    ///< return the serial of the tree
+    int         aperture() const
+    {
+        return fAperture;
+    }  ///< return how "open" is a tree in terms of free variables
+    void setAperture(int a) { fAperture = a; }  ///< modify the aperture of a tree
 
     // Print a tree and the hash table (for debugging purposes)
-    std::ostream& print(std::ostream& fout) const;  ///< print recursively the content of a tree on a stream
-    static void   control();                        ///< print the hash table content (for debug purpose)
+    std::ostream& print(
+        std::ostream& fout) const;  ///< print recursively the content of a tree on a stream
+    static void control();          ///< print the hash table content (for debug purpose)
 
     static void init();
 
@@ -208,7 +220,8 @@ inline Tree tree(const Node& n, const Tree& a, const Tree& b, const Tree& c, con
     return CTree::make(n, 4, br);
 }
 
-inline Tree tree(const Node& n, const Tree& a, const Tree& b, const Tree& c, const Tree& d, const Tree& e)
+inline Tree tree(const Node& n, const Tree& a, const Tree& b, const Tree& c, const Tree& d,
+                 const Tree& e)
 {
     Tree br[] = {a, b, c, d, e};
     return CTree::make(n, 5, br);
@@ -219,13 +232,15 @@ inline Tree tree(const Node& n, const tvec& br)
 }
 
 // useful conversions
-LIBFAUST_API int         tree2int(Tree t);     ///< if t has a node of type int, return it otherwise error
-double                   tree2float(Tree t);   ///< if t has a node of type float, return it otherwise error
-double                   tree2double(Tree t);  ///< if t has a node of type float, return it otherwise error
-LIBFAUST_API const char* tree2str(Tree t);     ///< if t has a node of type symbol, return its name otherwise error
-std::string              tree2quotedstr(Tree t);
-void*                    tree2ptr(Tree t);     ///< if t has a node of type ptr, return it otherwise error
-LIBFAUST_API void*       getUserData(Tree t);  ///< if t has a node of type symbol, return the associated user data
+LIBFAUST_API int tree2int(Tree t);     ///< if t has a node of type int, return it otherwise error
+double           tree2float(Tree t);   ///< if t has a node of type float, return it otherwise error
+double           tree2double(Tree t);  ///< if t has a node of type float, return it otherwise error
+LIBFAUST_API const char* tree2str(
+    Tree t);  ///< if t has a node of type symbol, return its name otherwise error
+std::string        tree2quotedstr(Tree t);
+void*              tree2ptr(Tree t);  ///< if t has a node of type ptr, return it otherwise error
+LIBFAUST_API void* getUserData(
+    Tree t);  ///< if t has a node of type symbol, return the associated user data
 
 // pattern matching
 bool isTree(const Tree& t, const Node& n);
@@ -280,8 +295,7 @@ Tree deBruijn2Sym(Tree t);  ////< transform a tree from deBruijn to symbolic not
 
 //---------------------------------------------------------------------------
 
-class Tabber
-{
+class Tabber {
     int fIndent;
     int fPostInc;
 
@@ -301,7 +315,9 @@ class Tabber
 
     std::ostream& print(std::ostream& fout)
     {
-        for (int i = 0; i < fIndent; i++) fout << '\t';
+        for (int i = 0; i < fIndent; i++) {
+            fout << '\t';
+        }
         fIndent += fPostInc;
         fPostInc = 0;
         return fout;

@@ -66,8 +66,7 @@ enum NodeType { kIntNode, kInt64Node, kDoubleNode, kSymNode, kPointerNode };
  * Class Node = (type x (int + double + Sym + void*))
  */
 
-class Node : public virtual Garbageable
-{
+class Node : public virtual Garbageable {
     int fType;
     union {
         int     i;
@@ -122,8 +121,14 @@ class Node : public virtual Garbageable
     void*   getPointer() const { return fData.p; }
 
     // conversions and promotion for numbers
-    operator int() const { return (fType == kIntNode) ? fData.i : (fType == kDoubleNode) ? int(fData.f) : 0; }
-    operator double() const { return (fType == kIntNode) ? double(fData.i) : (fType == kDoubleNode) ? fData.f : 0.0; }
+    operator int() const
+    {
+        return (fType == kIntNode) ? fData.i : (fType == kDoubleNode) ? int(fData.f) : 0;
+    }
+    operator double() const
+    {
+        return (fType == kIntNode) ? double(fData.i) : (fType == kDoubleNode) ? fData.f : 0.0;
+    }
 
     std::ostream& print(std::ostream& fout) const;  ///< print a node on a stream
 };
@@ -188,27 +193,32 @@ inline bool isDouble(const Node& n, double* x)
 
 inline bool isZero(const Node& n)
 {
-    return ((n.type() == kDoubleNode) && (n.getDouble() == 0.0)) || ((n.type() == kIntNode) && (n.getInt() == 0));
+    return ((n.type() == kDoubleNode) && (n.getDouble() == 0.0)) ||
+           ((n.type() == kIntNode) && (n.getInt() == 0));
 }
 
 inline bool isGEZero(const Node& n)
 {
-    return ((n.type() == kDoubleNode) && (n.getDouble() >= 0.0)) || ((n.type() == kIntNode) && (n.getInt() >= 0));
+    return ((n.type() == kDoubleNode) && (n.getDouble() >= 0.0)) ||
+           ((n.type() == kIntNode) && (n.getInt() >= 0));
 }
 
 inline bool isGTZero(const Node& n)
 {
-    return ((n.type() == kDoubleNode) && (n.getDouble() > 0.0)) || ((n.type() == kIntNode) && (n.getInt() > 0));
+    return ((n.type() == kDoubleNode) && (n.getDouble() > 0.0)) ||
+           ((n.type() == kIntNode) && (n.getInt() > 0));
 }
 
 inline bool isOne(const Node& n)
 {
-    return ((n.type() == kDoubleNode) && (n.getDouble() == 1.0)) || ((n.type() == kIntNode) && (n.getInt() == 1));
+    return ((n.type() == kDoubleNode) && (n.getDouble() == 1.0)) ||
+           ((n.type() == kIntNode) && (n.getInt() == 1));
 }
 
 inline bool isMinusOne(const Node& n)
 {
-    return ((n.type() == kDoubleNode) && (n.getDouble() == -1.0)) || ((n.type() == kIntNode) && (n.getInt() == -1));
+    return ((n.type() == kDoubleNode) && (n.getDouble() == -1.0)) ||
+           ((n.type() == kIntNode) && (n.getInt() == -1));
 }
 
 bool sameMagnitude(const Node& a, const Node& b);
@@ -275,11 +285,16 @@ inline Node mulNode(const Node& x, const Node& y)
 inline Node divExtendedNode(const Node& x, const Node& y)
 {
     if (isDouble(x) || isDouble(y)) {
-        if (double(y) == 0) goto raise_exception;
+        if (double(y) == 0) {
+            goto raise_exception;
+        }
         return Node(double(x) / double(y));
     } else {
-        if (int(y) == 0 || double(y) == 0) goto raise_exception;
-        return (double(int(x) / int(y)) == double(x) / double(y)) ? Node(int(x) / int(y)) : Node(double(x) / double(y));
+        if (int(y) == 0 || double(y) == 0) {
+            goto raise_exception;
+        }
+        return (double(int(x) / int(y)) == double(x) / double(y)) ? Node(int(x) / int(y))
+                                                                  : Node(double(x) / double(y));
     }
 
 raise_exception:
