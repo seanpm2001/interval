@@ -57,8 +57,9 @@ interval interval_algebra::Mul(const interval& x, const interval& y)
     {
         // if the quotient of an INT limit by an interval limit is below a limit of the other interval
         // ie, if there is something big enough in the other interval to make the interval limit go beyond an INT limit
-        if (std::max(std::abs(x.lo()), std::abs(x.hi()))*std::max(std::abs(y.lo()), std::abs(y.hi())) >= (double) INT_MAX)
+        if (std::max(std::abs(x.lo()), std::abs(x.hi()))*std::max(std::abs(y.lo()), std::abs(y.hi())) >= (double) INT_MAX) {
             return {(double) INT_MIN, (double) INT_MAX, x.lsb() + y.lsb()};
+        }
         /* interval z{lo, hi, x.lsb()+y.lsb()};
         interval shift{pow(2, 31), pow(2, 31), 31};
         interval m{pow(2, 32), pow(2, 32), 32};
