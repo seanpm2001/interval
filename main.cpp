@@ -17,14 +17,35 @@
 #include <sstream>
 #include <string>
 
+bool gRandom = true;
+
 #include "interval/check.hh"
 #include "interval/interval_algebra.hh"
 #include "interval/interval_def.hh"
 
 using namespace itv;
 
-int main()
+void print_help()
 {
+    std::cout << "Usage: ./TestInterval [option]\n"
+    << "Options:\n"
+    << "  -h       Show this help message\n"
+    << "  -norand  Enable deterministic computation (non random)\n";
+}
+
+int main(int argc, char* argv[])
+{
+    // Check if an argument is passed
+    if (argc > 1) {
+        std::string arg = argv[1];
+        if (arg == "-h" || arg == "--help" ) {
+            print_help();
+            return 0;  // Exit after showing help
+        } else if (arg == "-norand") {
+            gRandom = false;
+        }
+    }
+    
     // test interval representation
     // check("interval()", interval());
     check("interval(0,100,-24)", interval(100.0, 0.0));
@@ -87,6 +108,7 @@ int main()
 
     interval_algebra A;
     A.testAll();
+    
     /*A.testExp();
     A.testLog();*/
     /*A.testAcos(); 
@@ -240,3 +262,4 @@ int main()
     interval Y = interval(23.4489,23.4489,-958);
     std::cout << X << "/" << Y << " = " << A.Div(X, Y) << std::endl;*/
 }
+

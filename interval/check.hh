@@ -7,6 +7,8 @@
 #include "interval_def.hh"
 #include "utils.hh"
 
+extern bool gRandom;
+
 bool const taylor_lsb = false; // flag that tells us to always compute the LSB using a Taylor expansion of the function 
                               // instead of going for the exact computation
 

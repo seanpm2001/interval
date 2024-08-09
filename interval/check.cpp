@@ -99,8 +99,8 @@ void check(const std::string& testname, bool exp, bool res)
  */
 itv::interval testfun(int N, bfun f, const itv::interval& x, const itv::interval& y)
 {
-    std::random_device             rd;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(rd());
+    std::random_device             R;  // used to generate a random seed, based on some hardware randomness
+    std::default_random_engine     generator((gRandom) ? R() : 12345);
     std::uniform_real_distribution rx(x.lo(), x.hi());
     std::uniform_real_distribution ry(y.lo(), y.hi());
 
@@ -154,7 +154,7 @@ void analyzemod(itv::interval x, itv::interval y)
 void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& D, ufun f)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(R());
+    std::default_random_engine     generator((gRandom) ? R() : 12345);
     std::uniform_real_distribution rd(D.lo(), D.hi());
 
     std::cout << "Analysis of " << title << " in domain " << D << std::endl;
@@ -205,7 +205,7 @@ void analyzeUnaryFunction(int E, int M, const char* title, const itv::interval& 
 void analyzeUnaryMethod(int E, int M, const char* title, const itv::interval& D, ufun f, umth mp)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(R());
+    std::default_random_engine     generator((gRandom) ? R() : 12345);
     std::uniform_real_distribution rd(D.lo(), D.hi());
     itv::interval_algebra          A;
 
@@ -324,7 +324,7 @@ void analyzeBinaryMethod(int E, int M, const char* title, const itv::interval& D
                          bmth bm)
 {
     std::random_device             R;  // used to generate a random seed, based on some hardware randomness
-    std::default_random_engine     generator(R());
+    std::default_random_engine     generator((gRandom) ? R() : 12345);
     std::uniform_real_distribution rdx(Dx.lo(), Dx.hi());
     std::uniform_real_distribution rdy(Dy.lo(), Dy.hi());
     itv::interval_algebra          A;
